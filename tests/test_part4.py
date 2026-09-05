@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from part4.evaluation import feature_target, metrics, select_threshold, split_development, threshold_table
-from part4.experiment import make_pipeline
+from part4.experiment import make_pipeline, paired_bootstrap
 
 
 def frame(n=80):
@@ -74,3 +74,22 @@ def test_pipeline_encodes_categories_without_learning_validation_values():
     assert np.isfinite(estimator.predict_proba(unseen)).all()
     after = estimator.named_steps["preprocess"].named_transformers_["categorical"].categories_
     assert all(np.array_equal(a, b) for a, b in zip(before, after))
+
+
+def test_identical_models_have_zero_paired_bootstrap_differences():
+    p = np.array([.1, .2, .8, .9])
+    result = paired_bootstrap([0, 1, 0, 1], p, p, .5, repeats=100).set_index("Quantity")
+    for metric in ["AP", "ROC-AUC"]:
+        row = result.loc[f"{metric} difference: tuned - baseline"]
+        assert row.Estimate == row.CI_low == row.CI_high == 0
+
+
+def test_csv_roundtrip_preserves_decisions_at_float32_threshold(tmp_path):
+    from part4.experiment import save_predictions
+    scores = np.array([.1, .31501567, .8, .9], dtype=np.float32)
+    threshold = float(scores[1])
+    path = tmp_path / "predictions.csv"
+    save_predictions(path, np.arange(4), [0, 1, 0, 1], scores, scores)
+    restored = pd.read_csv(path, float_precision="round_trip")
+    assert np.array_equal(restored.Tuned_probability.to_numpy(), scores.astype(float))
+    assert metrics(restored.default, restored.Tuned_probability, threshold) == metrics([0, 1, 0, 1], scores, threshold)

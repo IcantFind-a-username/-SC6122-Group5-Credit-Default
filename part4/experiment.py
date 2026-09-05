@@ -21,7 +21,7 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.model_selection import ParameterSampler, StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier, __version__ as xgboost_version
 
 from .evaluation import COST_RATIOS, feature_target, metrics, select_threshold, split_development, threshold_table
 
@@ -53,6 +53,13 @@ def file_hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def save_predictions(path, row_ids, labels, baseline, tuned):
+    """Preserve exact float32 scores in CSV; read with float_precision='round_trip'."""
+    pd.DataFrame({"row_id": np.asarray(row_ids), "default": np.asarray(labels),
+                  "Baseline_probability": np.asarray(baseline, dtype=float),
+                  "Tuned_probability": np.asarray(tuned, dtype=float)}).to_csv(path, index=False)
+
+
 def paired_bootstrap(y, baseline, tuned, threshold, repeats=1000):
     """Stratified paired test bootstrap, conditional on the already frozen models."""
     y = np.asarray(y)
@@ -65,11 +72,14 @@ def paired_bootstrap(y, baseline, tuned, threshold, repeats=1000):
         i = np.concatenate([rng.choice(g, size=len(g), replace=True) for g in groups])
         draws.append([average_precision_score(y[i], tuned[i]), roc_auc_score(y[i], tuned[i]),
                       average_precision_score(y[i], tuned[i]) - average_precision_score(y[i], baseline[i]),
+                      roc_auc_score(y[i], tuned[i]) - roc_auc_score(y[i], baseline[i]),
                       (loss_selected[i] - loss_default[i]).mean() * 1000])
     observed = [average_precision_score(y, tuned), roc_auc_score(y, tuned),
                 average_precision_score(y, tuned) - average_precision_score(y, baseline),
+                roc_auc_score(y, tuned) - roc_auc_score(y, baseline),
                 (loss_selected - loss_default).mean() * 1000]
     labels = ["Tuned AP", "Tuned ROC-AUC", "AP difference: tuned - baseline",
+              "ROC-AUC difference: tuned - baseline",
               "Cost/1000 difference: tuned r=5 threshold - tuned threshold 0.5"]
     low, high = np.percentile(draws, [2.5, 97.5], axis=0)
     return pd.DataFrame({"Quantity": labels, "Estimate": observed,
@@ -126,8 +136,7 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     table = threshold_table(y_val, val_tuned)
     table.to_csv(output / "validation_thresholds.csv", index=False)
     thresholds = {str(r): select_threshold(table, r) for r in COST_RATIOS}
-    pd.DataFrame({"row_id": validation.row_id.to_numpy(), "default": y_val.to_numpy(),
-                  "Baseline_probability": val_base, "Tuned_probability": val_tuned}).to_csv(output / "validation_predictions.csv", index=False)
+    save_predictions(output / "validation_predictions.csv", validation.row_id, y_val, val_base, val_tuned)
     val_metrics = [{"Model": "Baseline XGBoost", **metrics(y_val, val_base)},
                    {"Model": "Tuned XGBoost", **metrics(y_val, val_tuned)}]
     val_metrics += [{"Model": f"Tuned XGBoost / cost ratio {r}", **metrics(y_val, val_tuned, thresholds[str(r)])} for r in COST_RATIOS]
@@ -139,7 +148,8 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     joblib.dump(baseline, output / "baseline_pipeline.joblib", compress=3)
     joblib.dump(tuned, output / "tuned_pipeline.joblib", compress=3)
     versions = {name: importlib.metadata.version(name) for name in
-                ["numpy", "pandas", "scikit-learn", "xgboost-cpu", "matplotlib", "scipy", "joblib"]}
+                ["numpy", "pandas", "scikit-learn", "matplotlib", "scipy", "joblib"]}
+    versions["xgboost"] = xgboost_version  # both standard and CPU-only distributions expose this module
     protocol = {"Stage": "Frozen before test loading", "Frozen_at_UTC": datetime.now(timezone.utc).isoformat(),
                 "Source_train_SHA256": file_hash(train_path), "Features": x_fit.columns.tolist(),
                 "Fit_rows": len(fit), "Validation_rows": len(validation), "Seed": 42,
@@ -165,9 +175,7 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
         raise ValueError("Test membership/order differs from supplied index file")
     x_test, y_test = feature_target(test)
     base_p, tuned_p = baseline.predict_proba(x_test)[:, 1], tuned.predict_proba(x_test)[:, 1]
-    predictions = pd.DataFrame({"row_id": test.row_id.to_numpy(), "default": y_test.to_numpy(),
-                                "Baseline_probability": base_p, "Tuned_probability": tuned_p})
-    predictions.to_csv(output / "test_predictions.csv", index=False)
+    save_predictions(output / "test_predictions.csv", test.row_id, y_test, base_p, tuned_p)
     comparison = [{"Model": "Baseline XGBoost", **metrics(y_test, base_p)},
                   {"Model": "Tuned XGBoost", **metrics(y_test, tuned_p)}]
     comparison += [{"Model": f"Tuned XGBoost / cost ratio {r}", **metrics(y_test, tuned_p, thresholds[str(r)])} for r in COST_RATIOS]

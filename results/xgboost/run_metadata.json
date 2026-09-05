@@ -1,0 +1,8 @@
+{
+  "Status": "Complete",
+  "Completed_at_UTC": "2026-09-05T15:29:17.942056+00:00",
+  "Elapsed_seconds": 75.347086021,
+  "Frozen_protocol_SHA256": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+  "Test_predictions_SHA256": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79",
+  "Postprocessing_note": "Re-exported probabilities at full precision from unchanged frozen models; added paired ROC-AUC difference interval. No model fitting, parameter selection or threshold changes."
+}
