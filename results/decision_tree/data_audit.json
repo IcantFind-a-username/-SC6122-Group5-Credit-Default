@@ -1,0 +1,8 @@
+{
+  "Source_test_SHA256": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2",
+  "Row_ID_overlap": 0,
+  "Training_rows": 24000,
+  "Test_rows": 6000,
+  "Test_rows_with_features_seen_in_development": 15,
+  "Note": "Identical feature vectors retained per team protocol; not proof of duplicate customers."
+}
