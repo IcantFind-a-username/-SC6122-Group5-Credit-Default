@@ -24,7 +24,7 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 - [Bilingual Q&A](Group5_QA.md): 22 questions, role-priority map and evidence links.
 - [Model comparison](model_comparison.csv), [cost comparison](cost_comparison.csv), [README](../README.md), [dataset provenance](../data/README.md).
 - [Experiment audit](../results/final/audit.json), [audit interpretation](../integration/AUDIT_FINDINGS.md), [source audit](../results/final/source_audit.json), [notebook execution status](../results/final/notebook_status.json).
-- `Group5_Reproduction.zip` and `package_manifest.json`: suggested backup; packaged Git commit and archive SHA256 recorded after final build.
+- `Group5_Dataset.zip` (data-only) and `Group5_Reproduction.zip` (code/data/results/materials), with `package_manifest.json`: suggested backup; packaged Git commit and archive SHA256 recorded after final build.
 - `delivery_validation.json`: PDF page counts, bounds/content checks and document hashes. Visual report inspection covers the full contact sheet and detailed table/reference pages. Final slide export/visual acceptance is recorded below.
 
 ## Reproducibility acceptance
@@ -54,6 +54,6 @@ Prepare the editable source, PPTX/PDF, notes/Q&A, code/data/models/results and e
 
 ## Final presentation acceptance
 
-Native editable PPTX created. Actual source-PPTX PDF export and slide-by-slide visual inspection are being completed; the final `slide_manifest.json` and `delivery_validation.json` record the delivered state. Report PDF is complete and visually inspected at 6 pages.
+Actual PPTX exported by official LibreOffice 26.8.0.3 to a 16-page PDF. All 144 text boxes match the rendered PDF; scripts and explicit transitions match Markdown, native speaker notes and the manifest. Full contact sheet and dense slides inspected; backup-page overflow corrected. Main talk: 720 seconds; Q&A: 180 seconds. Report is complete and visually inspected at 6 pages. `slide_manifest.json` and `delivery_validation.json` record hashes and counts.
 
 Integration branch only: `integration/final-submission-20260907`. No force-push, main merge, course upload or teacher email.

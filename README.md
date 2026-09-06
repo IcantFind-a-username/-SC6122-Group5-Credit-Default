@@ -69,4 +69,4 @@ Update report prose in `submission/report_template.tex`, then regenerate; genera
 python -m integration.reproduce package
 ```
 
-The archive contains committed repository files only, under `Group5/`. `.gitattributes` excludes the archive itself and temporary render logs. No `.git`, `.venv`, caches or unrelated local files are included. Check `submission/package_manifest.json` for the packaged commit and SHA256 when using the prepared archive.
+The reproduction archive contains committed repository files only, under `Group5/`. A separate `Group5_Dataset.zip` contains only the committed `data/` folder and its source/license documentation, for a platform that requests the dataset separately. `.gitattributes` excludes the archive itself and temporary render logs. No `.git`, `.venv`, caches or unrelated local files are included. Check `submission/package_manifest.json` for the packaged commit and SHA256 when using the prepared archive.

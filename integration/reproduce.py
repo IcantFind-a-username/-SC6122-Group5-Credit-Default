@@ -40,9 +40,16 @@ def main():
             assert not any(forbidden.intersection(Path(name).parts) for name in names)
             assert not any(name.endswith('Group5_Reproduction.zip') for name in names)
             assert handle.testzip() is None
+        dataset_archive = ROOT/'submission/Group5_Dataset.zip'
+        subprocess.run(['git','archive','--format=zip','--prefix=Group5_Data/',
+                        '--output='+str(dataset_archive),'HEAD','data'],cwd=ROOT,check=True)
+        with ZipFile(dataset_archive) as handle:
+            assert handle.testzip() is None
+            assert 'Group5_Data/data/README.md' in handle.namelist()
         commit = subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
         write_json(ROOT/'submission/package_manifest.json', {'packaged_commit':commit,
                    'archive_SHA256':file_hash(archive),'archive_bytes':archive.stat().st_size,
+                   'dataset_archive_SHA256':file_hash(dataset_archive),'dataset_archive_bytes':dataset_archive.stat().st_size,
                    'entries':len(names),'required_deliverables_present':True,'forbidden_content_absent':True,
                    'scope':'Committed HEAD; archive/manifest self-excluded by export-ignore'})
         print('Packaged and checked committed HEAD only:',commit)
