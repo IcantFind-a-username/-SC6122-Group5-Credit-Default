@@ -119,8 +119,14 @@ def run():
                          "clean_duplicate_features_excluding_first": int(clean[features].duplicated().sum()),
                          "train_duplicate_features_excluding_first": int(train_hash.duplicated().sum()),
                          "test_rows_features_seen_in_development": int(test_hash.isin(set(train_hash)).sum()),
-                         "cleaning": "02_preprocessing.ipynb documents EDUCATION {0,5,6}->4, MARRIAGE 0->3; no rows removed/imputation; negative repayment codes and large/negative amounts retained. Original pre-cleaning raw dataset is not committed, so its transformation cannot be independently replayed.",
+                         "cleaning": "02_preprocessing.ipynb documents EDUCATION {0,5,6}->4, MARRIAGE 0->3; no rows removed/imputation; negative repayment codes and large/negative amounts retained. Original historical download bytes were not preserved; the separate results/final/source_audit.json records fresh official-source replay evidence.",
                          "duplicate_interpretation": "Equal feature vectors retained; do not establish duplicate customers."}
+    source_path = output / "source_audit.json"
+    if source_path.exists():
+        source_audit = json.loads(source_path.read_text())
+        details["official_source_replay"] = source_audit
+        check("source: official-source cleaning replay", source_audit["cleaning_exact_values_dtypes_order_verified"] and
+              source_audit["clean_sha256"] == file_hash(ROOT / "data/credit_card_default_clean.csv"))
     membership = pd.concat([fit[["row_id"]].assign(Partition="fit"), validation[["row_id"]].assign(Partition="validation")], ignore_index=True)
     cv = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(x_fit, y_fit))
     cv_membership = pd.DataFrame([{"row_id": int(row), "CV_fold": fold} for fold, (_, indices) in enumerate(cv) for row in fit.iloc[indices].row_id])

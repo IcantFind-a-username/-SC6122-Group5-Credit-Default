@@ -1,0 +1,96 @@
+{
+  "Stage": "Supplement choices frozen before this runner loads historic test rows",
+  "Evidence_status": "Post-hoc reproducibility supplement after historic test results existed",
+  "Estimator": "LogisticRegression",
+  "Independent_unseen_test_claim": false,
+  "Source_script_SHA256": "7b702d677380c384bfbbf6df9779398a09999a615aabdc0af6810c0cc4cdd750",
+  "Preprocessing": "Fold-trained full one-hot SEX/EDUCATION/MARRIAGE; StandardScaler for remaining numeric predictors",
+  "Fixed_estimator_parameters": {
+    "solver": "lbfgs",
+    "l1_ratio": 0.0,
+    "max_iter": 3000,
+    "random_state": 42
+  },
+  "Frozen_at_UTC": "2026-09-06T16:07:54.050390+00:00",
+  "Source_train_SHA256": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+  "Features": [
+    "LIMIT_BAL",
+    "SEX",
+    "EDUCATION",
+    "MARRIAGE",
+    "AGE",
+    "PAY_0",
+    "PAY_2",
+    "PAY_3",
+    "PAY_4",
+    "PAY_5",
+    "PAY_6",
+    "BILL_AMT1",
+    "BILL_AMT2",
+    "BILL_AMT3",
+    "BILL_AMT4",
+    "BILL_AMT5",
+    "BILL_AMT6",
+    "PAY_AMT1",
+    "PAY_AMT2",
+    "PAY_AMT3",
+    "PAY_AMT4",
+    "PAY_AMT5",
+    "PAY_AMT6"
+  ],
+  "Fit_rows": 18000,
+  "Validation_rows": 6000,
+  "Seed": 42,
+  "CV_folds": 5,
+  "Candidates": 12,
+  "Selection_metric": "average_precision",
+  "Baseline_parameters": {
+    "C": 1.0,
+    "class_weight": null
+  },
+  "Selected_parameters": {
+    "C": 0.1,
+    "class_weight": null
+  },
+  "Selected_candidate": 5,
+  "Search_space": {
+    "C": [
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "class_weight": [
+      null,
+      "balanced"
+    ]
+  },
+  "Validation_thresholds": {
+    "1": 0.4453536666170534,
+    "3": 0.26511536570131244,
+    "5": 0.23431561971886616,
+    "10": 0.00394068689681157
+  },
+  "Primary_cost_ratio": 5,
+  "Cost_definition": "FP + ratio * FN; hypothetical equal unit cost per false positive",
+  "Threshold_tie_rule": "largest threshold",
+  "Prediction_rule": "score >= threshold",
+  "Refit_after_threshold_selection": false,
+  "Bootstrap_replicates": 1000,
+  "Bootstrap_seed": 20260905,
+  "Python": "3.12.2",
+  "Packages": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "scipy": "1.17.0",
+    "joblib": "1.5.3"
+  },
+  "Model_SHA256": {
+    "baseline_pipeline.joblib": "bdc2108ed65d4a20a15806f597d6a6db063ecc525b25e1d12a47ea0ef7d83c95",
+    "tuned_pipeline.joblib": "fe93896d87a73f868515992843318214ad3d2c267340a37e8efb8209a1fdfd48"
+  }
+}

@@ -1,0 +1,9 @@
+# Dataset provenance
+
+I-Cheng Yeh (2009), **Default of Credit Card Clients**, UCI Machine Learning Repository, DOI https://doi.org/10.24432/C55S3H. License: CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Data refer to Taiwan clients, with April–September 2005 payment history; monetary fields are NT dollars. Positive label: default payment = 1.
+
+`source/uci_350_raw.csv` is the official UCI CSV retrieved during final provenance verification; `source/uci_metadata.json` retains its metadata. The original team's download bytes were not saved. `python -m integration.source_audit` verifies the fresh official source against the committed clean dataset exactly (values, dtypes, row and column order). It uses the cached raw CSV offline once present. Hashes are recorded in `results/final/source_audit.json`.
+
+Changes: rename X1…X23 to descriptive columns; map EDUCATION 0/5/6 to 4 and MARRIAGE 0 to 3. No missing values, imputation, removed rows, outlier filtering or oversampling. Repayment negative codes are retained. `row_id` is zero-based position, and the UCI original ID equals `row_id+1`; both are bookkeeping, never predictors. 35 repeated feature/label records remain because equality alone does not establish duplicate customers. This choice can make cross-row validation optimistic; no group or external validation is claimed.
+
+`credit_card_default_clean.csv`: 30,000 rows, 23 predictors, label, row_id. `splits/`: original 80/20 stratified split, seed 42; files preserve membership and order. Model development uses a further 75/25 stratified split of the 24,000 development rows: 18,000 fit and 6,000 validation. Test rows: 6,000. No adaptive use of test rows in the supplied tree runners or logistic supplement. Historical team-wide test exposure prevents calling the supplement an independently unseen-test experiment.

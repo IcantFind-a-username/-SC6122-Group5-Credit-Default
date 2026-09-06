@@ -1,0 +1,4 @@
+{
+  "Intercept": -1.6367577442244603,
+  "Note": "Numeric coefficients use fit-standardized predictors; category coefficients use full one-hot coding and L2 regularization."
+}
