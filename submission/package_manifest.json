@@ -1,0 +1,11 @@
+{
+  "packaged_commit": "b04bec33e2b568edc0de6c92821b04411f56cf94",
+  "archive_SHA256": "566f2db5fa59a3b39ea0651f1a845e2aba1dc6f006365ee67654a0fa036a158f",
+  "archive_bytes": 20677747,
+  "dataset_archive_SHA256": "1fc5984c111a7340a8b558fe8b2e495650b9baecb988944394fdff337c93ef27",
+  "dataset_archive_bytes": 3117487,
+  "entries": 213,
+  "required_deliverables_present": true,
+  "forbidden_content_absent": true,
+  "scope": "Committed HEAD; archive/manifest self-excluded by export-ignore"
+}
