@@ -1,2 +1,4 @@
 # Preserve the freshly downloaded source bytes used by the provenance hash.
 data/source/uci_350_raw.csv -text
+/submission/Group5_Reproduction.zip export-ignore
+/submission/package_manifest.json export-ignore
