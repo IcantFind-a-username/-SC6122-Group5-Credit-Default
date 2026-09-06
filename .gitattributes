@@ -1,0 +1,2 @@
+# Preserve the freshly downloaded source bytes used by the provenance hash.
+data/source/uci_350_raw.csv -text
