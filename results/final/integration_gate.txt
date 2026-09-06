@@ -1,0 +1,24 @@
+Integration gate, 2026-09-07 (Singapore).
+Commands actually executed from repository root in the unified .venv:
+
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q
+70 passed in 1.30s
+
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/ruff check .
+All checks passed!
+
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/mypy --cache-dir=/dev/null part1 part2 part3 part4 integration tests conftest.py
+Success: no issues found in 28 source files
+
+Artifact acceptance: python -m integration.audit
+223/223 checks passed (see audit.json). No historical CV refitting.
+
+Notebook acceptance: python -m integration.notebooks
+03,04,05,06 executed successfully in the sc6122 unified kernel.
+01/02 not executed because their historical data-writing behavior would overwrite frozen data.
+
+Duplicate scan: hash, JSON writer, prediction serializer and paired bootstrap each have one shared implementation.
+part2.save_model_predictions is only an adapter from model objects to the shared serializer.
+
+Report render: Tectonic; six pages including references; all numeric .5 table cells found in actual PDF.
+Contact sheet of all six pages and full comparison/reference pages inspected; no clipping or overlaps.
