@@ -3,6 +3,7 @@
 Artifact-only presentation of frozen evidence; no fitting or decision selection.
 """
 import json
+import re
 from pathlib import Path
 
 import matplotlib
@@ -45,7 +46,7 @@ def run():
     selected_rows = {}
     config_text = {'LR*': 'C=0.1; unweighted', 'DT': 'Unlimited depth; leaf=100',
                    'RF': '500 trees; depth=8; leaf=2; class 1:3',
-                   'XGB': '150 trees; depth=2; rate=.03; weight=3'}
+                   'XGB': '150 trees; depth=4; rate=.03; weight=3'}
     for folder, family, label in FAMILIES:
         subset = test[(test.Family == family) & (test.Threshold == .5)]
         for prefix, abbr in [('Baseline', 'B'), ('Tuned', 'T')]:
@@ -108,7 +109,7 @@ def run():
     template=(OUT/'report_template.tex').read_text()
     for key,value in values.items():
         template=template.replace('{{'+key+'}}',value)
-    if '{{' in template:
+    if re.search(r'\{\{[A-Z_]+\}\}', template):
         raise ValueError('Unresolved report field')
     (OUT/'Group5_Final_Report.tex').write_text(template)
     comparison.to_csv(OUT/'model_comparison.csv',index=False)
