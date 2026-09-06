@@ -60,3 +60,55 @@ def test_identical_models_have_zero_paired_bootstrap_differences():
     for metric in ["AP", "ROC-AUC"]:
         row = result.loc[f"{metric} difference: tuned - baseline"]
         assert row.Estimate == row.CI_low == row.CI_high == 0
+
+
+from part3.experiment import BASELINE, SEARCH_SPACE, best_candidate, make_pipeline
+
+
+def test_baseline_hyperparameters_are_frozen():
+    model = make_pipeline({}, threads=1).named_steps["model"]
+    assert model.n_estimators == BASELINE["n_estimators"] == 100
+    assert model.max_depth is None
+    assert model.min_samples_split == 2
+    assert model.min_samples_leaf == 1
+    assert model.max_features == "sqrt"
+    assert model.criterion == "gini"
+    assert model.class_weight is None
+    assert model.random_state == 42
+
+
+def test_search_space_mirrors_protocol_breadth():
+    assert set(SEARCH_SPACE) == {"n_estimators", "max_depth", "min_samples_split",
+                                 "min_samples_leaf", "max_features", "class_weight"}
+    assert None in SEARCH_SPACE["max_depth"]
+    assert {0: 1, 1: 3} in SEARCH_SPACE["class_weight"]
+    assert "sqrt" in SEARCH_SPACE["max_features"]
+
+
+def test_pipeline_encodes_categories_without_learning_validation_values():
+    x, y = feature_target(frame())
+    estimator = make_pipeline({"n_estimators": 3, "max_depth": 2}, threads=1)
+    estimator.fit(x, y)
+    before = [v.copy() for v in estimator.named_steps["preprocess"].named_transformers_["categorical"].categories_]
+    unseen = x.iloc[:2].copy()
+    unseen["EDUCATION"] = 99
+    assert np.isfinite(estimator.predict_proba(unseen)).all()
+    after = estimator.named_steps["preprocess"].named_transformers_["categorical"].categories_
+    assert all(np.array_equal(a, b) for a, b in zip(before, after))
+
+
+def test_best_candidate_breaks_ties_by_lowest_candidate_index():
+    rows = pd.DataFrame({"Candidate": [3, 1, 2],
+                         "Mean_CV_AP": [.70, .70, .69]})
+    assert best_candidate(rows) == 1
+
+
+def test_save_predictions_roundtrip_preserves_float32_decisions(tmp_path):
+    from part3.experiment import save_predictions
+    scores = np.array([.1, .31501567, .8, .9], dtype=np.float32)
+    threshold = float(scores[1])
+    path = tmp_path / "predictions.csv"
+    save_predictions(path, np.arange(4), [0, 1, 0, 1], scores, scores)
+    restored = pd.read_csv(path, float_precision="round_trip")
+    assert np.array_equal(restored.Tuned_probability.to_numpy(), scores.astype(float))
+    assert metrics(restored.default, restored.Tuned_probability, threshold) == metrics([0, 1, 0, 1], scores, threshold)
