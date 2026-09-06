@@ -12,7 +12,7 @@ Final integration branch: `integration/final-submission-20260907`. Main and memb
 
 ## Environment
 
-Use Python 3.12. The accepted environment is Python 3.12.2, numpy 2.3.5, pandas 2.2.3, scikit-learn 1.8.0, scipy 1.17.0, matplotlib 3.10.8, joblib 1.5.3, and XGBoost 3.0.5. `requirements.txt` unifies the previously separate member dependency files; OS markers choose the appropriate XGBoost distribution. The report build uses Tectonic; editable slides use python-pptx. This Mac's PDF slide renderer is Keynote 13.1. Other systems can export the PPTX using PowerPoint/LibreOffice and must visually recheck it.
+Use Python 3.12. The accepted environment is Python 3.12.2, numpy 2.3.5, pandas 2.2.3, scikit-learn 1.8.0, scipy 1.17.0, matplotlib 3.10.8, joblib 1.5.3, and XGBoost 3.0.5. `requirements.txt` unifies the previously separate member dependency files; OS markers choose the appropriate XGBoost distribution. The report build uses Tectonic; editable slides use python-pptx. Actual slide PDF rendering uses LibreOffice; PowerPoint is also supported by the generator on macOS. Native Keynote/PowerPoint export encountered local application access problems during integration, so an official portable LibreOffice runtime was used. Recheck layout after exporting with another renderer.
 
 ```bash
 python3.12 -m venv .venv
@@ -35,12 +35,12 @@ mypy part1 part2 part3 part4 integration tests conftest.py
 python -m integration.reproduce figures
 python -m integration.reproduce notebooks
 python -m integration.reproduce report
-python -m integration.reproduce slides
+python -m integration.reproduce slides --soffice /Applications/LibreOffice.app/Contents/MacOS/soffice
 ```
 
 `verify` replays official-source cleaning from the included cached raw CSV, checks hashes/values/types/order, split and CV memberships, saved model predictions, CSV metrics, validation thresholds, tied-score decisions, bootstrap intervals, and RF error cases. It writes `results/final/`, never the historical experiment directories. CV scores and selection are reconciled; the original CV fits are not repeated. Raw data download occurs only if `data/source/uci_350_raw.csv` is absent. Score/threshold CSVs use `float_precision="round_trip"`; classification always uses `score >= threshold`. AP means `average_precision_score`, not trapezoidal PR-AUC.
 
-`figures` redraws the final report figures and generates its LaTeX from accepted CSVs; it does not select models. `report` also runs Tectonic. `slides` creates the PPTX and notes; see the slide generator for PDF export. `notebooks` executes 03–06 in the local `sc6122` kernel. 01/02 are retained historical inspection/source-writing notebooks: do not run them over the frozen data. Their cleaning and membership logic is independently verified by `verify`. The previously empty 03 is now an honest reader for the supplement, and 05 displays frozen RF evidence.
+`figures` redraws the final report figures and generates its LaTeX from accepted CSVs; it does not select models. `report` also runs Tectonic. `slides` creates the PPTX, native/Markdown notes and actually exports the same PPTX to PDF. Supply `--soffice /path/to/soffice` for LibreOffice (on Linux this is commonly `/usr/bin/soffice`); without it the generator uses macOS PowerPoint. Install a native renderer separately; it is not a pip dependency. `notebooks` executes 03–06 in the local `sc6122` kernel. 01/02 are retained historical inspection/source-writing notebooks: do not run them over the frozen data. Their cleaning and membership logic is independently verified by `verify`. The previously empty 03 is now an honest reader for the supplement, and 05 displays frozen RF evidence.
 
 ## Retraining (different commands; separate output directory required)
 

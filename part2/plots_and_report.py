@@ -36,7 +36,7 @@ def run(output_dir=None):
     figs.mkdir(exist_ok=True)
     protocol = json.loads((out / "protocol_frozen.json").read_text())
     cv = pd.read_csv(out / "cv_results.csv")
-    final = pd.read_csv(out / "test_metrics.csv")
+    final = pd.read_csv(out / "test_metrics.csv", float_precision="round_trip")
     selected = cv.loc[cv.Candidate == protocol["Selected_candidate"]].iloc[0]
     base_cv = cv.loc[(cv.Max_depth.astype(str) == "Unlimited") & (cv.Min_samples_leaf == 1)].iloc[0]
     fixed = cv.loc[cv.Min_samples_leaf == 1]
@@ -119,8 +119,8 @@ def run(output_dir=None):
     t = final.iloc[1]
     columns = ["Model", "AP", "ROC-AUC", "Accuracy", "Precision", "Recall", "F1"]
     final_table = table(final, columns)
-    fit = pd.read_csv(out / "fit_metrics.csv")
-    validation = pd.read_csv(out / "validation_metrics.csv")
+    fit = pd.read_csv(out / "fit_metrics.csv", float_precision="round_trip")
+    validation = pd.read_csv(out / "validation_metrics.csv", float_precision="round_trip")
     full = pd.concat(
         [
             fit.assign(Partition="Fit (18,000)"),

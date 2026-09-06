@@ -24,7 +24,7 @@ def generate(output):
                          "axes.titlesize": 12, "figure.dpi": 120, "savefig.dpi": 200,
                          "svg.fonttype": "none"})
     predictions = pd.read_csv(output / "test_predictions.csv", float_precision="round_trip")
-    result = pd.read_csv(output / "test_metrics.csv").set_index("Model")
+    result = pd.read_csv(output / "test_metrics.csv", float_precision="round_trip").set_index("Model")
     protocol = json.loads((output / "protocol_frozen.json").read_text())
     thresholds = protocol["Validation_thresholds"]
     threshold = thresholds["5"]

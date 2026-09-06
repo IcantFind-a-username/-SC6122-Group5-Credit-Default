@@ -10,12 +10,16 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('mode', choices=['verify','figures','notebooks','report','slides','package'])
+    parser.add_argument("--soffice", help="LibreOffice soffice executable, for actual PPTX PDF export")
     args = parser.parse_args()
     modules = {'verify':['integration.source_audit','integration.audit'],
                'figures':['integration.build_report'], 'notebooks':['integration.notebooks'],
                'report':['integration.build_report'], 'slides':['integration.build_slides']}
     for module in modules.get(args.mode, []):
-        subprocess.run([sys.executable,'-m',module],cwd=ROOT,check=True)
+        command = [sys.executable,'-m',module]
+        if module == 'integration.build_slides' and args.soffice:
+            command += ['--soffice', args.soffice]
+        subprocess.run(command,cwd=ROOT,check=True)
     if args.mode == 'report':
         subprocess.run(['tectonic','submission/Group5_Final_Report.tex','--keep-logs'],cwd=ROOT,check=True)
     if args.mode == 'package':
