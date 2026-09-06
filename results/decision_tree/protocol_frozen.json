@@ -1,0 +1,116 @@
+{
+  "Stage": "Frozen before test loading",
+  "Frozen_at_UTC": "2026-09-05T23:00:37.607597+00:00",
+  "Source_train_SHA256": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+  "Fit_rows": 18000,
+  "Validation_rows": 6000,
+  "CV_folds": 5,
+  "Seed": 42,
+  "Features": [
+    "LIMIT_BAL",
+    "SEX",
+    "EDUCATION",
+    "MARRIAGE",
+    "AGE",
+    "PAY_0",
+    "PAY_2",
+    "PAY_3",
+    "PAY_4",
+    "PAY_5",
+    "PAY_6",
+    "BILL_AMT1",
+    "BILL_AMT2",
+    "BILL_AMT3",
+    "BILL_AMT4",
+    "BILL_AMT5",
+    "BILL_AMT6",
+    "PAY_AMT1",
+    "PAY_AMT2",
+    "PAY_AMT3",
+    "PAY_AMT4",
+    "PAY_AMT5",
+    "PAY_AMT6"
+  ],
+  "Transformed_features": [
+    "SEX_1",
+    "SEX_2",
+    "EDUCATION_1",
+    "EDUCATION_2",
+    "EDUCATION_3",
+    "EDUCATION_4",
+    "MARRIAGE_1",
+    "MARRIAGE_2",
+    "MARRIAGE_3",
+    "LIMIT_BAL",
+    "AGE",
+    "PAY_0",
+    "PAY_2",
+    "PAY_3",
+    "PAY_4",
+    "PAY_5",
+    "PAY_6",
+    "BILL_AMT1",
+    "BILL_AMT2",
+    "BILL_AMT3",
+    "BILL_AMT4",
+    "BILL_AMT5",
+    "BILL_AMT6",
+    "PAY_AMT1",
+    "PAY_AMT2",
+    "PAY_AMT3",
+    "PAY_AMT4",
+    "PAY_AMT5",
+    "PAY_AMT6"
+  ],
+  "Search_space": {
+    "max_depth": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      null
+    ],
+    "min_samples_leaf": [
+      1,
+      20,
+      100
+    ]
+  },
+  "Candidates": 21,
+  "Selection_metric": "average_precision",
+  "Tie_rule": "Lowest candidate index",
+  "Selected_candidate": 20,
+  "Selected_parameters": {
+    "max_depth": null,
+    "min_samples_leaf": 100
+  },
+  "Baseline_parameters": {
+    "max_depth": null,
+    "min_samples_leaf": 1
+  },
+  "Prediction_rule": "score >= 0.5",
+  "Threshold_tuned": false,
+  "Refit_on_validation": false,
+  "Class_weight": null,
+  "Part4_membership_checks": {
+    "development_membership.csv": "Exact membership and row order verified against Part 4",
+    "cv_membership.csv": "Exact membership and row order verified against Part 4"
+  },
+  "Source_repository": "https://github.com/IcantFind-a-username/-SC6122-Group5-Credit-Default",
+  "Source_commit": "0188f4a0df4e46140c8aa8ebfef4ba4a54403255",
+  "Python": "3.12.13",
+  "Packages": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "joblib": "1.5.3"
+  },
+  "Model_SHA256": {
+    "baseline_pipeline.joblib": "66e8501d35d3131cdc2a9180f21b57fa1cbb5c4df163f861801f37eac3b18569",
+    "tuned_pipeline.joblib": "ffe69735c3550fff35573caca442b68c79e2c19a7dba3114da53326c507d25bf"
+  }
+}
