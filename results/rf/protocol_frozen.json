@@ -1,7 +1,7 @@
 {
   "Stage": "Frozen before test loading",
   "Estimator": "RandomForestClassifier",
-  "Frozen_at_UTC": "2026-09-06T02:24:10.248550+00:00",
+  "Frozen_at_UTC": "2026-09-06T03:39:24.877627+00:00",
   "Source_train_SHA256": "17616bdca64aa051af6b14aced75b8150789aa8ec0ecd9b748596ae98f66267a",
   "Features": [
     "LIMIT_BAL",
@@ -107,14 +107,14 @@
   "Python": "3.12.0",
   "Packages": {
     "numpy": "2.3.5",
-    "pandas": "2.3.3",
-    "scikit-learn": "1.7.2",
-    "matplotlib": "3.10.7",
-    "scipy": "1.16.3",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "matplotlib": "3.10.8",
+    "scipy": "1.17.0",
     "joblib": "1.5.3"
   },
   "Model_SHA256": {
-    "baseline_pipeline.joblib": "de81dad354113362b4da0609b40ad4122ddf1b857d0afa92af9754b54effe7df",
-    "tuned_pipeline.joblib": "3b48294bf00179c5e0f00a6d4aea9abec7304ba49d72a70dfdce874f43c85c14"
+    "baseline_pipeline.joblib": "dfd40a3b8309b18a1eb2ecee797b0473c0fd1ddb1b97d97183dbd3a46146e263",
+    "tuned_pipeline.joblib": "e7f3ff3ec1420322a2a063cc34ea22249cab459cd43f045c5984ae52461d7549"
   }
 }
