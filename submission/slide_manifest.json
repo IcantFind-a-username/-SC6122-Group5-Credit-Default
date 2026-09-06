@@ -1,0 +1,379 @@
+{
+  "slides": [
+    {
+      "title": "Credit default: rank risk, then choose an action",
+      "role": "Part 1",
+      "seconds": 45,
+      "bullets": [
+        "How well can we identify default risk?",
+        "What changes when missed defaults cost more?",
+        "Four models. One auditable comparison."
+      ],
+      "headline": "12 MIN + 3 MIN Q&A",
+      "detail": "SC6122 \u2022 Group 5\nFour speakers \u00d7 three minutes\nNAME / ID / SHARE TO CONFIRM",
+      "source": "UCI Default of Credit Card Clients; group experiment artifacts.",
+      "script": "Our question is how to identify default risk while balancing predictive ranking, interpretability, and the cost of taking action. We compare logistic regression, a decision tree, random forest, and XGBoost on shared historical records. A model score ranks accounts, but a threshold decides which accounts receive attention. Those are different questions, and our results will show why the distinction matters. Each of our four roles has three minutes, followed by three minutes for questions. Member names, student IDs, and contribution shares remain visibly marked for confirmation. I will begin with the data and the evidence boundary.",
+      "chart": null,
+      "transition": "First, let us see how the shared data supports a fair comparison."
+    },
+    {
+      "title": "One split, shared folds, distinct responsibilities",
+      "role": "Part 1",
+      "seconds": 70,
+      "bullets": [
+        "30,000 clients \u2022 23 predictors \u2022 22.12% default",
+        "Categories learned within each training fold",
+        "Validation selects policies; historical test reports outcomes"
+      ],
+      "headline": "18,000 \u2192 6,000 \u2192 6,000",
+      "detail": "FIT: five CV folds, seed 42\nVALIDATION: threshold selection\nTEST: fixed historical holdout",
+      "source": "Source: data/splits; protocol_frozen.json; results/final/audit.json",
+      "script": "The UCI dataset contains thirty thousand Taiwan credit card clients and twenty-three predictors. About twenty-two percent default, so an always-negative classifier can appear accurate while detecting nobody. We retain the supplied stratified split: eighteen thousand fitting rows, six thousand validation rows, and six thousand historical test rows. Five shared folds inside fitting data select configurations by average precision. Each fold learns its own category encoding, and logistic regression also learns scaling there. Validation selects thresholds without a later refit. The audit confirms identical memberships across the reproducible models. This random historical holdout is not temporal or external validation.",
+      "chart": null,
+      "transition": "With the data roles fixed, we can introduce the logistic reference and its caveat."
+    },
+    {
+      "title": "Logistic regression: a transparent reference, with a caveat",
+      "role": "Part 1",
+      "seconds": 65,
+      "bullets": [
+        "L2 model + fold-trained scaling + one-hot categories",
+        "12 declared settings; CV selected C=0.1, unweighted",
+        "Original LR notebook was empty; original process unverified"
+      ],
+      "headline": "AP 0.4967",
+      "detail": "Baseline AP 0.4970\nNo ranking improvement from selection\nLR* is a separate post-hoc supplement",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | LR* = post-hoc reproducibility supplement after historic test results existed.",
+      "script": "Logistic regression offers a linear reference whose coefficients describe regularized associations. We used fold-trained scaling and categorical encoding, then compared twelve declared combinations of regularization strength and class weighting. Cross-validation selected C equal to zero point one without class weighting. The test AP is 0.4967, versus 0.4970 for the baseline, so selection did not improve ranking here. Crucially, the original logistic notebook was empty, and its original procedure cannot be verified. We preserve those artifacts and label our reproducible run as a post-hoc supplement after earlier test results existed. Part two now examines how tree regularization changes performance.",
+      "chart": null,
+      "transition": "Part two now explains what changes when we regularize a decision tree."
+    },
+    {
+      "title": "Decision tree: constrain leaves to reduce overfitting",
+      "role": "Part 2",
+      "seconds": 65,
+      "bullets": [
+        "21 configurations: depth \u00d7 minimum leaf size",
+        "Unrestricted baseline fits training folds almost perfectly",
+        "Selected minimum leaf size: 100 observations"
+      ],
+      "headline": "Test average precision",
+      "detail": "A large baseline gap signals overfitting.\nCV selection improves this tree's ranking.",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1",
+      "script": "A decision tree can fit very detailed partitions, which makes overfitting easy. Our baseline achieves nearly perfect fitting-fold AP but only about zero point three in cross-validation. The declared grid searches seven depth limits and three minimum leaf sizes, giving twenty-one configurations. The selected model requires at least one hundred observations in each leaf, although it has no explicit depth cap. Test AP rises from 0.2843 to 0.5221. This is a substantial change for this model and split. It supports regularization as an explanation, rather than treating training performance as evidence of generalization. Next, we inspect what the tree actually uses.",
+      "chart": {
+        "categories": [
+          "Baseline",
+          "Selected"
+        ],
+        "series": [
+          [
+            "AP",
+            [
+              0.284267217062282,
+              0.5220918784014116
+            ]
+          ]
+        ],
+        "maximum": 0.65
+      },
+      "transition": "Next, we inspect one rule to understand the tree's predictive pattern."
+    },
+    {
+      "title": "Tree rules make a predictive association inspectable",
+      "role": "Part 2",
+      "seconds": 60,
+      "bullets": [
+        "Root rule: recent repayment status PAY_0 \u2264 1.5",
+        "Selected tree: depth 18, with 134 leaves",
+        "Node proportions describe this fitting sample"
+      ],
+      "headline": "16.51%  |  70.13%",
+      "detail": "Fit-row default proportions\nLeft branch | Right branch\nAssociation, not a causal effect",
+      "source": "Source: saved decision-tree model; integration audit/report evidence.",
+      "script": "The selected tree begins with recent repayment status, PAY zero. Its root separates values at one point five. In the fitting sample, the default proportions are sixteen point five one percent on the left and seventy point one three percent on the right. This provides a concise description of an important predictive pattern. It does not mean repayment status causes the outcome, and node proportions are not a substitute for calibration analysis. The full selected tree still has depth eighteen and one hundred thirty-four leaves. We therefore use a representative rule rather than claiming the whole tree is a small explanation.",
+      "chart": null,
+      "transition": "We can now place the tree beside the other models using a common ranking metric."
+    },
+    {
+      "title": "Compare ranking point estimates without declaring a winner",
+      "role": "Part 2",
+      "seconds": 55,
+      "bullets": [
+        "AP emphasizes positive-class retrieval",
+        "AP is not trapezoidal PR-AUC",
+        "CV selection precedes these test comparisons"
+      ],
+      "headline": "Test average precision",
+      "detail": "Baseline and selected models are both retained.\nSmall ensemble differences do not establish superiority.",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | LR* = post-hoc reproducibility supplement after historic test results existed.",
+      "script": "This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Part three will examine the forest and the fairness of our comparison.",
+      "chart": {
+        "categories": [
+          "LR*",
+          "Tree",
+          "RF",
+          "XGBoost"
+        ],
+        "series": [
+          [
+            "Baseline",
+            [
+              0.4969981429211727,
+              0.284267217062282,
+              0.531169199686173,
+              0.5543803073495323
+            ]
+          ],
+          [
+            "CV-selected",
+            [
+              0.49674924303782697,
+              0.5220918784014116,
+              0.5507549511360591,
+              0.5516036303213034
+            ]
+          ]
+        ],
+        "maximum": 0.65,
+        "format": "0.000",
+        "horizontal": true
+      },
+      "transition": "Part three will explain the forest result and the evidence behind our comparison."
+    },
+    {
+      "title": "Random forest: average trees, then tune complexity",
+      "role": "Part 3",
+      "seconds": 70,
+      "bullets": [
+        "Baseline + 23 seeded candidate settings",
+        "Selected: 500 trees, depth 8, minimum leaf 2",
+        "Positive-class weight 3; feature fraction 0.5"
+      ],
+      "headline": "Test average precision",
+      "detail": "Averaging reduces dependence on one tree.\nWeights also change the score distribution.",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | results/rf/protocol_frozen.json",
+      "script": "Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from 0.5312 to 0.5508. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next inspect the operating threshold and the resulting workload rather than relying on ranking alone.",
+      "chart": {
+        "categories": [
+          "Baseline",
+          "Selected"
+        ],
+        "series": [
+          [
+            "AP",
+            [
+              0.531169199686173,
+              0.5507549511360591
+            ]
+          ]
+        ],
+        "maximum": 0.65
+      },
+      "transition": "We next move from the forest's ranking to its decision threshold."
+    },
+    {
+      "title": "Forest policy: fewer misses, more review alerts",
+      "role": "Part 3",
+      "seconds": 60,
+      "bullets": [
+        "Validation selected r=5 threshold: 0.3229",
+        "Recall: 52.0% \u2192 77.1%",
+        "Alert rate: 21.1% \u2192 48.4%"
+      ],
+      "headline": "3,758 \u2192 3,404",
+      "detail": "Test cost = FP + 5 \u00d7 FN\nError cases checked under each policy\nSame extreme cases can legitimately recur",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | RF misclassification audit; costs hypothetical.",
+      "script": "For the forest, validation selected a threshold of 0.3229 under the hypothetical assumption that a missed default costs five times a false-positive review. On the historical test set, recall rises from 52.0% to 77.1%, but the alert rate also rises from 21.1% to 48.4%. Cost falls from 3758 to 3404 units. We independently checked the saved error profiles and case rules for both policies. The most confident errors can appear in both exports because they remain errors at both thresholds. Identical extreme examples alone therefore do not demonstrate an export mistake.",
+      "chart": null,
+      "transition": "Before comparing policies, we should check that the underlying evidence aligns."
+    },
+    {
+      "title": "What the audit establishes\u2014and what it cannot",
+      "role": "Part 3",
+      "seconds": 50,
+      "bullets": [
+        "Identical fit / validation / five-fold memberships",
+        "Metrics recomputed after row-ID alignment",
+        "Frozen thresholds use score \u2265 threshold at full precision"
+      ],
+      "headline": "COMPARABLE \u2260 IDENTICAL",
+      "detail": "Shared data and objective\nDifferent search budgets\nHistorical exposure and LR* caveat remain",
+      "source": "Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md",
+      "script": "Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result.",
+      "chart": null,
+      "transition": "Part four now separates XGBoost's ranking result from its action-policy result."
+    },
+    {
+      "title": "XGBoost: tuning did not improve test ranking",
+      "role": "Part 4",
+      "seconds": 60,
+      "bullets": [
+        "Baseline + 23 seeded configurations; select by CV AP",
+        "Selected: 150 trees, depth 4, rate 0.03",
+        "Selected ROC-AUC: 0.7762"
+      ],
+      "headline": "Test average precision",
+      "detail": "Tuned \u2212 baseline AP: -0.0028\nConditional 95% interval: [-0.0106, 0.0054]",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | results/xgboost/bootstrap_intervals.csv",
+      "script": "XGBoost builds trees sequentially with regularization. We retained the baseline and searched twenty-three additional seeded configurations using the shared CV objective. The selected configuration has test AP 0.5516, compared with 0.5544 for the baseline. The paired bootstrap interval for the difference spans zero, so we do not claim a ranking improvement. This bootstrap resamples the fixed predictions and does not include model retraining or selection uncertainty. The useful next question is separate: given the selected model's scores, how does a validation-chosen action threshold change missed defaults, false positives, and the stated hypothetical cost?",
+      "chart": {
+        "categories": [
+          "Baseline",
+          "Selected"
+        ],
+        "series": [
+          [
+            "AP",
+            [
+              0.5543803073495323,
+              0.5516036303213034
+            ]
+          ]
+        ],
+        "maximum": 0.65
+      },
+      "transition": "The next slide holds scores fixed and changes only the validation-selected threshold."
+    },
+    {
+      "title": "A lower threshold trades review capacity for fewer misses",
+      "role": "Part 4",
+      "seconds": 80,
+      "bullets": [
+        "Validation r=5 cutoff: 0.3150",
+        "Recall 54.9% \u2192 82.5%; alerts 55.7%",
+        "Cost 3,685 \u2192 3,408: 7.5% reduction"
+      ],
+      "headline": "Test confusion trade-off",
+      "detail": "Same ranking scores, different action policy.\nReview costs are hypothetical; capacity is unmeasured.",
+      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | FP + 5\u00d7FN; threshold selected only on validation.",
+      "script": "At a cost ratio of five, validation selects XGBoost's threshold at 0.3150. Applying it unchanged to the historical test set reduces false negatives from 599 to 232, while false positives rise from 690 to 2248. Recall reaches 82.5%, but 55.7% of clients are flagged. The total hypothetical cost falls from 3685 to 3408, about 7.5%. This is not an improvement in AP or ROC-AUC; the scores have not changed. The policy may be impractical if review capacity is limited. Real exposure, loss severity, and intervention benefits are unavailable, so these cost units are a sensitivity analysis.",
+      "chart": {
+        "categories": [
+          "False positives",
+          "False negatives"
+        ],
+        "series": [
+          [
+            "Threshold 0.5",
+            [
+              690,
+              599
+            ]
+          ],
+          [
+            "Validation r=5",
+            [
+              2248,
+              232
+            ]
+          ]
+        ],
+        "maximum": 2700,
+        "format": "0"
+      },
+      "transition": "This trade-off leads to our main conclusion about ranking, costs, and workload."
+    },
+    {
+      "title": "Choose the decision question before choosing the policy",
+      "role": "Part 4",
+      "seconds": 40,
+      "bullets": [
+        "Ranking, explanations, and workload need separate evidence",
+        "No clear ensemble winner from these small differences",
+        "Next: fresh temporal data, calibration, subgroup errors"
+      ],
+      "headline": "QUESTIONS \u2022 3 MIN",
+      "detail": "Freeze realistic costs and capacity first.\nValidate a new policy on new data.\nNAME / ID / SHARE TO CONFIRM",
+      "source": "Historical educational study; no causal or deployment-readiness claim.",
+      "script": "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you; we now have three minutes for questions.",
+      "chart": null,
+      "transition": "We welcome your questions; the following slides provide supporting details."
+    },
+    {
+      "title": "Backup A \u2022 AP, ROC-AUC and threshold metrics",
+      "role": "Q&A",
+      "seconds": 0,
+      "bullets": [
+        "AP = sum of recall increments \u00d7 precision",
+        "ROC-AUC measures positive/negative score ordering",
+        "Precision, recall, F1 and accuracy require a threshold"
+      ],
+      "headline": "AP \u2260 TRAPEZOIDAL PR-AUC",
+      "detail": "Saved continuous scores supply ranking metrics.\nChanging the cutoff changes decisions only.",
+      "source": "Source: scikit-learn average_precision_score documentation; part4/evaluation.py",
+      "script": "If asked about the ranking metric, explain that average precision weights each precision value by the associated increase in recall. It does not linearly interpolate the precision-recall curve with trapezoids, so similarly named PR-AUC values need not agree. ROC-AUC instead summarizes positive-versus-negative score ordering. Neither metric changes when we apply a different operating threshold to the same saved scores. Precision and recall do change because the decision set changes. The historical logistic CSV uses a PR-AUC label whose computation cannot be verified, which is one reason it is excluded from our verified ranking table.",
+      "chart": null,
+      "transition": "If useful, we can next explain the cost rule and the scope of its uncertainty."
+    },
+    {
+      "title": "Backup B \u2022 Cost ratios and fixed-prediction uncertainty",
+      "role": "Q&A",
+      "seconds": 0,
+      "bullets": [
+        "Predeclared ratios: r = 1, 3, 5, 10",
+        "Validation minimum cost; ties prefer largest cutoff",
+        "1,000 stratified paired bootstrap resamples"
+      ],
+      "headline": "CONDITIONAL UNCERTAINTY",
+      "detail": "Fixed models / thresholds / class counts\nExcludes fitting / selection uncertainty\nExcludes population / prevalence shifts",
+      "source": "Source: frozen protocols; integration/uncertainty.py; bootstrap_intervals.csv",
+      "script": "The cost experiment declares four ratios rather than searching for a convenient ratio after viewing test results. At each ratio, the validation table includes all distinct score-based decision sets, with tied scores moving together. Equal costs select the largest threshold and therefore fewer alerts. The paired bootstrap samples the same test-row indices for each compared prediction vector, stratified by outcome. Its intervals are conditional on frozen models, thresholds, and class counts. They do not include uncertainty from refitting, hyperparameter search, threshold search, or a shift to another population. Real operational costs would require information that this dataset does not provide.",
+      "chart": null,
+      "transition": "We can also explain where the source data and evidence boundaries come from."
+    },
+    {
+      "title": "Backup C \u2022 Data provenance and evidence boundaries",
+      "role": "Q&A",
+      "seconds": 0,
+      "bullets": [
+        "UCI cleaning reproduced exactly from downloaded source",
+        "EDUCATION 0/5/6 \u2192 4; MARRIAGE 0 \u2192 3",
+        "Retained duplicate vectors can span partitions"
+      ],
+      "headline": "HISTORICAL TEST REUSED",
+      "detail": "Original LR process remains unverified.\nLR* source was committed before its one run.\nNo new unseen-test claim is made.",
+      "source": "Sources: results/final/source_audit.json; integration/LOGISTIC_PROVENANCE.md",
+      "script": "The integration audit redownloaded the official source and reproduced the committed cleaned dataset in values, types, order, and schema. Undocumented education categories are consolidated, and marriage category zero is mapped to other. The original download bytes were not preserved, so the new download and its hash are documented separately. Duplicate feature vectors remain under the established protocol and may create dependence across partitions. For logistic regression, the original notebook history contained an empty model notebook. The supplement's code and search declaration were committed before execution, but previous team test results already existed. This makes the supplement reproducible without making it independent external evidence.",
+      "chart": null,
+      "transition": "The last backup lists our references and the responsibilities still to confirm."
+    },
+    {
+      "title": "Backup D \u2022 Sources, responsibilities and reproducibility",
+      "role": "Q&A",
+      "seconds": 0,
+      "bullets": [
+        "UCI: doi.org/10.24432/C55S3H",
+        "scikit-learn: average_precision_score documentation",
+        "XGBoost paper: doi.org/10.1145/2939672.2939785"
+      ],
+      "headline": "FOUR ROLES \u2022 REVIEW REQUIRED",
+      "detail": "P1 data/LR \u2022 P2 tree/ranking\nP3 forest/audit \u2022 P4 XGBoost/costs\nNAME / ID / SHARE TO CONFIRM",
+      "source": "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
+      "script": "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Member identities and contribution percentages must be confirmed by the group; we have not invented them. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.",
+      "chart": null,
+      "transition": "We can return to the main conclusion or discuss a specific model or policy."
+    }
+  ],
+  "main_slides": 12,
+  "backup_slides": 4,
+  "rendered_pdf_pages": 16,
+  "renderer": "LibreOffice native PPTX-to-PDF export",
+  "renderer_version": "LibreOffice 26.8.0.3 bce0998afefdbc355585ca324285661a2170ba77",
+  "talk_seconds": 720,
+  "qa_seconds": 180,
+  "role_seconds": {
+    "Part 1": 180,
+    "Part 2": 180,
+    "Part 3": 180,
+    "Part 4": 180
+  },
+  "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
+  "source_csv_sha256": "90ec1df8bb42f20604ceea5f208ca031f042d48932cd850f7007a7df8a8b4acb",
+  "generator_sha256": "bb6c6521b90b32281f56cce745a4574be4f4b28017134578457332095a9a0804",
+  "artifacts": {
+    "Group5_Presentation.pptx": "e2d08a5a288d18cec77df47b102c9c7d9f252a09d8574d6487cb4695a424323f",
+    "Group5_Presentation.pdf": "9d62f6563dc74d0f2d3192993e6f9afea3d04ff09ed52f0b7a08c09b7d06f7c3",
+    "Group5_Speaker_Notes.md": "ab2f5de8623064d61e97644c4e491d59d21034b90bd02ff49cc9f500f1738e67"
+  }
+}

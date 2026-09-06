@@ -1,0 +1,51 @@
+{
+  "report_pages": 6,
+  "report_page_details": [
+    {
+      "page": 1,
+      "words": 424,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 2,
+      "words": 516,
+      "min_font_pt": 7.97,
+      "rightmost_text_pt": 541.42
+    },
+    {
+      "page": 3,
+      "words": 343,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.42
+    },
+    {
+      "page": 4,
+      "words": 409,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 5,
+      "words": 394,
+      "min_font_pt": 7.97,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 6,
+      "words": 436,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.42
+    }
+  ],
+  "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
+  "report_pdf_SHA256": "ebc2e6581f137b4d13af54294a6d375ba7d73c5314586300329b2d4f41fba3ef",
+  "report_latex_SHA256": "555265dd51314cb8d8be10c133442102759984bd4acb18fce82ec2c34acbbbda",
+  "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality.",
+  "slide_text_boxes_verified": 144,
+  "speaker_scripts_and_transitions": "Match manifest, Markdown and native speaker notes",
+  "slide_pages": 16,
+  "slide_first_text_matches_pdf": true,
+  "presentation_pptx_SHA256": "e2d08a5a288d18cec77df47b102c9c7d9f252a09d8574d6487cb4695a424323f",
+  "presentation_pdf_SHA256": "9d62f6563dc74d0f2d3192993e6f9afea3d04ff09ed52f0b7a08c09b7d06f7c3"
+}

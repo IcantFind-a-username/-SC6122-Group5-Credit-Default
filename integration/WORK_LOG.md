@@ -37,3 +37,12 @@ Workers reuse the above tools; no duplicate utilities. Propose new utilities bef
 - Integration gate: 70 pytest tests passed, ruff all files passed, mypy 28 source files passed. Subsequent nonbehavioral DT serializer adapter is covered by the final gate.
 - Six-page report rendered including all references, using 11pt body and normal math scripts. Teacher template missing, standard LaTeX fallback declared. Contact sheet and pages 3/6 visually inspected: no truncation/overlap, clear tables/charts.
 - New test fixture structure replaces repeated setup; existing test files only, no new setup-heavy test file.
+
+## Final delivery acceptance
+- Report: six pages including references, 11pt body; actual PDF rendered with Tectonic. Full contact and detailed comparison/reference pages inspected.
+- Presentation: 16 pages (12 main + 4 backup), five editable native charts, all 144 text boxes match the actual PPTX-rendered PDF. Explicit transitions and scripts agree across manifest, native notes and Markdown.
+- Talk timing: 720 seconds, 180 per role; Q&A 180 seconds. Backup slides do not count in the main talk.
+- Official signed LibreOffice 26.8.0.3 used to render the original PPTX after native Office/Keynote access failures. One backup card overflow was corrected and re-rendered; final dense slides/contact inspected.
+- Final gate after document/precision changes: 70 tests passed (1.29s), full Ruff passed, mypy passed on 28 source files.
+- Final main remote recheck: 15c6d1c, unchanged. All changes stay on integration branch. No course upload, teacher email, force-push or main merge.
+- Remaining human information: member identities/actual contribution percentages, teacher template, final course platform deadline/date/upload fields, any original LR code outside the searched repository.

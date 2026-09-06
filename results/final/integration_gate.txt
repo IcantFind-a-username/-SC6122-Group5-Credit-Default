@@ -22,3 +22,8 @@ part2.save_model_predictions is only an adapter from model objects to the shared
 
 Report render: Tectonic; six pages including references; all numeric .5 table cells found in actual PDF.
 Contact sheet of all six pages and full comparison/reference pages inspected; no clipping or overlaps.
+
+Final delivered-source gate repeated after precision/export changes:
+70 passed in 1.29s; Ruff all checks passed; mypy no issues in28 source files.
+Presentation acceptance: 16 actual PPTX-rendered PDF pages;144 text boxes verified;native/Markdown scripts and transitions match.
+Renderer: official LibreOffice26.8.0.3; backup14 overflow fixed and visually checked.
