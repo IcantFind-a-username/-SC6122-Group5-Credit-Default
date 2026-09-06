@@ -1,12 +1,14 @@
 """Build editable 16-slide presentation and native notes from audited artifacts.
 
 Commit before execution. Run: PYTHONDONTWRITEBYTECODE=1 python -m integration.build_slides
-Charts remain editable PowerPoint charts. PowerPoint exports the companion PDF.
+Charts remain editable PowerPoint charts. PowerPoint or a supplied LibreOffice runtime renders the actual PPTX to PDF.
 """
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 import json
 import subprocess
+import tempfile
 
 import fitz
 from PIL import Image
@@ -36,6 +38,7 @@ class Slide:
     source: str
     script: str
     chart: dict | None = None
+    transition: str = ""
 
 
 def textbox(slide, x, y, w, h, text, size=22, color=NAVY, bold=False):
@@ -172,7 +175,7 @@ def make_slides(frame):
         Slide("Choose the decision question before choosing the policy", "Part 4", 40,
           ["Ranking, explanations, and workload need separate evidence", "No clear ensemble winner from these small differences", "Next: fresh temporal data, calibration, subgroup errors"],
           "QUESTIONS • 3 MIN", "Freeze realistic costs and capacity first.\nValidate a new policy on new data.\nNAME / ID / SHARE TO CONFIRM", "Historical educational study; no causal or deployment-readiness claim.",
-          "Our main conclusion is that ranking and action policy answer different questions. Tree regularization improves its baseline substantially, while the ensembles have similar selected-model ranking estimates. Lower thresholds can reduce the stated cost by creating many more reviews. We cannot turn those observations into a production recommendation without realistic costs and capacity constraints. The study is also limited by historical data, retained duplicates, random splitting, and the logistic provenance gap. A next study should freeze a new protocol on fresh temporal or external data and evaluate calibration and subgroup errors. Thank you; we now have three minutes for questions."),
+          "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you; we now have three minutes for questions."),
         Slide("Backup A • AP, ROC-AUC and threshold metrics", "Q&A", 0,
           ["AP = sum of recall increments × precision", "ROC-AUC measures positive/negative score ordering", "Precision, recall, F1 and accuracy require a threshold"],
           "AP ≠ TRAPEZOIDAL PR-AUC", "Saved continuous scores supply ranking metrics.\nChanging the cutoff changes decisions only.", "Source: scikit-learn average_precision_score documentation; part4/evaluation.py",
@@ -190,10 +193,30 @@ def make_slides(frame):
           "FOUR ROLES • REVIEW REQUIRED", "P1 data/LR • P2 tree/ranking\nP3 forest/audit • P4 XGBoost/costs\nNAME / ID / SHARE TO CONFIRM", "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
           "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Member identities and contribution percentages must be confirmed by the group; we have not invented them. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models."),
     ]
+    transitions = [
+        "First, let us see how the shared data supports a fair comparison.",
+        "With the data roles fixed, we can introduce the logistic reference and its caveat.",
+        "Part two now explains what changes when we regularize a decision tree.",
+        "Next, we inspect one rule to understand the tree's predictive pattern.",
+        "We can now place the tree beside the other models using a common ranking metric.",
+        "Part three will explain the forest result and the evidence behind our comparison.",
+        "We next move from the forest's ranking to its decision threshold.",
+        "Before comparing policies, we should check that the underlying evidence aligns.",
+        "Part four now separates XGBoost's ranking result from its action-policy result.",
+        "The next slide holds scores fixed and changes only the validation-selected threshold.",
+        "This trade-off leads to our main conclusion about ranking, costs, and workload.",
+        "We welcome your questions; the following slides provide supporting details.",
+        "If useful, we can next explain the cost rule and the scope of its uncertainty.",
+        "We can also explain where the source data and evidence boundaries come from.",
+        "The last backup lists our references and the responsibilities still to confirm.",
+        "We can return to the main conclusion or discuss a specific model or policy.",
+    ]
+    for slide, transition in zip(slides, transitions, strict=True):
+        slide.transition = transition
     return slides
 
 
-def run():
+def run(soffice=None):
     output = ROOT / "submission"
     output.mkdir(exist_ok=True)
     frame = read_csv(ROOT / "results/final/model_comparison.csv")
@@ -226,10 +249,10 @@ def run():
         panel(slide, 0, 6.86, 13.333, .64, NAVY)
         textbox(slide, .55, 6.98, 11.9, .4, spec.source, 11, WHITE)
         textbox(slide, 12.65, 6.96, .4, .4, f"{index:02}", 14, WHITE, True)
-        native = f"{spec.role} | {spec.seconds} seconds | NAME / ID / SHARE TO CONFIRM\n\n{spec.script}\n\n{spec.source}"
+        native = f"{spec.role} | {spec.seconds} seconds | NAME / ID / SHARE TO CONFIRM\n\n{spec.script}\n\nTransition: {spec.transition}\n\n{spec.source}"
         slide.notes_slide.notes_text_frame.text = native
         notes += [f"## Slide {index}: {spec.title}",
-                  f"**{spec.role} — {spec.seconds} seconds** | NAME / ID / SHARE TO CONFIRM", spec.script, spec.source]
+                  f"**{spec.role} — {spec.seconds} seconds** | NAME / ID / SHARE TO CONFIRM", spec.script, f"**Transition:** {spec.transition}", spec.source]
     pptx_path = output / "Group5_Presentation.pptx"
     pdf_path = output / "Group5_Presentation.pdf"
     deck.save(str(pptx_path))
@@ -243,7 +266,15 @@ save d in (POSIX file (item 2 of argv)) as save as PDF
 close d saving no
 end tell
 end run'''
-    subprocess.run(["osascript", "-e", export_script, str(pptx_path), str(pdf_path)], check=True, timeout=180)
+    if soffice is None:
+        subprocess.run(["osascript", "-e", export_script, str(pptx_path), str(pdf_path)], check=True, timeout=180)
+        renderer = "Microsoft PowerPoint native PDF export"
+    else:
+        with tempfile.TemporaryDirectory(prefix="group5-libreoffice-") as profile:
+            subprocess.run([str(soffice), "--headless", f"-env:UserInstallation={Path(profile).as_uri()}",
+                            "--convert-to", "pdf", "--outdir", str(output), str(pptx_path)],
+                           check=True, timeout=180)
+        renderer = "LibreOffice native PPTX-to-PDF export"
     assets = output / "slide_assets"
     assets.mkdir(exist_ok=True)
     document = fitz.open(pdf_path)
@@ -260,7 +291,7 @@ end run'''
     contact.save(assets / "contact_sheet.jpg", quality=85)
     write_json(output / "slide_manifest.json", {
         "slides": slides, "main_slides": 12, "backup_slides": 4,
-        "rendered_pdf_pages": len(document),
+        "rendered_pdf_pages": len(document), "renderer": renderer,
         "talk_seconds": 720, "qa_seconds": 180,
         "role_seconds": {role: 180 for role in ["Part 1", "Part 2", "Part 3", "Part 4"]},
         "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
@@ -271,4 +302,6 @@ end run'''
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--soffice", type=Path, help="Optional installed or portable LibreOffice executable")
+    run(parser.parse_args().soffice)
