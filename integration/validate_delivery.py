@@ -2,6 +2,7 @@
 import json
 from pathlib import Path
 import re
+import unicodedata
 
 import fitz
 from PIL import Image
@@ -49,12 +50,24 @@ def run():
         deck=Presentation(str(OUT/'Group5_Presentation.pptx'))
         slides_pdf=fitz.open(OUT/'Group5_Presentation.pdf')
         assert len(deck.slides)==len(slides_pdf)==16
-        for slide,page in zip(deck.slides,slides_pdf):
-            strings=[s.text for s in slide.shapes if s.has_text_frame and s.text.strip()]
-            title=max(strings,key=lambda text: len(text)) if not strings else strings[0]
-            def normalized(text):
-                return re.sub(r'[^a-z0-9]','',text.lower())
-            assert normalized(title) in normalized(page.get_text()), title
+        manifest = json.loads((OUT/'slide_manifest.json').read_text())
+        assert manifest['talk_seconds'] == 720 and manifest['qa_seconds'] == 180
+        assert manifest['role_seconds'] == {f'Part {i}':180 for i in range(1,5)}
+        assert manifest['source_csv_sha256'] == file_hash(ROOT/'results/final/model_comparison.csv')
+        notes = (OUT/'Group5_Speaker_Notes.md').read_text()
+        def normalized(text):
+            return re.sub(r'[^a-z0-9]','',unicodedata.normalize('NFKC',text).lower())
+        text_checks = 0
+        for number,(slide,page) in enumerate(zip(deck.slides,slides_pdf),1):
+            for shape in slide.shapes:
+                if shape.has_text_frame and shape.text.strip():
+                    assert normalized(shape.text) in normalized(page.get_text()), (number,shape.text)
+                    text_checks += 1
+            spec = manifest['slides'][number-1]
+            assert spec['script'] in notes and spec['transition'] in notes
+            assert spec['transition'] in slide.notes_slide.notes_text_frame.text
+        result['slide_text_boxes_verified'] = text_checks
+        result['speaker_scripts_and_transitions'] = 'Match manifest, Markdown and native speaker notes'
         result.update({'slide_pages':len(slides_pdf),'slide_first_text_matches_pdf':True,
                        'presentation_pptx_SHA256':file_hash(OUT/'Group5_Presentation.pptx'),
                        'presentation_pdf_SHA256':file_hash(OUT/'Group5_Presentation.pdf')})
