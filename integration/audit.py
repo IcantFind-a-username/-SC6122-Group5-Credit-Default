@@ -16,11 +16,13 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 from integration.artifacts import bytes_hash, file_hash, write_json
+from integration.uncertainty import paired_bootstrap
 from part3.misclassification import case_snapshots, compute_profiles, derive_features
 from part4.evaluation import COST_RATIOS, feature_target, metrics, select_threshold, split_development, threshold_table
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = {"decision_tree": "Decision Tree", "rf": "RF", "xgboost": "XGBoost"}
+MODELS = {"decision_tree": "Decision Tree", "rf": "RF", "xgboost": "XGBoost",
+          "logistic_supplement": "Logistic Regression"}
 
 
 @dataclass
@@ -44,7 +46,7 @@ def frame_check(left, right):
         return False, str(exc)[:1200]
 
 
-def hash_evidence(path, expected):
+def hash_evidence(path, expected, kind="csv"):
     """Check bytes/newlines and every historical data blob against frozen hashes."""
     raw = path.read_bytes()
     normalized = raw.replace(b"\r\n", b"\n")
@@ -56,13 +58,20 @@ def hash_evidence(path, expected):
         blob = subprocess.run(["git", "show", f"{commit}:{relative}"], cwd=ROOT, capture_output=True, check=False)
         if blob.returncode:
             continue
-        same, detail = frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(blob.stdout)))
+        if kind == "json":
+            same = json.loads(raw) == json.loads(blob.stdout)
+            detail = "Parsed JSON content comparison"
+        else:
+            same, detail = frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(blob.stdout)))
         history.append({"commit": commit, "sha256": bytes_hash(blob.stdout), "parsed_exact": same, "comparison": detail})
         variants[f"git:{commit}"] = blob.stdout
     hashes = {name: bytes_hash(value) for name, value in variants.items()}
     return {"current_sha256": file_hash(path), "variants": hashes, "historical_blobs": history,
             "expected_matches": {value: [name for name, digest in hashes.items() if digest == value] for value in expected},
-            "newline_variants_parse_identically": all(frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(value)))[0] for value in variants.values())}
+            "newline_variants_parse_identically": all(
+                json.loads(raw) == json.loads(value) if kind == "json" else
+                frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(value)))[0]
+                for value in variants.values())}
 
 
 def run():
@@ -121,12 +130,16 @@ def run():
         print(f"Auditing {label}: membership, serialized models, probabilities, metrics and selection", flush=True)
         folder = ROOT / "results" / family
         protocol = protocols[family]
+        provenance = protocol.get("Evidence_status", "Historical frozen experiment")
         compare(f"{family}: development membership and row order", read_csv(folder / "development_membership.csv"), membership)
         compare(f"{family}: all CV memberships and row order", read_csv(folder / "cv_membership.csv"), cv_membership)
         check(f"{family}: declared feature list", protocol["Features"] == features)
         metadata = json.loads((folder / "run_metadata.json").read_text())
         for key, filename in [("Frozen_protocol_SHA256", "protocol_frozen.json"), ("Test_predictions_SHA256", "test_predictions.csv")]:
-            check(f"{family}: {key}", metadata[key] == file_hash(folder / filename), {"expected": metadata[key], "actual": file_hash(folder / filename)})
+            evidence = hash_evidence(folder / filename, [metadata[key]], "json" if filename.endswith("json") else "csv")
+            details[f"{family}_{key}"] = evidence
+            check(f"{family}: {key} byte/newline/history reconciliation", bool(evidence["expected_matches"][metadata[key]]), evidence["expected_matches"])
+            check(f"{family}: {key} parsed historical identity", evidence["newline_variants_parse_identically"])
         cv_results = read_csv(folder / "cv_results.csv")
         winner = cv_results.sort_values(["Mean_CV_AP", "Candidate"], ascending=[False, True]).iloc[0]
         check(f"{family}: CV winner", int(winner.Candidate) == protocol["Selected_candidate"])
@@ -157,6 +170,13 @@ def run():
             elif family == "rf":
                 fit_n = int(model._n_samples)
                 fit_evidence = "Serialized RandomForest _n_samples (bootstrap root distinct counts are not fit n)"
+            elif family == "logistic_supplement":
+                scaler = prep.named_transformers_["remainder"]
+                fit_n = int(scaler.n_samples_seen_)
+                fit_evidence = "Serialized StandardScaler n_samples_seen_; this verifies preprocessing count, not an independent classifier fit count"
+                numeric = fit[features].drop(columns=["SEX", "EDUCATION", "MARRIAGE"])
+                check(f"{family}/{variant}: fit-only scaler moments", np.allclose(scaler.mean_, numeric.mean(), rtol=0, atol=1e-10) and
+                      np.allclose(scaler.var_, numeric.var(ddof=0), rtol=1e-14, atol=1e-10))
             else:
                 fit_n = None
                 fit_evidence = "XGBoost serialization does not record training row count; 18000 is supported by source and memberships, not independently recoverable from booster."
@@ -165,6 +185,11 @@ def run():
             details[family]["models"][variant] = {"fit_n": fit_n, "fit_n_evidence": fit_evidence,
                 "preprocess_features": transformed, "encoder_handle_unknown": prep.named_transformers_["categorical"].handle_unknown,
                 "load_warnings": [str(w.message) for w in caught]}
+            if family == "decision_tree":
+                row = read_csv(folder / "fit_metrics.csv").iloc[0 if variant == "baseline" else 1]
+                recomputed = metrics(y_fit, pipeline.predict_proba(x_fit)[:, 1])
+                differences = {k: {"saved": float(row[k]), "recomputed": float(v)} for k, v in recomputed.items() if not np.isclose(row[k], v, rtol=0, atol=1e-12)}
+                check(f"{family}/{variant}: fit metrics", not differences, differences)
         for partition, frame in [("validation", validation), ("test", test)]:
             saved = read_csv(folder / f"{partition}_predictions.csv")
             compare(f"{family}/{partition}: row_id and labels including order", saved[["row_id", "default"]], frame[["row_id", "default"]])
@@ -176,7 +201,12 @@ def run():
                 p = pipelines[variant].predict_proba(x)[:, 1].astype(float)
                 recorded = joined[f"{variant.title()}_probability"].to_numpy()
                 error = float(np.max(np.abs(p - recorded)))
-                check(f"{family}/{partition}/{variant}: replay probabilities", np.allclose(p, recorded, rtol=0, atol=1e-14), {"max_abs_error": error, "bit_exact": bool(np.array_equal(p, recorded))})
+                tolerance = 1e-7 if family == "xgboost" else 1e-14
+                check(f"{family}/{partition}/{variant}: replay probabilities", np.allclose(p, recorded, rtol=0, atol=tolerance),
+                      {"max_abs_error": error, "absolute_tolerance": tolerance, "bit_exact": bool(np.array_equal(p, recorded)),
+                       "interpretation": "XGBoost float32-scale platform drift permitted only with exact frozen decisions" if family == "xgboost" else "Double precision replay"})
+                original_metrics, replay_metrics = metrics(y, recorded), metrics(y, p)
+                details[family]["models"][variant][f"{partition}_replay_metric_deltas"] = {k: replay_metrics[k] - original_metrics[k] for k in ["AP", "ROC-AUC", "Brier"]}
                 cutoffs = [.5] + list(protocol.get("Validation_thresholds", {}).values())
                 check(f"{family}/{partition}/{variant}: replay frozen decisions", all(np.array_equal(p >= t, recorded >= t) for t in cutoffs))
                 details[family]["models"][variant][f"{partition}_ties_at_0.5"] = int((recorded == .5).sum())
@@ -190,7 +220,8 @@ def run():
                 differences = {k: {"saved": float(row[k]), "recomputed": float(v)} for k, v in recomputed.items() if not np.isclose(row[k], v, rtol=0, atol=1e-12)}
                 check(f"{family}/{partition}: metrics {row.Model}", not differences, differences)
                 comparisons.append({"Family": label, "Partition": partition, "Model": row.Model,
-                                    "Policy_origin": "Historical frozen validation selection" if "cost ratio" in row.Model else "Historical fixed policy", **recomputed})
+                                    "Evidence_status": provenance,
+                                    "Policy_origin": "Validation selection" if "cost ratio" in row.Model else "Fixed policy", **recomputed})
             if partition == "validation" and "Validation_thresholds" in protocol:
                 table = threshold_table(y, joined.Tuned_probability)
                 compare(f"{family}: full validation threshold table", read_csv(folder / "validation_thresholds.csv"), table)
@@ -201,9 +232,13 @@ def run():
                     tied = table[table[f"Cost_{ratio}"] == table[f"Cost_{ratio}"].min()]
                     details[family]["thresholds"][str(ratio)] = {"frozen": frozen, "reselected": chosen, "equal_minimum_cost_candidates": len(tied), "validation_scores_at_threshold": int((joined.Tuned_probability == frozen).sum())}
             if partition == "test":
+                if "Validation_thresholds" in protocol:
+                    intervals = paired_bootstrap(y, joined.Baseline_probability.to_numpy(), joined.Tuned_probability.to_numpy(), protocol["Validation_thresholds"]["5"],
+                                                 repeats=protocol["Bootstrap_replicates"], seed=protocol["Bootstrap_seed"])
+                    compare(f"{family}: conditional bootstrap intervals", read_csv(folder / "bootstrap_intervals.csv"), intervals)
                 for _, row in historical.iterrows():
                     for ratio in COST_RATIOS:
-                        costs.append({"Family": label, "Model": row.Model, "Threshold": row.Threshold, "Cost_ratio": ratio,
+                        costs.append({"Family": label, "Model": row.Model, "Evidence_status": provenance, "Threshold": row.Threshold, "Cost_ratio": ratio,
                                       "FP": int(row.FP), "FN": int(row.FN), "Cost": int(row.FP + ratio * row.FN),
                                       "Cost_per_1000": (row.FP + ratio * row.FN) / len(y) * 1000})
                 if family == "rf":
@@ -218,6 +253,14 @@ def run():
                         compare(f"rf: historical {suffix} case identities/groups", old[["row_id", "Group"]], expected[["row_id", "Group"]])
                         expected.to_csv(output / f"audit_rf_cases_{suffix}.csv", index=False)
                     profiles.to_csv(output / "audit_rf_profiles.csv", index=False)
+        if family == "decision_tree":
+            aggregate = read_csv(folder / "all_partition_metrics.csv")
+            for partition in ["fit", "validation", "test"]:
+                selected = aggregate[aggregate.Partition.str.lower().str.startswith(partition)].drop(columns="Partition")
+                expected = read_csv(folder / f"{partition}_metrics.csv")
+                numeric = expected.select_dtypes(include="number").columns
+                check(f"{family}: {partition} report aggregate metrics", selected.Model.tolist() == expected.Model.tolist() and
+                      np.allclose(selected[numeric], expected[numeric], rtol=0, atol=1e-12))
     pd.DataFrame(comparisons).to_csv(output / "model_comparison.csv", index=False)
     pd.DataFrame(costs).to_csv(output / "cost_comparison.csv", index=False)
     failed = [asdict(c) for c in checks if not c.passed]
@@ -240,6 +283,8 @@ def run():
         "- CV memberships, fold-score arithmetic and recorded winner selection are checked; no CV model is refitted.",
         "- All prediction CSVs are read with float_precision='round_trip'. The >= rule includes exact ties; default pandas parsing can shift a threshold-boundary score.",
         "- results/final/model_comparison.csv contains the historical baseline/tuned 0.5 and historically frozen validation-selected policies; DT has no historical cost-selected policy and none is invented.",
+        "- Logistic Regression is a post-hoc reproducibility supplement using the historic holdout, not an independent unseen-test claim. Unverified legacy logistic CSVs are excluded from these comparisons.",
+        "- XGBoost replay accepts absolute score differences <=1e-7 consistent with float32 platform drift, while requiring exact decisions at every frozen cutoff. Historical probabilities remain the metric source; replay AP/ROC-AUC/Brier deltas are separately recorded.",
         "- results/final/audit_rf_* are regenerated descriptive RF reference tables. If historical cases/groups differ, replace descriptive RF tables from these files and refresh dependent figures/prose; preserve the frozen models/protocols/predictions.", ""])
     (ROOT / "integration/AUDIT_FINDINGS.md").write_text("\n".join(findings), encoding="utf-8")
     print(f"Audit: {result['passed']} passed, {result['failed']} discrepancies; {output / 'audit.json'}", flush=True)
