@@ -18,7 +18,7 @@ def run():
     rendered = OUT/'rendered'
     rendered.mkdir(exist_ok=True)
     pdf = fitz.open(OUT/'Group5_Final_Report.pdf')
-    assert len(pdf) <= 7, f'Report has {len(pdf)} pages'
+    print('Report page openings:', [(i+1, p.get_text()[:100]) for i,p in enumerate(pdf)])
     report_text = '\n'.join(p.get_text() for p in pdf)
     for text in ['Problem','References','contribution','hypothetical','post-hoc']:
         assert text.lower() in report_text.lower(), text
@@ -58,6 +58,7 @@ def run():
         result.update({'slide_pages':len(slides_pdf),'slide_first_text_matches_pdf':True,
                        'presentation_pptx_SHA256':file_hash(OUT/'Group5_Presentation.pptx'),
                        'presentation_pdf_SHA256':file_hash(OUT/'Group5_Presentation.pdf')})
+    assert len(pdf) <= 7, f'Report has {len(pdf)} pages'
     write_json(OUT/'delivery_validation.json',result)
     print(json.dumps(result,indent=2))
 
