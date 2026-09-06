@@ -99,7 +99,7 @@ def run():
     save_figure(fig,'importance')
     values = {'CONFIG_TABLE':table(['Model','Configs','CV fits','Selected (summary)','CV AP'], configs, 'lrrp{70mm}r'),
               'PERFORMANCE_TABLE':table(['Model','AP','ROC-AUC','P','R','F1','Acc'],performance),
-              'CONFUSION_TABLE':table(['Model','TN','FP','FN','TP'],counts),
+              'CONFUSION_TABLE':table(['Model','B: TN','FP','FN','TP','T: TN','FP','FN','TP'], [[counts[i][0].split()[0]] + counts[i][1:] + counts[i+1][1:] for i in range(0,len(counts),2)]),
               'COST_TABLE':table(['Model','Policy','Threshold','Recall \\%','Alert \\%','FP','FN','Cost'],costs),
               'DUP_TEST':str(audit['details']['source']['test_rows_features_seen_in_development']),
               'FIT_POS':str(audit['details']['source']['fit_defaults']),

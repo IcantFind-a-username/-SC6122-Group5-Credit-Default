@@ -47,7 +47,7 @@ LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its g
 \smallcap{Table 2. Historical test, $n=6,000$, default positive. All rows use threshold 0.5. P/R/F1/Acc are proportions. B = baseline; T = CV-selected; LR* = post-hoc supplement. Full precision and all confusion counts are in \texttt{model\_comparison.csv}.}
 
 {{CONFUSION_TABLE}}
-\smallcap{Table 3. Test confusion counts at 0.5, in TN/FP/FN/TP order. These are computed from the same row-aligned scores used in Table 2, not copied from an unaudited summary.}
+\smallcap{Table 3. Test confusion counts at 0.5. B = baseline; T = CV-selected. Counts are recomputed from row-aligned scores and labels.}
 
 AP is computed by \texttt{average\_precision\_score}, a recall-increment weighted sum of precision, not trapezoidal PR-AUC [2]. ROC-AUC summarizes positive--negative score ordering. Both use continuous scores and are independent of the chosen operating threshold; precision, recall, F1 and accuracy describe a particular decision rule.
 \begin{center}\includegraphics[width=.94\linewidth]{figures/ranking.png}\end{center}
@@ -90,7 +90,7 @@ Limitations include one historical geography/time period; a random rather than t
 
 A defensible next study would freeze a new protocol on fresh temporal/external data, assess calibration and subgroup errors, collect realistic loss and intervention-cost estimates, and evaluate policies constrained by review capacity. These are future steps, not experiments silently performed on the already evaluated test set.
 
-\textbf{Reproducibility and delivery.} The integration branch preserves member commits and historical protocols. The repository README distinguishes artifact verification/redrawing from retraining. \texttt{results/final/model\_comparison.csv} and \texttt{cost\_comparison.csv} are the numerical sources for this report and the editable presentation. Models, row-level predictions, source data, split indices and environment pins accompany a selected-file reproduction archive. Course-platform submission is performed by the group; its exact time and upload fields remain to be confirmed.
+\textbf{Reproducibility and delivery.} The README separates verification from retraining. Automated comparison CSVs, models, predictions, source data and environment pins accompany the editable report and presentation. Historical protocols and member commits are preserved. Course-platform submission and member identities require group confirmation.
 
 \sect{Member contribution statement (identities to confirm)}
 \begin{tabularx}{\linewidth}{@{}p{18mm}Xp{26mm}@{}}\toprule
