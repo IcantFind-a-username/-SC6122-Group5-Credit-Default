@@ -158,3 +158,10 @@ def test_case_snapshots_pick_the_extremes():
     fp = snap[snap.Group == "FP"]
     assert fp.Tuned_probability.tolist() == [.85, .75]
     assert {"row_id", "Group", "Tuned_probability", "Utilization_1"}.issubset(snap.columns)
+
+
+def test_run_refuses_frozen_output_dir(tmp_path):
+    from part3.experiment import run
+    (tmp_path / "protocol_frozen.json").write_text("{}")
+    with pytest.raises(FileExistsError):
+        run(output_dir=tmp_path, candidates=2, bootstrap_repeats=100)

@@ -118,8 +118,9 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     baseline.fit(x_fit, y_fit)
     tuned.fit(x_fit, y_fit)
     val_base, val_tuned = baseline.predict_proba(x_val)[:, 1], tuned.predict_proba(x_val)[:, 1]
-    threshold_table(y_val, val_tuned).to_csv(output / "validation_thresholds.csv", index=False)
-    thresholds = {str(r): select_threshold(threshold_table(y_val, val_tuned), r) for r in COST_RATIOS}
+    table = threshold_table(y_val, val_tuned)
+    table.to_csv(output / "validation_thresholds.csv", index=False)
+    thresholds = {str(r): select_threshold(table, r) for r in COST_RATIOS}
     save_predictions(output / "validation_predictions.csv", validation.row_id, y_val, val_base, val_tuned)
     val_metrics = [{"Model": "Baseline RF", **metrics(y_val, val_base)},
                    {"Model": "Tuned RF", **metrics(y_val, val_tuned)}]
