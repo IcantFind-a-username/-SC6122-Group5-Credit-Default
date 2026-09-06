@@ -1,7 +1,14 @@
+# Part 3 Random Forest — pinned environment.
+# These match the versions recorded in results/rf/protocol_frozen.json (the
+# environment that produced the committed frozen artifacts), so
+# `pip install -r requirements-part3.txt` reproduces them exactly.
+# Patch versions may differ from requirements-part4.txt (sklearn 1.7.2 vs 1.8.0);
+# shared data, splits, CV scheme and metrics are identical, so cross-model
+# comparisons remain valid.
 numpy==2.3.5
-pandas==2.2.3
-scikit-learn==1.8.0
-scipy==1.17.0
-matplotlib==3.10.8
+pandas==2.3.3
+scikit-learn==1.7.2
+scipy==1.16.3
+matplotlib==3.10.7
 joblib==1.5.3
-pytest==9.1.1
+pytest==9.0.3
