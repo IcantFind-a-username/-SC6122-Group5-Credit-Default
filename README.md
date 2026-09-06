@@ -12,7 +12,7 @@ Final integration branch: `integration/final-submission-20260907`. Main and memb
 
 ## Environment
 
-Use Python 3.12. The accepted environment is Python 3.12.2, numpy 2.3.5, pandas 2.2.3, scikit-learn 1.8.0, scipy 1.17.0, matplotlib 3.10.8, joblib 1.5.3, and XGBoost 3.0.5. `requirements.txt` unifies the previously separate member dependency files; OS markers choose the appropriate XGBoost distribution. The report build uses Tectonic; editable slides use python-pptx. Actual slide PDF rendering uses LibreOffice; PowerPoint is also supported by the generator on macOS. Native Keynote/PowerPoint export encountered local application access problems during integration, so an official portable LibreOffice runtime was used. Recheck layout after exporting with another renderer.
+Use Python 3.12. The accepted environment is Python 3.12.2, numpy 2.3.5, pandas 2.2.3, scikit-learn 1.8.0, scipy 1.17.0, matplotlib 3.10.8, joblib 1.5.3, and XGBoost 3.0.5. `requirements.txt` unifies the previously separate member dependency files; OS markers choose the appropriate XGBoost distribution. The report build uses Tectonic; editable slides use python-pptx. Actual slide PDF rendering uses official LibreOffice 26.8.0.3; PowerPoint is also supported by the generator on macOS. Native Keynote/PowerPoint export encountered local application access problems during integration, so an official portable LibreOffice runtime was used. Recheck layout after exporting with another renderer.
 
 ```bash
 python3.12 -m venv .venv

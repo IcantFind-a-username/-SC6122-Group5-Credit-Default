@@ -133,9 +133,9 @@ def make_slides(frame):
           "18,000 → 6,000 → 6,000", "FIT: five CV folds, seed 42\nVALIDATION: threshold selection\nTEST: fixed historical holdout", "Source: data/splits; protocol_frozen.json; results/final/audit.json",
           "The UCI dataset contains thirty thousand Taiwan credit card clients and twenty-three predictors. About twenty-two percent default, so an always-negative classifier can appear accurate while detecting nobody. We retain the supplied stratified split: eighteen thousand fitting rows, six thousand validation rows, and six thousand historical test rows. Five shared folds inside fitting data select configurations by average precision. Each fold learns its own category encoding, and logistic regression also learns scaling there. Validation selects thresholds without a later refit. The audit confirms identical memberships across the reproducible models. This random historical holdout is not temporal or external validation."),
         Slide("Logistic regression: a transparent reference, with a caveat", "Part 1", 65,
-          ["L2 model + fold-trained scaling + one-hot categories", "12 declared settings; CV selected C=0.1, unweighted", "Historic LR notebook is empty; original process unverified"],
+          ["L2 model + fold-trained scaling + one-hot categories", "12 declared settings; CV selected C=0.1, unweighted", "Original LR notebook was empty; original process unverified"],
           f"AP {lr.AP:.4f}", f"Baseline AP {lb.AP:.4f}\nNo ranking improvement from selection\nLR* is a separate post-hoc supplement", source + " | " + note,
-          f"Logistic regression offers a linear reference whose coefficients describe regularized associations. We used fold-trained scaling and categorical encoding, then compared twelve declared combinations of regularization strength and class weighting. Cross-validation selected C equal to zero point one without class weighting. The test AP is {lr.AP:.4f}, versus {lb.AP:.4f} for the baseline, so selection did not improve ranking here. Crucially, the historical logistic notebook is empty, and its original procedure cannot be verified. We preserve those artifacts and label our reproducible run as a post-hoc supplement after earlier test results existed. Part two now examines how tree regularization changes performance."),
+          f"Logistic regression offers a linear reference whose coefficients describe regularized associations. We used fold-trained scaling and categorical encoding, then compared twelve declared combinations of regularization strength and class weighting. Cross-validation selected C equal to zero point one without class weighting. The test AP is {lr.AP:.4f}, versus {lb.AP:.4f} for the baseline, so selection did not improve ranking here. Crucially, the original logistic notebook was empty, and its original procedure cannot be verified. We preserve those artifacts and label our reproducible run as a post-hoc supplement after earlier test results existed. Part two now examines how tree regularization changes performance."),
         Slide("Decision tree: constrain leaves to reduce overfitting", "Part 2", 65,
           ["21 configurations: depth × minimum leaf size", "Unrestricted baseline fits training folds almost perfectly", "Selected minimum leaf size: 100 observations"],
           "Test average precision", "A large baseline gap signals overfitting.\nCV selection improves this tree's ranking.", source,
@@ -182,12 +182,12 @@ def make_slides(frame):
           "If asked about the ranking metric, explain that average precision weights each precision value by the associated increase in recall. It does not linearly interpolate the precision-recall curve with trapezoids, so similarly named PR-AUC values need not agree. ROC-AUC instead summarizes positive-versus-negative score ordering. Neither metric changes when we apply a different operating threshold to the same saved scores. Precision and recall do change because the decision set changes. The historical logistic CSV uses a PR-AUC label whose computation cannot be verified, which is one reason it is excluded from our verified ranking table."),
         Slide("Backup B • Cost ratios and fixed-prediction uncertainty", "Q&A", 0,
           ["Predeclared ratios: r = 1, 3, 5, 10", "Validation minimum cost; ties prefer largest cutoff", "1,000 stratified paired bootstrap resamples"],
-          "CONDITIONAL UNCERTAINTY", "Fixed models, thresholds and class counts\nExcludes retraining and selection uncertainty\nExcludes new-population and prevalence shifts", "Source: frozen protocols; integration/uncertainty.py; bootstrap_intervals.csv",
+          "CONDITIONAL UNCERTAINTY", "Fixed models / thresholds / class counts\nExcludes fitting / selection uncertainty\nExcludes population / prevalence shifts", "Source: frozen protocols; integration/uncertainty.py; bootstrap_intervals.csv",
           "The cost experiment declares four ratios rather than searching for a convenient ratio after viewing test results. At each ratio, the validation table includes all distinct score-based decision sets, with tied scores moving together. Equal costs select the largest threshold and therefore fewer alerts. The paired bootstrap samples the same test-row indices for each compared prediction vector, stratified by outcome. Its intervals are conditional on frozen models, thresholds, and class counts. They do not include uncertainty from refitting, hyperparameter search, threshold search, or a shift to another population. Real operational costs would require information that this dataset does not provide."),
         Slide("Backup C • Data provenance and evidence boundaries", "Q&A", 0,
           ["UCI cleaning reproduced exactly from downloaded source", "EDUCATION 0/5/6 → 4; MARRIAGE 0 → 3", "Retained duplicate vectors can span partitions"],
           "HISTORICAL TEST REUSED", "Original LR process remains unverified.\nLR* source was committed before its one run.\nNo new unseen-test claim is made.", "Sources: results/final/source_audit.json; integration/LOGISTIC_PROVENANCE.md",
-          "The integration audit redownloaded the official source and reproduced the committed cleaned dataset in values, types, order, and schema. Undocumented education categories are consolidated, and marriage category zero is mapped to other. The original download bytes were not preserved, so the new download and its hash are documented separately. Duplicate feature vectors remain under the established protocol and may create dependence across partitions. For logistic regression, all available notebook history contains an empty model notebook. The supplement's code and search declaration were committed before execution, but previous team test results already existed. This makes the supplement reproducible without making it independent external evidence."),
+          "The integration audit redownloaded the official source and reproduced the committed cleaned dataset in values, types, order, and schema. Undocumented education categories are consolidated, and marriage category zero is mapped to other. The original download bytes were not preserved, so the new download and its hash are documented separately. Duplicate feature vectors remain under the established protocol and may create dependence across partitions. For logistic regression, the original notebook history contained an empty model notebook. The supplement's code and search declaration were committed before execution, but previous team test results already existed. This makes the supplement reproducible without making it independent external evidence."),
         Slide("Backup D • Sources, responsibilities and reproducibility", "Q&A", 0,
           ["UCI: doi.org/10.24432/C55S3H", "scikit-learn: average_precision_score documentation", "XGBoost paper: doi.org/10.1145/2939672.2939785"],
           "FOUR ROLES • REVIEW REQUIRED", "P1 data/LR • P2 tree/ranking\nP3 forest/audit • P4 XGBoost/costs\nNAME / ID / SHARE TO CONFIRM", "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
@@ -269,11 +269,14 @@ end run'''
     if soffice is None:
         subprocess.run(["osascript", "-e", export_script, str(pptx_path), str(pdf_path)], check=True, timeout=180)
         renderer = "Microsoft PowerPoint native PDF export"
+        renderer_version = None
     else:
         with tempfile.TemporaryDirectory(prefix="group5-libreoffice-") as profile:
             subprocess.run([str(soffice), "--headless", f"-env:UserInstallation={Path(profile).as_uri()}",
                             "--convert-to", "pdf", "--outdir", str(output), str(pptx_path)],
                            check=True, timeout=180)
+            renderer_version = subprocess.check_output([str(soffice), "--headless",
+                f"-env:UserInstallation={Path(profile).as_uri()}", "--version"], text=True, timeout=60).strip()
         renderer = "LibreOffice native PPTX-to-PDF export"
     assets = output / "slide_assets"
     assets.mkdir(exist_ok=True)
@@ -286,12 +289,12 @@ end run'''
         tile = Image.frombytes("RGB", (pixmap.width, pixmap.height), pixmap.samples)
         tile.thumbnail((480, 270))
         contact.paste(tile, ((index % 4) * 480, (index // 4) * 270))
-        if index in [2, 5, 10]:
+        if index in [2, 5, 10, 13]:
             page.get_pixmap(matrix=fitz.Matrix(1.2, 1.2), alpha=False).save(str(assets / f"slide_{index+1:02}.png"))
     contact.save(assets / "contact_sheet.jpg", quality=85)
     write_json(output / "slide_manifest.json", {
         "slides": slides, "main_slides": 12, "backup_slides": 4,
-        "rendered_pdf_pages": len(document), "renderer": renderer,
+        "rendered_pdf_pages": len(document), "renderer": renderer, "renderer_version": renderer_version,
         "talk_seconds": 720, "qa_seconds": 180,
         "role_seconds": {role: 180 for role in ["Part 1", "Part 2", "Part 3", "Part 4"]},
         "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
