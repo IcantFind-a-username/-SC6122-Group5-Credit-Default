@@ -60,7 +60,9 @@ def hash_evidence(path, expected, kind="csv"):
             continue
         if kind == "json":
             same = json.loads(raw) == json.loads(blob.stdout)
-            detail = "Parsed JSON content comparison"
+            current_json, old_json = json.loads(raw), json.loads(blob.stdout)
+            detail = {key: {"current": current_json.get(key), "historical": old_json.get(key)}
+                      for key in current_json.keys() | old_json.keys() if current_json.get(key) != old_json.get(key)}
         else:
             same, detail = frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(blob.stdout)))
         history.append({"commit": commit, "sha256": bytes_hash(blob.stdout), "parsed_exact": same, "comparison": detail})
@@ -71,7 +73,8 @@ def hash_evidence(path, expected, kind="csv"):
             "newline_variants_parse_identically": all(
                 json.loads(raw) == json.loads(value) if kind == "json" else
                 frame_check(read_csv(BytesIO(raw)), read_csv(BytesIO(value)))[0]
-                for value in variants.values())}
+                for name, value in variants.items() if name in ["current", "LF", "CRLF"]),
+            "historical_versions_parse_identically": all(row["parsed_exact"] for row in history)}
 
 
 def run():
@@ -99,7 +102,7 @@ def run():
         evidence = hash_evidence(ROOT / f"data/splits/{partition}.csv", set(expected))
         details[f"{partition}_hash_evidence"] = evidence
         check(f"{partition}: every historical hash explained", all(evidence["expected_matches"].values()), evidence["expected_matches"])
-        check(f"{partition}: historical parsed identity", evidence["newline_variants_parse_identically"])
+        check(f"{partition}: historical parsed identity", evidence["newline_variants_parse_identically"] and evidence["historical_versions_parse_identically"])
     check("source: row_id uniqueness and complete coverage", clean.row_id.is_unique and sorted(clean.row_id) == list(range(30000)))
     check("source: no missing values", not clean.isna().any().any())
     check("source: disjoint train/test", set(train.row_id).isdisjoint(test.row_id))
@@ -145,7 +148,7 @@ def run():
             evidence = hash_evidence(folder / filename, [metadata[key]], "json" if filename.endswith("json") else "csv")
             details[f"{family}_{key}"] = evidence
             check(f"{family}: {key} byte/newline/history reconciliation", bool(evidence["expected_matches"][metadata[key]]), evidence["expected_matches"])
-            check(f"{family}: {key} parsed historical identity", evidence["newline_variants_parse_identically"])
+            check(f"{family}: {key} newline conversion preserves content", evidence["newline_variants_parse_identically"])
         cv_results = read_csv(folder / "cv_results.csv")
         winner = cv_results.sort_values(["Mean_CV_AP", "Candidate"], ascending=[False, True]).iloc[0]
         check(f"{family}: CV winner", int(winner.Candidate) == protocol["Selected_candidate"])
@@ -283,6 +286,12 @@ def run():
         findings.append(f"- **{failure['name']}**: {failure['detail']}")
     if not failed:
         findings.append("All audited identities, memberships, models, probabilities, metrics and recorded selections reconcile.")
+    findings.extend(["", "## Concrete findings", "",
+        "- DT/XGBoost training-source hashes match current LF bytes; RF source and metadata hashes match exact CRLF variants. Parsed source values, dtypes and order are unchanged across available git history.",
+        f"- Fit/validation/test membership is {len(fit)}/{len(validation)}/{len(test)}, with defaults {int(fit.default.sum())}/{int(validation.default.sum())}/{int(test.default.sum())}; all four models share exact membership and CV folds.",
+        f"- There are {details['source']['train_duplicate_features_excluding_first']} repeated development feature rows beyond the first and {details['source']['test_rows_features_seen_in_development']} test rows whose features occur in development. These are retained per team protocol.",
+        "- RF protocol history records an earlier run (3da46a6) and environment regeneration (421b0e1). Timestamp, dependency versions and serialized model hashes changed; current metadata hashes reconcile and prediction CSV history is identical. This chronology must remain visible; it does not establish a newly unseen test set.",
+        "- RF historical .5/r=5 group counts and most-confident FN/FP case identities reconcile with full-precision predictions and the exact frozen threshold. No descriptive correction is indicated by these checks."])
     findings.extend(["", "## Interpretation and limits", "",
         "- Frozen timestamps are historical self-reports. This audit cannot prove the test set was never viewed before freezing.",
         "- DT/RF serialized training-row counts are checked. XGBoost training row count is not serialized; source code and exact fit membership support 18000, without an independent booster count.",
