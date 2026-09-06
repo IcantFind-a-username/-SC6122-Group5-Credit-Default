@@ -112,3 +112,49 @@ def test_save_predictions_roundtrip_preserves_float32_decisions(tmp_path):
     restored = pd.read_csv(path, float_precision="round_trip")
     assert np.array_equal(restored.Tuned_probability.to_numpy(), scores.astype(float))
     assert metrics(restored.default, restored.Tuned_probability, threshold) == metrics([0, 1, 0, 1], scores, threshold)
+
+
+from part3.misclassification import case_snapshots, compute_profiles, derive_features
+
+
+def cases_frame():
+    return pd.DataFrame({
+        "row_id": np.arange(8),
+        "default": [1, 1, 1, 1, 0, 0, 0, 0],
+        "Tuned_probability": [.10, .20, .80, .90, .10, .25, .75, .85],
+        "PAY_0": [-1, -1, 2, 2, -1, -1, 0, 0],
+        "PAY_2": [-1, -1, 2, 2, -1, -1, 0, 0],
+        "PAY_6": [-1, -1, 2, 2, -1, -1, 0, 0],
+        "LIMIT_BAL": [10000] * 8,
+        "BILL_AMT1": [500, 5000, 5000, 5000, 500, 5000, 5000, 5000],
+        "PAY_AMT1": [500, 0, 500, 500, 500, 0, 500, 500],
+        "BILL_AMT6": [500] * 8,
+        "PAY_AMT6": [500] * 8,
+        "AGE": [30] * 8,
+        "SEX": [1, 2] * 4,
+        "EDUCATION": [1, 2] * 4,
+        "MARRIAGE": [1, 2] * 4,
+    })
+
+
+def test_compute_profiles_group_counts_and_derived_features():
+    frame = derive_features(cases_frame())
+    profile = compute_profiles(frame, threshold=.5)
+    groups = profile.set_index("Group")
+    assert groups.loc["FN", "N"] == 2 and groups.loc["TP", "N"] == 2
+    assert groups.loc["FP", "N"] == 2 and groups.loc["TN", "N"] == 2
+    assert groups.loc["TP", "Mean_Utilization_1"] == 0.5
+    assert groups.loc["FN", "Mean_PAY_0"] == -1.0
+    assert groups.loc["TN", "Mean_Payment_share_1"] == 0.5
+    assert groups.loc["FP", "Mean_Payment_share_1"] == 0.1
+    assert groups.loc["FP", "Pct_PAY_0_overdue"] == 0.0
+
+
+def test_case_snapshots_pick_the_extremes():
+    frame = derive_features(cases_frame())
+    snap = case_snapshots(frame, threshold=.5, k=2)
+    fn = snap[snap.Group == "FN"]
+    assert fn.Tuned_probability.tolist() == [.10, .20]
+    fp = snap[snap.Group == "FP"]
+    assert fp.Tuned_probability.tolist() == [.85, .75]
+    assert {"row_id", "Group", "Tuned_probability", "Utilization_1"}.issubset(snap.columns)
