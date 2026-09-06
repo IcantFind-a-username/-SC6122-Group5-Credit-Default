@@ -5,12 +5,13 @@ CV folds, nominal-feature encoding, AP selection and score >= 0.5 rule.
 No threshold optimization and no refit on validation observations.
 """
 import argparse
-import hashlib
 import importlib.metadata
 import json
 import platform
 from datetime import datetime, timezone
 from pathlib import Path
+
+from integration.artifacts import file_hash as file_hash, write_json as write_json
 
 import joblib
 import numpy as np
@@ -19,21 +20,13 @@ from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import ParameterGrid, StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.tree import DecisionTreeClassifier, export_text
+from sklearn.tree import DecisionTreeClassifier
 
 # Shared, already reviewed metrics and splitting. Does not import XGBoost.
 from part4.evaluation import feature_target, metrics, split_development
 
 ROOT = Path(__file__).resolve().parents[1]
 GRID = {'max_depth': [2, 3, 4, 5, 6, 8, None], 'min_samples_leaf': [1, 20, 100]}
-
-
-def write_json(path, value):
-    path.write_text(json.dumps(value, indent=2, allow_nan=False) + '\n', encoding='utf-8')
-
-
-def file_hash(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def make_pipeline(params):

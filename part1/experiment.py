@@ -1,7 +1,8 @@
-"""Fit/select on development data; freeze decisions before final holdout evaluation.
+"""Post-hoc logistic reproducibility supplement after historic test results existed.
 
-Run from the repository root: python -m part4.experiment
-No data download or teammate notebook execution is required.
+Run: python -m part1.experiment --output-dir results/logistic_supplement
+The historic holdout is reused; this is not a new independent unseen-test claim.
+All choices in this supplement use fit CV or validation only.
 """
 import argparse
 import importlib.metadata
@@ -11,45 +12,43 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from integration.uncertainty import paired_bootstrap as paired_bootstrap
-from integration.artifacts import file_hash as file_hash, save_predictions as save_predictions, write_json as write_json
-
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.inspection import permutation_importance
-from sklearn.model_selection import ParameterSampler, StratifiedKFold, cross_validate
+from sklearn.model_selection import ParameterGrid, StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-from xgboost import XGBClassifier, __version__ as xgboost_version
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.linear_model import LogisticRegression
 
-from .evaluation import COST_RATIOS, feature_target, metrics, select_threshold, split_development, threshold_table
+from part4.evaluation import COST_RATIOS, feature_target, metrics, select_threshold, split_development, threshold_table
 
-BASELINE = dict(n_estimators=200, max_depth=3, learning_rate=.1, min_child_weight=1,
-                subsample=1., colsample_bytree=1., reg_lambda=1., reg_alpha=0., scale_pos_weight=1.)
-SEARCH_SPACE = dict(n_estimators=[150, 300, 500], max_depth=[2, 3, 4, 5],
-                    learning_rate=[.03, .07, .1], min_child_weight=[1, 5, 10],
-                    subsample=[.7, 1.], colsample_bytree=[.8, 1.],
-                    reg_lambda=[1., 5., 10.], reg_alpha=[0., .1], scale_pos_weight=[1., 3.])
+from integration.artifacts import file_hash, save_predictions, write_json
+from integration.uncertainty import paired_bootstrap
+
+BASELINE = {"C": 1., "class_weight": None}
+SEARCH_SPACE = {"C": [.001, .01, .1, 1., 10., 100.],
+                "class_weight": [None, "balanced"]}
 ROOT = Path(__file__).resolve().parents[1]
+EVIDENCE_STATUS = "Post-hoc reproducibility supplement after historic test results existed"
 
 
-def make_pipeline(params=None, threads=2):
+def make_pipeline(params=None):
+    """Learn categories and numeric scaling only inside each training fold."""
     preprocessing = ColumnTransformer([
         ("categorical", OneHotEncoder(handle_unknown="ignore", sparse_output=False),
-         ["SEX", "EDUCATION", "MARRIAGE"])], remainder="passthrough",
+         ["SEX", "EDUCATION", "MARRIAGE"])], remainder=StandardScaler(),
         verbose_feature_names_out=False)
-    parameters = BASELINE | (params or {})
-    model = XGBClassifier(**parameters, objective="binary:logistic", eval_metric="logloss",
-                          tree_method="hist", random_state=42, n_jobs=threads, verbosity=0)
+    model = LogisticRegression(**(BASELINE | (params or {})), solver="lbfgs",
+                               l1_ratio=0., max_iter=3000, random_state=42)
     return Pipeline([("preprocess", preprocessing), ("model", model)])
 
 
-def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
-    if candidates < 2 or bootstrap_repeats < 100:
-        raise ValueError("Use at least two candidates and 100 bootstrap replicates")
-    output = Path(output_dir) if output_dir else ROOT / "results/xgboost"
+def run(output_dir=None, bootstrap_repeats=1000):
+    if bootstrap_repeats < 100:
+        raise ValueError("Use at least 100 bootstrap replicates")
+    output = Path(output_dir) if output_dir else ROOT / "results/logistic_supplement"
     if (output / "protocol_frozen.json").exists():
         raise FileExistsError("This run is frozen. Use --output-dir for a separately labelled reproduction.")
     output.mkdir(parents=True, exist_ok=True)
@@ -71,11 +70,12 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     for fold, (_, holdout) in enumerate(cv):
         cv_members.extend({"row_id": int(v), "CV_fold": fold} for v in fit.iloc[holdout].row_id)
     pd.DataFrame(cv_members).to_csv(output / "cv_membership.csv", index=False)
-    settings = [BASELINE.copy()] + list(ParameterSampler(SEARCH_SPACE, n_iter=candidates - 1, random_state=42))
+    settings = [BASELINE.copy()] + [p for p in ParameterGrid(SEARCH_SPACE) if p != BASELINE]
+    candidates = len(settings)
     rows = []
     print(f"Fitting rows={len(fit)}, validation rows={len(validation)}; {candidates} candidates x 5 folds", flush=True)
     for number, parameters in enumerate(settings):
-        scores = cross_validate(make_pipeline(parameters, threads), x_fit, y_fit, cv=cv,
+        scores = cross_validate(make_pipeline(parameters), x_fit, y_fit, cv=cv,
                                 scoring={"AP": "average_precision", "ROC_AUC": "roc_auc"},
                                 n_jobs=1, return_train_score=True, error_score="raise")
         row = {"Candidate": number, "Parameters": json.dumps(parameters, sort_keys=True),
@@ -89,7 +89,7 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
         pd.DataFrame(rows).to_csv(output / "cv_results.csv", index=False)
         print(f"Candidate {number + 1}/{candidates}: CV AP={row['Mean_CV_AP']:.5f}", flush=True)
     best_id = int(pd.DataFrame(rows).sort_values(["Mean_CV_AP", "Candidate"], ascending=[False, True]).iloc[0].Candidate)
-    baseline, tuned = make_pipeline(BASELINE, threads), make_pipeline(settings[best_id], threads)
+    baseline, tuned = make_pipeline(BASELINE), make_pipeline(settings[best_id])
     baseline.fit(x_fit, y_fit)
     tuned.fit(x_fit, y_fit)
     val_base, val_tuned = baseline.predict_proba(x_val)[:, 1], tuned.predict_proba(x_val)[:, 1]
@@ -97,20 +97,29 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     table.to_csv(output / "validation_thresholds.csv", index=False)
     thresholds = {str(r): select_threshold(table, r) for r in COST_RATIOS}
     save_predictions(output / "validation_predictions.csv", validation.row_id, y_val, val_base, val_tuned)
-    val_metrics = [{"Model": "Baseline XGBoost", **metrics(y_val, val_base)},
-                   {"Model": "Tuned XGBoost", **metrics(y_val, val_tuned)}]
-    val_metrics += [{"Model": f"Tuned XGBoost / cost ratio {r}", **metrics(y_val, val_tuned, thresholds[str(r)])} for r in COST_RATIOS]
+    val_metrics = [{"Model": "Baseline LR supplement", **metrics(y_val, val_base)},
+                   {"Model": "Tuned LR supplement", **metrics(y_val, val_tuned)}]
+    val_metrics += [{"Model": f"Tuned LR supplement / cost ratio {r}", **metrics(y_val, val_tuned, thresholds[str(r)])} for r in COST_RATIOS]
     pd.DataFrame(val_metrics).to_csv(output / "validation_metrics.csv", index=False)
     importance = permutation_importance(tuned, x_val, y_val, scoring="average_precision",
                                         n_repeats=5, random_state=42, n_jobs=1)
     pd.DataFrame({"Feature": x_val.columns, "Mean_AP_decrease": importance.importances_mean,
                   "SD_AP_decrease": importance.importances_std}).sort_values("Mean_AP_decrease", ascending=False).to_csv(output / "validation_importance.csv", index=False)
+    pd.DataFrame({"Feature": tuned.named_steps["preprocess"].get_feature_names_out(),
+                  "Coefficient": tuned.named_steps["model"].coef_[0]}).to_csv(
+                      output / "coefficients.csv", index=False)
+    write_json(output / "intercept.json", {"Intercept": tuned.named_steps["model"].intercept_[0],
+               "Note": "Numeric coefficients use fit-standardized predictors; category coefficients use full one-hot coding and L2 regularization."})
     joblib.dump(baseline, output / "baseline_pipeline.joblib", compress=3)
     joblib.dump(tuned, output / "tuned_pipeline.joblib", compress=3)
     versions = {name: importlib.metadata.version(name) for name in
                 ["numpy", "pandas", "scikit-learn", "matplotlib", "scipy", "joblib"]}
-    versions["xgboost"] = xgboost_version  # both standard and CPU-only distributions expose this module
-    protocol = {"Stage": "Frozen before test loading", "Frozen_at_UTC": datetime.now(timezone.utc).isoformat(),
+    protocol = {"Stage": "Supplement choices frozen before this runner loads historic test rows",
+                "Evidence_status": EVIDENCE_STATUS, "Estimator": "LogisticRegression",
+                "Independent_unseen_test_claim": False,
+                "Source_script_SHA256": file_hash(Path(__file__)),
+                "Preprocessing": "Fold-trained full one-hot SEX/EDUCATION/MARRIAGE; StandardScaler for remaining numeric predictors",
+                "Fixed_estimator_parameters": {"solver": "lbfgs", "l1_ratio": 0., "max_iter": 3000, "random_state": 42}, "Frozen_at_UTC": datetime.now(timezone.utc).isoformat(),
                 "Source_train_SHA256": file_hash(train_path), "Features": x_fit.columns.tolist(),
                 "Fit_rows": len(fit), "Validation_rows": len(validation), "Seed": 42,
                 "CV_folds": 5, "Candidates": candidates, "Selection_metric": "average_precision",
@@ -123,9 +132,9 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
                 "Bootstrap_seed": 20260905, "Python": platform.python_version(), "Packages": versions,
                 "Model_SHA256": {name: file_hash(output / name) for name in ["baseline_pipeline.joblib", "tuned_pipeline.joblib"]}}
     write_json(output / "protocol_frozen.json", protocol)
-    print("Parameters, fitted models and validation thresholds frozen; beginning final test evaluation.", flush=True)
+    print("Supplement choices frozen; evaluating the previously used historical test split.", flush=True)
 
-    # FIRST reading of test observations in this runner: all adaptive choices above are frozen.
+    # First test-row read by this supplement only. Historic test results already existed.
     test = pd.read_csv(test_path)
     if len(test) != 6000 or test.columns.tolist() != train.columns.tolist():
         raise ValueError("Unexpected test size/schema")
@@ -136,9 +145,9 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     x_test, y_test = feature_target(test)
     base_p, tuned_p = baseline.predict_proba(x_test)[:, 1], tuned.predict_proba(x_test)[:, 1]
     save_predictions(output / "test_predictions.csv", test.row_id, y_test, base_p, tuned_p)
-    comparison = [{"Model": "Baseline XGBoost", **metrics(y_test, base_p)},
-                  {"Model": "Tuned XGBoost", **metrics(y_test, tuned_p)}]
-    comparison += [{"Model": f"Tuned XGBoost / cost ratio {r}", **metrics(y_test, tuned_p, thresholds[str(r)])} for r in COST_RATIOS]
+    comparison = [{"Model": "Baseline LR supplement", **metrics(y_test, base_p)},
+                  {"Model": "Tuned LR supplement", **metrics(y_test, tuned_p)}]
+    comparison += [{"Model": f"Tuned LR supplement / cost ratio {r}", **metrics(y_test, tuned_p, thresholds[str(r)])} for r in COST_RATIOS]
     constant = np.full(len(test), y_fit.mean())
     comparison += [{"Model": "Always negative", **metrics(y_test, constant, 1.)},
                    {"Model": "Always positive", **metrics(y_test, constant, 0.)}]
@@ -165,8 +174,6 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--candidates", type=int, default=24)
-    parser.add_argument("--threads", type=int, default=2)
     parser.add_argument("--bootstrap-repeats", type=int, default=1000)
     args = parser.parse_args()
-    run(args.output_dir, args.candidates, args.threads, args.bootstrap_repeats)
+    run(args.output_dir, args.bootstrap_repeats)

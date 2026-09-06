@@ -1,0 +1,17 @@
+# Logistic regression provenance and supplement declaration
+
+The historical logistic artifacts remain unchanged in `results/logistic_regression_*.csv`. Their execution provenance cannot be recovered from this repository snapshot.
+
+Evidence searched: all local and remote-tracking refs; `git log --all --name-only -- '*.ipynb'`; the notebook blobs at every relevant commit; all reflogs; and `git fsck --full --no-reflogs --unreachable` (no recoverable unreachable objects reported). Commit `959a2b27` is the only history entry for `03_logistic_regression.ipynb`: its blob is the empty-file object `e69de29bb2d1d6434b8b29ae775ad8c2e48c5391`, size zero. `01_data_inspection.ipynb` contains inspection, and `02_preprocessing.ipynb` contains cleaning and the shared split; neither supplies a logistic fitting/search procedure. This establishes missing repository provenance, not that the historical authors never ran a model elsewhere. No legacy hyperparameters, scaling procedure, fitting membership, or fold membership can honestly be inferred solely from summary CSVs.
+
+## Declared before supplement execution
+
+`python -m part1.experiment --output-dir results/logistic_supplement` is a **post-hoc reproducibility supplement after historic test results existed**. It is not a recovered legacy notebook or an independent unseen-test study. The controller must commit this script and declaration before running it.
+
+The supplied 24,000 development rows are split identically to Parts 3/4 into 18,000 fit and 6,000 validation rows, with stratification and seed 42. Five stratified, shuffled CV folds on the fit rows use seed 42. Membership files permit exact cross-model auditing.
+
+The declared exhaustive budget is 12 configurations: `C = [0.001, 0.01, 0.1, 1, 10, 100]` crossed with `class_weight = [None, 'balanced']`. Candidate 0 is the explicit unweighted `C=1` baseline; the remaining unique configurations follow deterministic `ParameterGrid` order. Logistic regression uses L2 regularization (`l1_ratio=0` under scikit-learn 1.8), `lbfgs`, `max_iter=3000`, and seed 42. The model pipeline learns one-hot categories for SEX/EDUCATION/MARRIAGE and numeric StandardScaler statistics only from each fitting fold. Unknown categories are ignored. Selection maximizes mean CV average precision, with ties preferring the lowest candidate index. No search expansion is permitted based on historical or new test results.
+
+Both final pipelines fit the 18,000 fit rows. Validation selects thresholds for hypothetical costs `FP + r*FN`, `r = 1,3,5,10`, using shared complete threshold enumeration and the largest-threshold tie rule. No refit follows selection. The protocol, models, and thresholds are frozen before this runner reads test rows. The existing 6,000 historical test rows are then evaluated once. Saved bootstrap intervals condition on those fitted models and the reused test sample; they do not establish external validation or erase historical exposure.
+
+Outputs include pipelines, exact-score validation/test predictions, CV scores and membership, development membership, validation thresholds, metrics, coefficients, validation permutation importance, conditional bootstrap intervals, and source/artifact hashes. Coefficients are on fit-standardized numeric and full one-hot categorical scales, are regularized associations, and do not establish causality. Historical artifacts and supplement artifacts must be presented separately.

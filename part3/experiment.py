@@ -4,17 +4,18 @@ Run from the repository root: python -m part3.experiment
 
 Follows the group protocol frozen by Part 4 (results/xgboost/protocol_frozen.json):
 dataset and development split, CV scheme, selection metric, cost ratios,
-threshold selection rule and bootstrap recipe are identical so all four models
-compare on equal terms.
+threshold selection rule and bootstrap recipe are shared. Search budgets and
+model configurations differ; legacy logistic results do not share proven provenance.
 """
 import argparse
-import hashlib
 import importlib.metadata
 import json
 import platform
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+
+from integration.artifacts import file_hash as file_hash, save_predictions as save_predictions, write_json as write_json
 
 import joblib
 import numpy as np
@@ -54,21 +55,6 @@ def best_candidate(results):
     """Highest mean CV AP; ties resolve to the lowest candidate index (as Part 4)."""
     return int(results.sort_values(["Mean_CV_AP", "Candidate"],
                                    ascending=[False, True]).iloc[0].Candidate)
-
-
-def write_json(path, value):
-    path.write_text(json.dumps(value, indent=2, allow_nan=False, default=lambda x: x.item()) + "\n")
-
-
-def file_hash(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def save_predictions(path, row_ids, labels, baseline, tuned):
-    """Preserve exact float32 scores in CSV; read with float_precision='round_trip'."""
-    pd.DataFrame({"row_id": np.asarray(row_ids), "default": np.asarray(labels),
-                  "Baseline_probability": np.asarray(baseline, dtype=float),
-                  "Tuned_probability": np.asarray(tuned, dtype=float)}).to_csv(path, index=False)
 
 
 def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):

@@ -1,3 +1,4 @@
+from integration.artifacts import save_predictions
 import numpy as np
 import pandas as pd
 import pytest
@@ -6,21 +7,13 @@ from part4.evaluation import feature_target, metrics, select_threshold, split_de
 from part4.experiment import make_pipeline, paired_bootstrap
 
 
-def frame(n=80):
-    return pd.DataFrame({"row_id": np.arange(n), "SEX": [1, 2] * (n // 2),
-                         "EDUCATION": [1, 2, 3, 4] * (n // 4),
-                         "MARRIAGE": [1, 2] * (n // 2),
-                         "LIMIT_BAL": np.arange(n) * 1000,
-                         "default": [0, 0, 0, 1] * (n // 4)})
-
-
-def test_row_id_and_label_cannot_be_predictors():
+def test_row_id_and_label_cannot_be_predictors(frame):
     x, y = feature_target(frame())
     assert "row_id" not in x and "default" not in x
     assert list(y) == frame()["default"].tolist()
 
 
-def test_inner_split_preserves_membership_is_disjoint_and_repeatable():
+def test_inner_split_preserves_membership_is_disjoint_and_repeatable(frame):
     a, b = split_development(frame())
     a2, b2 = split_development(frame())
     assert (len(a), len(b)) == (60, 20)
@@ -64,7 +57,7 @@ def test_invalid_scores_fail_instead_of_producing_plausible_metrics(p):
         metrics([0, 1], p, .5)
 
 
-def test_pipeline_encodes_categories_without_learning_validation_values():
+def test_pipeline_encodes_categories_without_learning_validation_values(frame):
     x, y = feature_target(frame())
     estimator = make_pipeline({"n_estimators": 3, "max_depth": 2}, threads=1)
     estimator.fit(x, y)
@@ -85,7 +78,6 @@ def test_identical_models_have_zero_paired_bootstrap_differences():
 
 
 def test_csv_roundtrip_preserves_decisions_at_float32_threshold(tmp_path):
-    from part4.experiment import save_predictions
     scores = np.array([.1, .31501567, .8, .9], dtype=np.float32)
     threshold = float(scores[1])
     path = tmp_path / "predictions.csv"

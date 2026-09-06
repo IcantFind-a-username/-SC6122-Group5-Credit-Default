@@ -1,3 +1,7 @@
+from part3.experiment import BASELINE, SEARCH_SPACE, best_candidate, make_pipeline
+from part3.misclassification import case_snapshots, compute_profiles, derive_features
+from integration.artifacts import save_predictions
+from part3.experiment import run
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,14 +12,6 @@ from part3.evaluation import (COST_RATIOS, feature_target, metrics,
 import part4.evaluation as p4
 
 
-def frame(n=80):
-    return pd.DataFrame({"row_id": np.arange(n), "SEX": [1, 2] * (n // 2),
-                         "EDUCATION": [1, 2, 3, 4] * (n // 4),
-                         "MARRIAGE": [1, 2] * (n // 2),
-                         "LIMIT_BAL": np.arange(n) * 1000,
-                         "default": [0, 0, 0, 1] * (n // 4)})
-
-
 def test_reexports_match_part4():
     """Single source of truth: Part 3 must use the exact Part 4 objects."""
     assert COST_RATIOS == p4.COST_RATIOS
@@ -24,13 +20,13 @@ def test_reexports_match_part4():
         assert globals()[name] is getattr(p4, name)
 
 
-def test_row_id_and_label_cannot_be_predictors():
+def test_row_id_and_label_cannot_be_predictors(frame):
     x, y = feature_target(frame())
     assert "row_id" not in x and "default" not in x
     assert list(y) == frame()["default"].tolist()
 
 
-def test_inner_split_preserves_membership_is_disjoint_and_repeatable():
+def test_inner_split_preserves_membership_is_disjoint_and_repeatable(frame):
     a, b = split_development(frame())
     a2, b2 = split_development(frame())
     assert (len(a), len(b)) == (60, 20)
@@ -62,7 +58,6 @@ def test_identical_models_have_zero_paired_bootstrap_differences():
         assert row.Estimate == row.CI_low == row.CI_high == 0
 
 
-from part3.experiment import BASELINE, SEARCH_SPACE, best_candidate, make_pipeline
 
 
 def test_baseline_hyperparameters_are_frozen():
@@ -85,7 +80,7 @@ def test_search_space_mirrors_protocol_breadth():
     assert "sqrt" in SEARCH_SPACE["max_features"]
 
 
-def test_pipeline_encodes_categories_without_learning_validation_values():
+def test_pipeline_encodes_categories_without_learning_validation_values(frame):
     x, y = feature_target(frame())
     estimator = make_pipeline({"n_estimators": 3, "max_depth": 2}, threads=1)
     estimator.fit(x, y)
@@ -104,7 +99,6 @@ def test_best_candidate_breaks_ties_by_lowest_candidate_index():
 
 
 def test_save_predictions_roundtrip_preserves_float32_decisions(tmp_path):
-    from part3.experiment import save_predictions
     scores = np.array([.1, .31501567, .8, .9], dtype=np.float32)
     threshold = float(scores[1])
     path = tmp_path / "predictions.csv"
@@ -114,31 +108,10 @@ def test_save_predictions_roundtrip_preserves_float32_decisions(tmp_path):
     assert metrics(restored.default, restored.Tuned_probability, threshold) == metrics([0, 1, 0, 1], scores, threshold)
 
 
-from part3.misclassification import case_snapshots, compute_profiles, derive_features
 
 
-def cases_frame():
-    return pd.DataFrame({
-        "row_id": np.arange(8),
-        "default": [1, 1, 1, 1, 0, 0, 0, 0],
-        "Tuned_probability": [.10, .20, .80, .90, .10, .25, .75, .85],
-        "PAY_0": [-1, -1, 2, 2, -1, -1, 0, 0],
-        "PAY_2": [-1, -1, 2, 2, -1, -1, 0, 0],
-        "PAY_6": [-1, -1, 2, 2, -1, -1, 0, 0],
-        "LIMIT_BAL": [10000] * 8,
-        "BILL_AMT1": [500, 5000, 5000, 5000, 500, 5000, 5000, 5000],
-        "PAY_AMT1": [500, 0, 500, 500, 500, 0, 500, 500],
-        "BILL_AMT6": [500] * 8,
-        "PAY_AMT6": [500] * 8,
-        "AGE": [30] * 8,
-        "SEX": [1, 2] * 4,
-        "EDUCATION": [1, 2] * 4,
-        "MARRIAGE": [1, 2] * 4,
-    })
-
-
-def test_compute_profiles_group_counts_and_derived_features():
-    frame = derive_features(cases_frame())
+def test_compute_profiles_group_counts_and_derived_features(cases_frame):
+    frame = derive_features(cases_frame)
     profile = compute_profiles(frame, threshold=.5)
     groups = profile.set_index("Group")
     assert groups.loc["FN", "N"] == 2 and groups.loc["TP", "N"] == 2
@@ -150,8 +123,8 @@ def test_compute_profiles_group_counts_and_derived_features():
     assert groups.loc["FP", "Pct_PAY_0_overdue"] == 0.0
 
 
-def test_case_snapshots_pick_the_extremes():
-    frame = derive_features(cases_frame())
+def test_case_snapshots_pick_the_extremes(cases_frame):
+    frame = derive_features(cases_frame)
     snap = case_snapshots(frame, threshold=.5, k=2)
     fn = snap[snap.Group == "FN"]
     assert fn.Tuned_probability.tolist() == [.10, .20]
@@ -161,7 +134,6 @@ def test_case_snapshots_pick_the_extremes():
 
 
 def test_run_refuses_frozen_output_dir(tmp_path):
-    from part3.experiment import run
     (tmp_path / "protocol_frozen.json").write_text("{}")
     with pytest.raises(FileExistsError):
         run(output_dir=tmp_path, candidates=2, bootstrap_repeats=100)
