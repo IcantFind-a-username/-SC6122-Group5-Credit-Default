@@ -4,6 +4,7 @@ from pathlib import Path
 
 import nbformat
 from nbclient import NotebookClient
+from jupyter_client import KernelManager
 from jupyter_client.kernelspec import KernelSpecManager
 
 from integration.artifacts import write_json
@@ -37,10 +38,9 @@ def run():
             if cell.cell_type=='code':
                 cell.outputs=[]
                 cell.execution_count=None
-        executed=NotebookClient(notebook,timeout=180,kernel_name='sc6122',kernel_manager_class=None,
+        km=KernelManager(kernel_name='sc6122',kernel_spec_manager=manager)
+        executed=NotebookClient(notebook,timeout=180,kernel_name='sc6122',km=km,
                                 resources={'metadata':{'path':str(ROOT)}})
-        executed.create_kernel_manager()
-        executed.km.kernel_spec_manager=manager
         executed.execute()
         nbformat.write(notebook,path)
         records.append({'notebook':name,'code_cells':sum(c.cell_type=='code' for c in notebook.cells),'status':'Executed successfully in unified environment'})
