@@ -46,7 +46,7 @@ def run():
             'report_pdf_SHA256':file_hash(OUT/'Group5_Final_Report.pdf'), 'report_latex_SHA256':file_hash(OUT/'Group5_Final_Report.tex'),
             'visual_inspection':'Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality.'}
     if (OUT/'Group5_Presentation.pdf').exists():
-        deck=Presentation(OUT/'Group5_Presentation.pptx')
+        deck=Presentation(str(OUT/'Group5_Presentation.pptx'))
         slides_pdf=fitz.open(OUT/'Group5_Presentation.pdf')
         assert len(deck.slides)==len(slides_pdf)==16
         for slide,page in zip(deck.slides,slides_pdf):

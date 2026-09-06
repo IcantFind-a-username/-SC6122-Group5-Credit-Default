@@ -1,7 +1,7 @@
 """Build editable 16-slide presentation and native notes from audited artifacts.
 
 Commit before execution. Run: PYTHONDONTWRITEBYTECODE=1 python -m integration.build_slides
-Charts remain editable PowerPoint charts. Keynote exports the companion PDF.
+Charts remain editable PowerPoint charts. PowerPoint exports the companion PDF.
 """
 from dataclasses import dataclass
 from pathlib import Path
@@ -232,13 +232,14 @@ def run():
                   f"**{spec.role} — {spec.seconds} seconds** | NAME / ID / SHARE TO CONFIRM", spec.script, spec.source]
     pptx_path = output / "Group5_Presentation.pptx"
     pdf_path = output / "Group5_Presentation.pdf"
-    deck.save(pptx_path)
+    deck.save(str(pptx_path))
     notes_path = output / "Group5_Speaker_Notes.md"
     notes_path.write_text("\n\n".join(notes) + "\n", encoding="utf-8")
     export_script = '''on run argv
-tell application "Keynote"
-set d to open (POSIX file (item 1 of argv))
-export d to (POSIX file (item 2 of argv)) as PDF
+tell application "Microsoft PowerPoint"
+open (POSIX file (item 1 of argv))
+set d to active presentation
+save d in (POSIX file (item 2 of argv)) as save as PDF
 close d saving no
 end tell
 end run'''
@@ -251,7 +252,7 @@ end run'''
     for index, page in enumerate(document):
         assert page.get_text().strip(), f"PDF slide {index + 1} has no text"
         pixmap = page.get_pixmap(matrix=fitz.Matrix(.5, .5), alpha=False)
-        tile = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+        tile = Image.frombytes("RGB", (pixmap.width, pixmap.height), pixmap.samples)
         tile.thumbnail((480, 270))
         contact.paste(tile, ((index % 4) * 480, (index // 4) * 270))
         if index in [2, 5, 10]:
