@@ -1,0 +1,2202 @@
+{
+  "scope": "Retrospective audit only; no fitting, threshold changes or alteration of frozen artifacts. Recorded CV scores reconciled but CV fitting not replayed.",
+  "python": "3.12.2",
+  "script_sha256": "cd9f53273da08e9a91b3972f777cf73fd9888027a7f3fcb73be5a1f0a964e57c",
+  "checks": [
+    {
+      "name": "train: every historical hash explained",
+      "passed": true,
+      "detail": {
+        "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf": [
+          "current",
+          "LF",
+          "git:959a2b27182b795f4fff1e7e1493cc85c522865a"
+        ],
+        "17616bdca64aa051af6b14aced75b8150789aa8ec0ecd9b748596ae98f66267a": [
+          "CRLF"
+        ]
+      }
+    },
+    {
+      "name": "train: historical parsed identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "test: every historical hash explained",
+      "passed": true,
+      "detail": {
+        "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2": [
+          "current",
+          "LF",
+          "git:959a2b27182b795f4fff1e7e1493cc85c522865a"
+        ],
+        "ac8606dd171f9982227242f8c4b31e8b22320e231851a14783b7144d0e8455e8": [
+          "CRLF"
+        ]
+      }
+    },
+    {
+      "name": "test: historical parsed identity",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "source: row_id uniqueness and complete coverage",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "source: no missing values",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "source: disjoint train/test",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "source: train/test cover clean",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "train: original stratified split/order/values",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "train: supplied index membership/order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "train: source row_id joined feature/label identity",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "test: original stratified split/order/values",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "test: supplied index membership/order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "test: source row_id joined feature/label identity",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "source: official-source cleaning replay",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: development membership and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "decision_tree: all CV memberships and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "decision_tree: declared feature list",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: Frozen_protocol_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237": [
+          "current",
+          "LF",
+          "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f"
+        ]
+      }
+    },
+    {
+      "name": "decision_tree: Frozen_protocol_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: Test_predictions_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9": [
+          "current",
+          "LF",
+          "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f"
+        ]
+      }
+    },
+    {
+      "name": "decision_tree: Test_predictions_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: CV winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: CV winner parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: fold AP aggregation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/baseline: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/baseline: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/baseline: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/baseline: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/baseline: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "decision_tree/baseline: fit metrics",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree/tuned: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/tuned: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/tuned: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/tuned: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/tuned: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "decision_tree/tuned: fit metrics",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree/validation: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "decision_tree/validation: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/validation: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/validation/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "decision_tree/validation/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/validation/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "decision_tree/validation/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/validation: metrics Baseline Decision Tree",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree/validation: metrics Tuned Decision Tree",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree/test: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "decision_tree/test: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/test: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/test/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "decision_tree/test/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/test/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "decision_tree/test/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree/test: metrics Baseline Decision Tree",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree/test: metrics Tuned Decision Tree",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "decision_tree: fit report aggregate metrics",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: validation report aggregate metrics",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "decision_tree: test report aggregate metrics",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: development membership and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: all CV memberships and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: declared feature list",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: Frozen_protocol_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "84b9a833b35d3bebb66cbfdabf19b109babb05643c303d2489b4a1f69d388e6f": [
+          "CRLF"
+        ]
+      }
+    },
+    {
+      "name": "rf: Frozen_protocol_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: Test_predictions_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "67563e134542aff0ce058c97d4f64d88ea8aaed04c7b271df67803a11853bea6": [
+          "CRLF"
+        ]
+      }
+    },
+    {
+      "name": "rf: Test_predictions_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: CV winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: CV winner parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf: fold AP aggregation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/baseline: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/baseline: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/baseline: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/baseline: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/baseline: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "rf/tuned: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/tuned: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/tuned: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/tuned: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/tuned: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "rf/validation: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf/validation: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/validation: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/validation/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "rf/validation/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/validation/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "rf/validation/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/validation: metrics Baseline RF",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/validation: metrics Tuned RF",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/validation: metrics Tuned RF / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/validation: metrics Tuned RF / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/validation: metrics Tuned RF / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/validation: metrics Tuned RF / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf: full validation threshold table",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: validation threshold r=1",
+      "passed": true,
+      "detail": {
+        "reselected": 0.706811715757006,
+        "frozen": 0.706811715757006
+      }
+    },
+    {
+      "name": "rf: validation threshold r=3",
+      "passed": true,
+      "detail": {
+        "reselected": 0.45258283874818894,
+        "frozen": 0.45258283874818894
+      }
+    },
+    {
+      "name": "rf: validation threshold r=5",
+      "passed": true,
+      "detail": {
+        "reselected": 0.32288101060928226,
+        "frozen": 0.32288101060928226
+      }
+    },
+    {
+      "name": "rf: validation threshold r=10",
+      "passed": true,
+      "detail": {
+        "reselected": 0.24897366446801708,
+        "frozen": 0.24897366446801708
+      }
+    },
+    {
+      "name": "rf/test: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf/test: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/test: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/test/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "rf/test/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/test/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "rf/test/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "rf/test: metrics Baseline RF",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Tuned RF",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Tuned RF / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Tuned RF / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Tuned RF / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Tuned RF / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Always negative",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf/test: metrics Always positive",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "rf: conditional bootstrap intervals",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: historical misclassification group counts",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: historical 05 case identities/groups",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "rf: historical r5 case identities/groups",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost: development membership and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost: all CV memberships and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost: declared feature list",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost: Frozen_protocol_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264": [
+          "current",
+          "LF",
+          "git:b0de7576faa574d803c35853e94c080ae4c60ea4"
+        ]
+      }
+    },
+    {
+      "name": "xgboost: Frozen_protocol_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost: Test_predictions_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79": [
+          "current",
+          "LF",
+          "git:b0de7576faa574d803c35853e94c080ae4c60ea4"
+        ]
+      }
+    },
+    {
+      "name": "xgboost: Test_predictions_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost: CV winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost: CV winner parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost: fold AP aggregation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/baseline: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/baseline: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/baseline: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/baseline: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/tuned: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/tuned: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/tuned: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/tuned: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/validation: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost/validation: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/validation: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/validation/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 5.960464477539063e-08,
+        "absolute_tolerance": 1e-07,
+        "bit_exact": false,
+        "interpretation": "XGBoost float32-scale platform drift permitted only with exact frozen decisions"
+      }
+    },
+    {
+      "name": "xgboost/validation/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/validation/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 5.960464477539063e-08,
+        "absolute_tolerance": 1e-07,
+        "bit_exact": false,
+        "interpretation": "XGBoost float32-scale platform drift permitted only with exact frozen decisions"
+      }
+    },
+    {
+      "name": "xgboost/validation/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/validation: metrics Baseline XGBoost",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/validation: metrics Tuned XGBoost",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/validation: metrics Tuned XGBoost / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/validation: metrics Tuned XGBoost / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/validation: metrics Tuned XGBoost / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/validation: metrics Tuned XGBoost / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost: full validation threshold table",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost: validation threshold r=1",
+      "passed": true,
+      "detail": {
+        "reselected": 0.7327737808227539,
+        "frozen": 0.7327737808227539
+      }
+    },
+    {
+      "name": "xgboost: validation threshold r=3",
+      "passed": true,
+      "detail": {
+        "reselected": 0.5344873666763306,
+        "frozen": 0.5344873666763306
+      }
+    },
+    {
+      "name": "xgboost: validation threshold r=5",
+      "passed": true,
+      "detail": {
+        "reselected": 0.31501567363739014,
+        "frozen": 0.31501567363739014
+      }
+    },
+    {
+      "name": "xgboost: validation threshold r=10",
+      "passed": true,
+      "detail": {
+        "reselected": 0.2706960439682007,
+        "frozen": 0.2706960439682007
+      }
+    },
+    {
+      "name": "xgboost/test: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "xgboost/test: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/test: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/test/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 2.9802322387695312e-08,
+        "absolute_tolerance": 1e-07,
+        "bit_exact": false,
+        "interpretation": "XGBoost float32-scale platform drift permitted only with exact frozen decisions"
+      }
+    },
+    {
+      "name": "xgboost/test/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/test/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 5.960464477539063e-08,
+        "absolute_tolerance": 1e-07,
+        "bit_exact": false,
+        "interpretation": "XGBoost float32-scale platform drift permitted only with exact frozen decisions"
+      }
+    },
+    {
+      "name": "xgboost/test/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "xgboost/test: metrics Baseline XGBoost",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Tuned XGBoost",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Tuned XGBoost / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Tuned XGBoost / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Tuned XGBoost / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Tuned XGBoost / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Always negative",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost/test: metrics Always positive",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "xgboost: conditional bootstrap intervals",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement: development membership and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement: all CV memberships and row order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement: declared feature list",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement: Frozen_protocol_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0": [
+          "current",
+          "LF",
+          "git:e1ecb3e97636347eb412d54a6a939564a28f2179"
+        ]
+      }
+    },
+    {
+      "name": "logistic_supplement: Frozen_protocol_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement: Test_predictions_SHA256 byte/newline/history reconciliation",
+      "passed": true,
+      "detail": {
+        "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d": [
+          "current",
+          "LF",
+          "git:e1ecb3e97636347eb412d54a6a939564a28f2179"
+        ]
+      }
+    },
+    {
+      "name": "logistic_supplement: Test_predictions_SHA256 newline conversion preserves content",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement: CV winner",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement: CV winner parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement: fold AP aggregation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: fit-only scaler moments",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/baseline: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "logistic_supplement/tuned: model SHA256",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/tuned: fitted estimator parameters",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/tuned: one-hot categories from fit",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/tuned: ID/outcome excluded from preprocessing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/tuned: fit-only scaler moments",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/tuned: serialized fit n",
+      "passed": true,
+      "detail": 18000
+    },
+    {
+      "name": "logistic_supplement/validation: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement/validation: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/validation: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/validation/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "logistic_supplement/validation/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/validation/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "logistic_supplement/validation/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Baseline LR supplement",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Tuned LR supplement",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Tuned LR supplement / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Tuned LR supplement / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Tuned LR supplement / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/validation: metrics Tuned LR supplement / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement: full validation threshold table",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement: validation threshold r=1",
+      "passed": true,
+      "detail": {
+        "reselected": 0.4453536666170534,
+        "frozen": 0.4453536666170534
+      }
+    },
+    {
+      "name": "logistic_supplement: validation threshold r=3",
+      "passed": true,
+      "detail": {
+        "reselected": 0.26511536570131244,
+        "frozen": 0.26511536570131244
+      }
+    },
+    {
+      "name": "logistic_supplement: validation threshold r=5",
+      "passed": true,
+      "detail": {
+        "reselected": 0.23431561971886616,
+        "frozen": 0.23431561971886616
+      }
+    },
+    {
+      "name": "logistic_supplement: validation threshold r=10",
+      "passed": true,
+      "detail": {
+        "reselected": 0.00394068689681157,
+        "frozen": 0.00394068689681157
+      }
+    },
+    {
+      "name": "logistic_supplement/test: row_id and labels including order",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    },
+    {
+      "name": "logistic_supplement/test: unique prediction row_ids",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/test: label join",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/test/baseline: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "logistic_supplement/test/baseline: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/test/tuned: replay probabilities",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 0.0,
+        "absolute_tolerance": 1e-14,
+        "bit_exact": true,
+        "interpretation": "Double precision replay"
+      }
+    },
+    {
+      "name": "logistic_supplement/test/tuned: replay frozen decisions",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "logistic_supplement/test: metrics Baseline LR supplement",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Tuned LR supplement",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Tuned LR supplement / cost ratio 1",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Tuned LR supplement / cost ratio 3",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Tuned LR supplement / cost ratio 5",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Tuned LR supplement / cost ratio 10",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Always negative",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement/test: metrics Always positive",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "logistic_supplement: conditional bootstrap intervals",
+      "passed": true,
+      "detail": "Exact values, column order, row order and dtypes"
+    }
+  ],
+  "passed": 223,
+  "failed": 0,
+  "details": {
+    "train_hash_evidence": {
+      "current_sha256": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+      "variants": {
+        "current": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+        "LF": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+        "CRLF": "17616bdca64aa051af6b14aced75b8150789aa8ec0ecd9b748596ae98f66267a",
+        "git:959a2b27182b795f4fff1e7e1493cc85c522865a": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf"
+      },
+      "historical_blobs": [
+        {
+          "commit": "959a2b27182b795f4fff1e7e1493cc85c522865a",
+          "sha256": "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "5865eb9b4e78ab070288a2bf0aceaf648d370ed56acb6d0d9d671e7d88ccbaaf": [
+          "current",
+          "LF",
+          "git:959a2b27182b795f4fff1e7e1493cc85c522865a"
+        ],
+        "17616bdca64aa051af6b14aced75b8150789aa8ec0ecd9b748596ae98f66267a": [
+          "CRLF"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "test_hash_evidence": {
+      "current_sha256": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2",
+      "variants": {
+        "current": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2",
+        "LF": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2",
+        "CRLF": "ac8606dd171f9982227242f8c4b31e8b22320e231851a14783b7144d0e8455e8",
+        "git:959a2b27182b795f4fff1e7e1493cc85c522865a": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2"
+      },
+      "historical_blobs": [
+        {
+          "commit": "959a2b27182b795f4fff1e7e1493cc85c522865a",
+          "sha256": "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "d3422c421d5c990924f05b72d6588fa6aa9708feec4b073fcf20ef2ce70384b2": [
+          "current",
+          "LF",
+          "git:959a2b27182b795f4fff1e7e1493cc85c522865a"
+        ],
+        "ac8606dd171f9982227242f8c4b31e8b22320e231851a14783b7144d0e8455e8": [
+          "CRLF"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "source": {
+      "clean_rows": 30000,
+      "fit_rows": 18000,
+      "validation_rows": 6000,
+      "test_rows": 6000,
+      "fit_defaults": 3982,
+      "validation_defaults": 1327,
+      "test_defaults": 1327,
+      "clean_duplicate_features_excluding_first": 56,
+      "train_duplicate_features_excluding_first": 39,
+      "test_rows_features_seen_in_development": 15,
+      "cleaning": "02_preprocessing.ipynb documents EDUCATION {0,5,6}->4, MARRIAGE 0->3; no rows removed/imputation; negative repayment codes and large/negative amounts retained. Original historical download bytes were not preserved; the separate results/final/source_audit.json records fresh official-source replay evidence.",
+      "duplicate_interpretation": "Equal feature vectors retained; do not establish duplicate customers."
+    },
+    "official_source_replay": {
+      "source_url": "https://archive.ics.uci.edu/static/public/350/data.csv",
+      "raw_sha256": "45bcf4df62ff2e237a74eb155cabfb4bbbc171219a0637daef44fdad07503dd0",
+      "clean_sha256": "a325002564c2fac88f804d0d2d81bed911435bac084e8479e450ceb08a744183",
+      "raw_columns": [
+        "ID",
+        "X1",
+        "X2",
+        "X3",
+        "X4",
+        "X5",
+        "X6",
+        "X7",
+        "X8",
+        "X9",
+        "X10",
+        "X11",
+        "X12",
+        "X13",
+        "X14",
+        "X15",
+        "X16",
+        "X17",
+        "X18",
+        "X19",
+        "X20",
+        "X21",
+        "X22",
+        "X23",
+        "Y"
+      ],
+      "raw_rows": 30000,
+      "raw_missing_values": 0,
+      "original_id_matches_row_id_plus_one": true,
+      "raw_duplicate_feature_label_rows_excluding_first": 35,
+      "clean_duplicate_feature_label_rows_excluding_first": 35,
+      "cleaning_exact_values_dtypes_order_verified": true,
+      "education_recoded_rows": 345,
+      "marriage_recoded_rows": 54,
+      "clean_label_counts": {
+        "0": 23364,
+        "1": 6636
+      },
+      "source_license": "CC BY 4.0; UCI dataset DOI 10.24432/C55S3H",
+      "note": "Fresh provenance audit; original preprocessing download bytes were not preserved. No training."
+    },
+    "cv_folds": [
+      {
+        "fold": 0,
+        "fit_n": 14400,
+        "heldout_n": 3600,
+        "heldout_defaults": 796,
+        "disjoint": true
+      },
+      {
+        "fold": 1,
+        "fit_n": 14400,
+        "heldout_n": 3600,
+        "heldout_defaults": 796,
+        "disjoint": true
+      },
+      {
+        "fold": 2,
+        "fit_n": 14400,
+        "heldout_n": 3600,
+        "heldout_defaults": 796,
+        "disjoint": true
+      },
+      {
+        "fold": 3,
+        "fit_n": 14400,
+        "heldout_n": 3600,
+        "heldout_defaults": 797,
+        "disjoint": true
+      },
+      {
+        "fold": 4,
+        "fit_n": 14400,
+        "heldout_n": 3600,
+        "heldout_defaults": 797,
+        "disjoint": true
+      }
+    ],
+    "decision_tree_Frozen_protocol_SHA256": {
+      "current_sha256": "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237",
+      "variants": {
+        "current": "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237",
+        "LF": "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237",
+        "CRLF": "a12dab2d948f58834169a52f02d8f5fc9a71ec507d5f516e401147f1d36b95aa",
+        "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f": "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237"
+      },
+      "historical_blobs": [
+        {
+          "commit": "3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f",
+          "sha256": "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237",
+          "parsed_exact": true,
+          "comparison": {}
+        }
+      ],
+      "expected_matches": {
+        "cacd8948b62ea6f871024f8a7262a9a35ddca297b6aff6677de8b50761b0f237": [
+          "current",
+          "LF",
+          "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "decision_tree_Test_predictions_SHA256": {
+      "current_sha256": "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9",
+      "variants": {
+        "current": "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9",
+        "LF": "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9",
+        "CRLF": "979df06cfad46512746218e584e2103b4cd74ca51cab07076205dd4d36dcae52",
+        "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f": "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9"
+      },
+      "historical_blobs": [
+        {
+          "commit": "3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f",
+          "sha256": "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "f4ae1bbd18d6e71347200b470f2fa3114b46b5b08747a3fb5615e942586aeff9": [
+          "current",
+          "LF",
+          "git:3d9ab3f1211124dd7aca9d2bdab59d7b85e5be6f"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "decision_tree": {
+      "selected_candidate": 20,
+      "cv_ap": 0.5307251616775044,
+      "cv_ap_sd": 0.018517141435777096,
+      "models": {
+        "baseline": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized tree root n_node_samples",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 1
+        },
+        "tuned": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized tree root n_node_samples",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 0
+        }
+      },
+      "thresholds": {}
+    },
+    "rf_Frozen_protocol_SHA256": {
+      "current_sha256": "2578d17c10eff408517be51c8db491bb62f5ad87df989f4facb3bee1ce7769e5",
+      "variants": {
+        "current": "2578d17c10eff408517be51c8db491bb62f5ad87df989f4facb3bee1ce7769e5",
+        "LF": "2578d17c10eff408517be51c8db491bb62f5ad87df989f4facb3bee1ce7769e5",
+        "CRLF": "84b9a833b35d3bebb66cbfdabf19b109babb05643c303d2489b4a1f69d388e6f",
+        "git:421b0e1362d46e6ed81b47dc7ddc9ea0a3961a94": "2578d17c10eff408517be51c8db491bb62f5ad87df989f4facb3bee1ce7769e5",
+        "git:3da46a6774b803386f52e5ffe75c82df03a73689": "4ae1c95f7e4e3b8ea038a7f78ca28c939fe37350282258c37e3b6b265f1f5ab0"
+      },
+      "historical_blobs": [
+        {
+          "commit": "421b0e1362d46e6ed81b47dc7ddc9ea0a3961a94",
+          "sha256": "2578d17c10eff408517be51c8db491bb62f5ad87df989f4facb3bee1ce7769e5",
+          "parsed_exact": true,
+          "comparison": {}
+        },
+        {
+          "commit": "3da46a6774b803386f52e5ffe75c82df03a73689",
+          "sha256": "4ae1c95f7e4e3b8ea038a7f78ca28c939fe37350282258c37e3b6b265f1f5ab0",
+          "parsed_exact": false,
+          "comparison": {
+            "Model_SHA256": {
+              "current": {
+                "baseline_pipeline.joblib": "dfd40a3b8309b18a1eb2ecee797b0473c0fd1ddb1b97d97183dbd3a46146e263",
+                "tuned_pipeline.joblib": "e7f3ff3ec1420322a2a063cc34ea22249cab459cd43f045c5984ae52461d7549"
+              },
+              "historical": {
+                "baseline_pipeline.joblib": "de81dad354113362b4da0609b40ad4122ddf1b857d0afa92af9754b54effe7df",
+                "tuned_pipeline.joblib": "3b48294bf00179c5e0f00a6d4aea9abec7304ba49d72a70dfdce874f43c85c14"
+              }
+            },
+            "Frozen_at_UTC": {
+              "current": "2026-09-06T03:39:24.877627+00:00",
+              "historical": "2026-09-06T02:24:10.248550+00:00"
+            },
+            "Packages": {
+              "current": {
+                "numpy": "2.3.5",
+                "pandas": "2.2.3",
+                "scikit-learn": "1.8.0",
+                "matplotlib": "3.10.8",
+                "scipy": "1.17.0",
+                "joblib": "1.5.3"
+              },
+              "historical": {
+                "numpy": "2.3.5",
+                "pandas": "2.3.3",
+                "scikit-learn": "1.7.2",
+                "matplotlib": "3.10.7",
+                "scipy": "1.16.3",
+                "joblib": "1.5.3"
+              }
+            }
+          }
+        }
+      ],
+      "expected_matches": {
+        "84b9a833b35d3bebb66cbfdabf19b109babb05643c303d2489b4a1f69d388e6f": [
+          "CRLF"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": false
+    },
+    "rf_Test_predictions_SHA256": {
+      "current_sha256": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050",
+      "variants": {
+        "current": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050",
+        "LF": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050",
+        "CRLF": "67563e134542aff0ce058c97d4f64d88ea8aaed04c7b271df67803a11853bea6",
+        "git:3da46a6774b803386f52e5ffe75c82df03a73689": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050"
+      },
+      "historical_blobs": [
+        {
+          "commit": "3da46a6774b803386f52e5ffe75c82df03a73689",
+          "sha256": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "67563e134542aff0ce058c97d4f64d88ea8aaed04c7b271df67803a11853bea6": [
+          "CRLF"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "rf": {
+      "selected_candidate": 3,
+      "cv_ap": 0.5647168733528509,
+      "cv_ap_sd": 0.013626591492187885,
+      "models": {
+        "baseline": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized RandomForest _n_samples (bootstrap root distinct counts are not fit n)",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 38,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 34
+        },
+        "tuned": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized RandomForest _n_samples (bootstrap root distinct counts are not fit n)",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 0
+        }
+      },
+      "thresholds": {
+        "1": {
+          "frozen": 0.706811715757006,
+          "reselected": 0.706811715757006,
+          "equal_minimum_cost_candidates": 2,
+          "validation_scores_at_threshold": 1
+        },
+        "3": {
+          "frozen": 0.45258283874818894,
+          "reselected": 0.45258283874818894,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "5": {
+          "frozen": 0.32288101060928226,
+          "reselected": 0.32288101060928226,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "10": {
+          "frozen": 0.24897366446801708,
+          "reselected": 0.24897366446801708,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        }
+      }
+    },
+    "xgboost_Frozen_protocol_SHA256": {
+      "current_sha256": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+      "variants": {
+        "current": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+        "LF": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+        "CRLF": "b9b330bec3530552b1678e4cdee76ae2432c61a4c95555b525ad518ca631919e",
+        "git:b0de7576faa574d803c35853e94c080ae4c60ea4": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264"
+      },
+      "historical_blobs": [
+        {
+          "commit": "b0de7576faa574d803c35853e94c080ae4c60ea4",
+          "sha256": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+          "parsed_exact": true,
+          "comparison": {}
+        }
+      ],
+      "expected_matches": {
+        "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264": [
+          "current",
+          "LF",
+          "git:b0de7576faa574d803c35853e94c080ae4c60ea4"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "xgboost_Test_predictions_SHA256": {
+      "current_sha256": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79",
+      "variants": {
+        "current": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79",
+        "LF": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79",
+        "CRLF": "e98e4aeb4307d5123e74a7c58a0e938a78396c1808a648562d82066450beb761",
+        "git:b0de7576faa574d803c35853e94c080ae4c60ea4": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79"
+      },
+      "historical_blobs": [
+        {
+          "commit": "b0de7576faa574d803c35853e94c080ae4c60ea4",
+          "sha256": "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "b52dbc898f546c8d0f9dd61afb5bdaf84e759644968af4f8a2cb994bcfcd9f79": [
+          "current",
+          "LF",
+          "git:b0de7576faa574d803c35853e94c080ae4c60ea4"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "xgboost": {
+      "selected_candidate": 7,
+      "cv_ap": 0.5620187239302741,
+      "cv_ap_sd": 0.014002365278013245,
+      "models": {
+        "baseline": {
+          "fit_n": null,
+          "fit_n_evidence": "XGBoost serialization does not record training row count; 18000 is supported by source and memberships, not independently recoverable from booster.",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 2.3499369117274682e-11
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": -6.219108561467124e-12
+          },
+          "test_ties_at_0.5": 0
+        },
+        "tuned": {
+          "fit_n": null,
+          "fit_n_evidence": "XGBoost serialization does not record training row count; 18000 is supported by source and memberships, not independently recoverable from booster.",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 4.501135575374349e-11
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 2.029076906495675e-11
+          },
+          "test_ties_at_0.5": 0
+        }
+      },
+      "thresholds": {
+        "1": {
+          "frozen": 0.7327737808227539,
+          "reselected": 0.7327737808227539,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "3": {
+          "frozen": 0.5344873666763306,
+          "reselected": 0.5344873666763306,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "5": {
+          "frozen": 0.31501567363739014,
+          "reselected": 0.31501567363739014,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "10": {
+          "frozen": 0.2706960439682007,
+          "reselected": 0.2706960439682007,
+          "equal_minimum_cost_candidates": 2,
+          "validation_scores_at_threshold": 1
+        }
+      }
+    },
+    "logistic_supplement_Frozen_protocol_SHA256": {
+      "current_sha256": "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0",
+      "variants": {
+        "current": "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0",
+        "LF": "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0",
+        "CRLF": "11ac27b703216e236f1428f45b371343e499819de8828a1a592137225b0c5aed",
+        "git:e1ecb3e97636347eb412d54a6a939564a28f2179": "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0"
+      },
+      "historical_blobs": [
+        {
+          "commit": "e1ecb3e97636347eb412d54a6a939564a28f2179",
+          "sha256": "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0",
+          "parsed_exact": true,
+          "comparison": {}
+        }
+      ],
+      "expected_matches": {
+        "e61458c01cb2cbdfd257c84ad5b97013a1a1f6e7cf2a5c1c82dda30869c748c0": [
+          "current",
+          "LF",
+          "git:e1ecb3e97636347eb412d54a6a939564a28f2179"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "logistic_supplement_Test_predictions_SHA256": {
+      "current_sha256": "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d",
+      "variants": {
+        "current": "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d",
+        "LF": "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d",
+        "CRLF": "84a9354c30916eb8b35538b4b4d8f860ded774005ab2ff12741d9ff87dff6198",
+        "git:e1ecb3e97636347eb412d54a6a939564a28f2179": "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d"
+      },
+      "historical_blobs": [
+        {
+          "commit": "e1ecb3e97636347eb412d54a6a939564a28f2179",
+          "sha256": "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d",
+          "parsed_exact": true,
+          "comparison": "Exact values, column order, row order and dtypes"
+        }
+      ],
+      "expected_matches": {
+        "4170dc3ab5a9e0b12b47dc557100bac52b8f902e72d2840ed98c7c1d62822b6d": [
+          "current",
+          "LF",
+          "git:e1ecb3e97636347eb412d54a6a939564a28f2179"
+        ]
+      },
+      "newline_variants_parse_identically": true,
+      "historical_versions_parse_identically": true
+    },
+    "logistic_supplement": {
+      "selected_candidate": 5,
+      "cv_ap": 0.5113319980695101,
+      "cv_ap_sd": 0.0149290518671588,
+      "models": {
+        "baseline": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized StandardScaler n_samples_seen_; this verifies preprocessing count, not an independent classifier fit count",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 0
+        },
+        "tuned": {
+          "fit_n": 18000,
+          "fit_n_evidence": "Serialized StandardScaler n_samples_seen_; this verifies preprocessing count, not an independent classifier fit count",
+          "preprocess_features": [
+            "SEX_1",
+            "SEX_2",
+            "EDUCATION_1",
+            "EDUCATION_2",
+            "EDUCATION_3",
+            "EDUCATION_4",
+            "MARRIAGE_1",
+            "MARRIAGE_2",
+            "MARRIAGE_3",
+            "LIMIT_BAL",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+          ],
+          "encoder_handle_unknown": "ignore",
+          "load_warnings": [],
+          "validation_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "validation_ties_at_0.5": 0,
+          "test_replay_metric_deltas": {
+            "AP": 0.0,
+            "ROC-AUC": 0.0,
+            "Brier": 0.0
+          },
+          "test_ties_at_0.5": 0
+        }
+      },
+      "thresholds": {
+        "1": {
+          "frozen": 0.4453536666170534,
+          "reselected": 0.4453536666170534,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "3": {
+          "frozen": 0.26511536570131244,
+          "reselected": 0.26511536570131244,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "5": {
+          "frozen": 0.23431561971886616,
+          "reselected": 0.23431561971886616,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        },
+        "10": {
+          "frozen": 0.00394068689681157,
+          "reselected": 0.00394068689681157,
+          "equal_minimum_cost_candidates": 1,
+          "validation_scores_at_threshold": 1
+        }
+      }
+    }
+  }
+}

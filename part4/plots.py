@@ -104,7 +104,7 @@ def generate(output):
                ("Always positive", GREEN, .27, lambda r: "Always positive")]
     for label, color, offset, get_model in configs:
         values = [result.loc[get_model(r), f"Cost_{r}_per_1000"] for r in ratios]
-        ax.bar(x + offset, values, width=.18, color=color, label=label)
+        ax.bar(x + offset, np.asarray(values, dtype=float), width=.18, color=color, label=label)
     ax.set(xticks=x, xticklabels=["1:1", "3:1", "5:1 (primary)", "10:1"],
            xlabel="Assumed false-negative : false-positive cost ratio",
            ylabel="Held-out hypothetical cost units per 1,000", title="Cost sensitivity on the fixed test set")

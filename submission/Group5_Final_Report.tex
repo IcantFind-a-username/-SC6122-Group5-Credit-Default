@@ -1,0 +1,145 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=19mm]{geometry}
+\usepackage{graphicx,booktabs,tabularx,array,xcolor,hyperref,enumitem}
+\definecolor{navy}{HTML}{142C43}
+\definecolor{teal}{HTML}{127D88}
+\hypersetup{colorlinks=true,urlcolor=teal,linkcolor=navy}
+\setlength{\parindent}{0pt}
+\setlength{\emergencystretch}{3em}
+\setlength{\parskip}{5pt}
+\setlist{nosep,leftmargin=16pt}
+\renewcommand{\arraystretch}{1.18}
+\newcommand{\sect}[1]{\vspace{3pt}{\large\bfseries\color{navy}#1}\par}
+\newcommand{\smallcap}[1]{{\small\textit{#1}}\par}
+\begin{document}
+{\LARGE\bfseries\color{navy} Credit Card Default Prediction}\par
+{\large Ranking risk, explaining patterns and choosing an action}\par
+NTU SC6122 Emerging Topics in FinTech --- Group 5\hfill 7 September 2026
+\smallcap{Members: \textbf{NAME / STUDENT ID TO CONFIRM for all four roles}. Planned presentation: 8 September 2026; course platform deadline pending confirmation.}
+\sect{1. Problem, objectives and data}
+Credit default prediction can support the prioritization of account reviews. A missed default and an unnecessary review impose different costs, so the model with the best classification accuracy need not support the best decision. We ask: \textbf{how well can models identify default risk, and how should ranking ability, interpretability and decision cost be balanced?} We compare logistic regression (LR), a decision tree (DT), random forest (RF) and XGBoost on the same historical records. Objectives are to evaluate ranking using average precision (AP) and ROC-AUC, explain predictive associations, and examine threshold policies under explicit hypothetical error costs.
+
+We use UCI's Default of Credit Card Clients dataset [1]: 30,000 Taiwan clients, 23 predictors and a binary default-payment outcome (1 = default). Predictors describe credit limit, age, sex, education, marital status, repayment status, bill amounts and previous payments. Payment history covers April--September 2005; monetary variables are in NT dollars. There are 6,636 positive outcomes (22.12\%) and 23,364 negatives. Thus an always-negative classifier can look accurate while detecting no defaults. This is an educational historical-sample study, not evidence of readiness for current credit decisions.
+
+\textbf{Cleaning and identity.} There are no missing entries. Undocumented EDUCATION values 0/5/6 are mapped to 4 (345 rows); MARRIAGE 0 is mapped to 3 (54 rows). Other values, including negative repayment codes and large or negative amounts, are retained. No rows, outliers or duplicate records are removed; 35 identical feature--label repetitions remain. Equal records alone do not establish repeated customers, but retaining them can create dependence across partitions. The final audit finds 15 test rows whose feature vectors also appear in development data. This limitation is retained rather than changing the established split after evaluation.
+
+\textbf{Traceability.} The official UCI CSV was downloaded again during integration, and the above transformation reproduces the committed clean file exactly in values, types, row order and column order. The original download bytes were not saved; the new raw file and SHA256 audit are provided. The repository's zero-based \texttt{row\_id} equals original UCI ID minus one. Neither identifier nor the label enters any model.
+\begin{center}\includegraphics[width=.97\linewidth]{figures/split.png}\end{center}
+\smallcap{Figure 1. Fixed stratified partitions, seed 42. The 18,000 fitting rows supply five inner CV folds (14,400 train / 3,600 holdout each). Validation selects decision thresholds; the 6,000 historical test rows supply reported outcomes.}
+\newpage
+\sect{2. Experimental design and model selection}
+The original 80/20 split yields 24,000 development and 6,000 test rows. A further stratified 75/25 development split produces 18,000 fit and 6,000 validation rows. Positive counts are 3982, 1,327 and 1,327 respectively. All four reproducible experiments have identical row-level development and five-fold CV memberships. IDs are unique and partitions disjoint. Final models fit only the 18,000 rows; validation rows are not incorporated by a later refit.
+
+Each CV training fold fits its own preprocessing. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
+
+\textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. LR's supplement evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
+\begin{center}\small
+\begin{tabular}{@{}lrrp{70mm}r@{}}\toprule
+Model & Configs & CV fits & Selected (summary) & CV AP\\\midrule
+LR* & 12 & 60 & C=0.1; unweighted & 0.5113\\
+DT & 21 & 105 & Unlimited depth; leaf=100 & 0.5307\\
+RF & 24 & 120 & 500 trees; depth=8; leaf=2; class 1:3 & 0.5647\\
+XGB & 24 & 120 & 150 trees; depth=4; rate=.03; weight=3 & 0.5620\\
+\bottomrule\end{tabular}\end{center}
+\smallcap{Table 1. Declared searches and selected configurations. The complete search spaces, per-fold scores, package versions and model hashes are in each \texttt{protocol\_frozen.json} and \texttt{cv\_results.csv}.}
+
+LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its grid crosses $C$ values .001, .01, .1, 1, 10 and 100 with no class weighting or balanced weighting. DT searches maximum depth 2, 3, 4, 5, 6, 8 or unlimited, and minimum leaf size 1, 20 or 100. RF varies tree count, depth, split/leaf size, feature subsampling and class weighting. XGBoost varies tree count, learning rate, depth, child weight, row/column sampling, L1/L2 penalties and positive-class weighting [3]. Baseline tree/ensemble configurations are retained alongside selected configurations.
+
+\textbf{Decision selection.} We use $\hat y=1[s\geq t]$ throughout, where $s$ is the positive-class score. The fixed reference is $t=0.5$. For LR, RF and XGBoost, all distinct validation score cutoffs are considered for $C_r=FP+r\,FN$, with $r\in\{1,3,5,10\}$. Equal costs prefer the largest threshold (fewer alerts); tied scores move together. DT has only its historical fixed 0.5 policy. Each cost threshold is chosen on validation, then applied unchanged to test predictions. No test threshold sweep is used to select a policy.
+
+\textbf{Evidence boundary.} Historical LR CSVs exist, but its notebook is empty across available branches/history and no saved model/predictions establish its process. Their ``PR-AUC'' definition is also unverified. We retain them but exclude them from the verified ranking table. LR below is a separately recorded, predeclared \emph{post-hoc reproducibility supplement}, run once after earlier team test results were visible. It is not a recovered original experiment or a new independently unseen test. Tree runners freeze choices before loading test rows, but team-wide historical exposure remains a limitation.
+\newpage
+\sect{3. Ranking and classification findings}
+\begin{center}\small
+\begin{tabular}{@{}lrrrrrr@{}}\toprule
+Model & AP & ROC-AUC & P & R & F1 & Acc\\\midrule
+LR* B & 0.4970 & 0.7111 & 0.6975 & 0.2555 & 0.3740 & 0.8108\\
+LR* T & 0.4967 & 0.7107 & 0.6985 & 0.2532 & 0.3717 & 0.8107\\
+DT B & 0.2843 & 0.6076 & 0.3783 & 0.4039 & 0.3907 & 0.7213\\
+DT T & 0.5221 & 0.7538 & 0.6583 & 0.3572 & 0.4631 & 0.8168\\
+RF B & 0.5312 & 0.7534 & 0.6441 & 0.3806 & 0.4784 & 0.8165\\
+RF T & 0.5508 & 0.7752 & 0.5463 & 0.5200 & 0.5328 & 0.7983\\
+XGB B & 0.5544 & 0.7773 & 0.6565 & 0.3557 & 0.4614 & 0.8163\\
+XGB T & 0.5516 & 0.7762 & 0.5134 & 0.5486 & 0.5304 & 0.7852\\
+\bottomrule\end{tabular}\end{center}
+\smallcap{Table 2. Historical test, $n=6,000$, default positive. All rows use threshold 0.5. P/R/F1/Acc are proportions. B = baseline; T = CV-selected; LR* = post-hoc supplement. Full precision and all confusion counts are in \texttt{model\_comparison.csv}.}
+
+\begin{center}\small
+\begin{tabular}{@{}lrrrrrrrr@{}}\toprule
+Model & B: TN & FP & FN & TP & T: TN & FP & FN & TP\\\midrule
+LR* & 4526 & 147 & 988 & 339 & 4528 & 145 & 991 & 336\\
+DT & 3792 & 881 & 791 & 536 & 4427 & 246 & 853 & 474\\
+RF & 4394 & 279 & 822 & 505 & 4100 & 573 & 637 & 690\\
+XGB & 4426 & 247 & 855 & 472 & 3983 & 690 & 599 & 728\\
+\bottomrule\end{tabular}\end{center}
+\smallcap{Table 3. Test confusion counts at 0.5. B = baseline; T = CV-selected. Counts are recomputed from row-aligned scores and labels.}
+
+AP is computed by \texttt{average\_precision\_score}, a recall-increment weighted sum of precision, not trapezoidal PR-AUC [2]. ROC-AUC summarizes positive--negative score ordering. Both use continuous scores and are independent of the chosen operating threshold; precision, recall, F1 and accuracy describe a particular decision rule.
+\begin{center}\includegraphics[width=.94\linewidth]{figures/ranking.png}\end{center}
+\smallcap{Figure 2. Test AP for declared baselines and CV-selected models. The dashed reference is positive prevalence (0.2212). Selection uses fit-fold CV, never this chart.}
+
+The unrestricted DT strongly overfits: mean fit-fold AP is about 1.0000 while CV AP is 0.2970. A minimum leaf size of 100 raises test AP from 0.2843 to 0.5221. RF selection raises AP from 0.5312 to 0.5508. XGBoost changes from 0.5544 to 0.5516: the selected configuration does not improve test ranking. LR* changes from 0.4970 to 0.4967, also without a ranking gain. Among the displayed point estimates the XGBoost baseline has the highest AP, but this retrospective observation does not authorize a new model-selection round. Small differences between RF and XGBoost do not establish superiority.
+\newpage
+\sect{4. Thresholds, costs and review capacity}
+We treat one false-positive review as one hypothetical cost unit, and a missed default as $r$ units. This is a sensitivity analysis, not a measured monetary loss: loan exposure, loss given default, treatment effects and review capacity are unavailable. Positive class weights can change score calibration, so a probability-derived cutoff such as $1/(1+r)$ is not assumed valid. Policies are selected empirically on validation data.
+\begin{center}\small
+\begin{tabular}{@{}lrrrrrrr@{}}\toprule
+Model & Policy & Threshold & Recall \% & Alert \% & FP & FN & Cost\\\midrule
+LR* & 0.5 & 0.50000 & 25.32 & 8.02 & 145 & 991 & 5100\\
+LR* & Val r=5 & 0.23432 & 59.38 & 32.75 & 1177 & 539 & 3872\\
+RF & 0.5 & 0.50000 & 52.00 & 21.05 & 573 & 637 & 3758\\
+RF & Val r=5 & 0.32288 & 77.09 & 48.45 & 1884 & 304 & 3404\\
+XGB & 0.5 & 0.50000 & 54.86 & 23.63 & 690 & 599 & 3685\\
+XGB & Val r=5 & 0.31502 & 82.52 & 55.72 & 2248 & 232 & 3408\\
+\bottomrule\end{tabular}\end{center}
+\smallcap{Table 4. Same-model test comparison at 0.5 versus its validation-selected $r=5$ policy. Alert rate is the share flagged for review; costs are total hypothetical units across 6,000 rows. LR* remains a post-hoc supplement. DT has no historical validation-selected cost policy.}
+\begin{center}\includegraphics[width=.94\linewidth]{figures/cost_tradeoff.png}\end{center}
+\smallcap{Figure 3. Moving the same tuned XGBoost from 0.5 to its validation cutoff changes FP/FN and workload. Ranking scores remain unchanged.}
+
+For XGBoost, $t=0.31502$ changes cost from 3,685 to 3,408, a reduction of 7.52\%. Recall rises from 54.86\% to 82.52\%, while false positives rise from 690 to 2,248 and 55.72\% of clients are flagged. Precision falls from 51.34\% to 32.76\%. The benefit is fewer missed defaults under the assumed cost ratio; it is not a gain in AP or ROC-AUC. If that review load is infeasible, the policy would need a separately validated capacity constraint, not a threshold changed after viewing test errors.
+
+RF at its validation $r=5$ threshold costs 3,404 and flags 48.45\%, versus XGBoost's 3,408 and 55.72\%. The four-unit difference is too small to support a strong cross-model cost claim. RF detects fewer defaults (77.09\% recall) with fewer false positives. An always-negative policy costs 6,635 and an always-positive policy 4,673 at $r=5$; both are useful context, not deployment recommendations.
+
+\textbf{Uncertainty.} Historical 1,000-replicate stratified paired bootstraps condition on the frozen models, thresholds and fixed class counts. XGBoost's tuned-minus-baseline AP difference is $-0.0028$ (95\% interval $[-0.0106,0.0054]$). The selected-minus-0.5 cost difference is $-46.17$ units per 1,000 (95\% interval $[-74.34,-18.00]$). These intervals describe resampling of fixed predictions; they exclude retraining, hyperparameter/threshold selection, prevalence shifts and new-population uncertainty. They cannot be read as end-to-end deployment guarantees.
+\newpage
+\sect{5. Interpretation and audit evidence}
+\textbf{Complementary explanations.} LR coefficients summarize regularized associations on standardized numeric and encoded categorical scales. Correlated bill/payment variables and full one-hot coding limit isolated coefficient interpretations. DT offers explicit paths: its root splits on \texttt{PAY\_0 <= 1.5}; within fit rows, default proportions are 16.51\% on the left and 70.13\% on the right. These are node-level sample summaries, not causal effects or calibrated individual probabilities. The selected tree has 134 leaves and depth 18: no explicit depth cap does not mean no regularization, since every leaf requires at least 100 observations.
+
+RF averages many trees; this reduces reliance on a single unstable partition but makes full decision paths less concise. XGBoost sequentially builds boosted trees with regularization. We use saved validation permutation importance to ask which variable perturbations most reduce AP. Repayment status, especially recent status, is influential. Correlated predictors can substitute for one another; shuffling can form unrealistic combinations. Importance and rules should therefore be interpreted as predictive associations.
+\begin{center}\includegraphics[width=.93\linewidth]{figures/importance.png}\end{center}
+\smallcap{Figure 4. Tuned XGBoost validation permutation importance, top six features. Error bars are the SD across five permutations, not confidence intervals or causal estimates. Horizontal units: decrease in validation AP.}
+
+\textbf{Misclassification evidence.} RF's saved profiles and representative cases were recomputed separately under 0.5 and its validation-selected $r=5$ threshold. Both files satisfy their own FP/FN decision rules. The most confident errors can be the same in both files: lowest-scoring defaults remain false negatives and highest-scoring non-defaults remain false positives. Identical extreme examples alone do not imply a duplicated export; group counts and rule membership provide the relevant verification.
+
+\textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
+
+Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
+\newpage
+\sect{6. Conclusions, limitations and contributions}
+The historical sample contains useful predictive structure. A regularized tree improves on its unrestricted baseline and provides inspectable rules. RF and XGBoost obtain similar selected-model AP, while LR supplies a linear reference with separately documented supplementary provenance.
+
+\textbf{Ranking quality and action policy answer different questions.} XGBoost tuning did not yield a clear AP gain, but its validation-selected cutoff reduced hypothetical cost by accepting more false positives. Operational selection needs credible error costs and review capacity; test outcomes cannot justify another optimization round.
+
+Limitations include one historical geography/time period; a random rather than temporal or external holdout; retained duplicate feature vectors; incomplete provenance of the original LR results; historical test exposure; unequal search budgets; unvalidated calibration; and no assessment of group-specific errors or fairness. Demographic fields warrant further governance evaluation. Cost ratios do not capture exposure, realized losses, intervention benefits or review limits. The conditional bootstrap omits the uncertainty from building and selecting models. We make no causal, regulatory-compliance or production-readiness claim.
+
+A defensible next study would freeze a new protocol on fresh temporal/external data, assess calibration and subgroup errors, collect realistic loss and intervention-cost estimates, and evaluate policies constrained by review capacity. These are future steps, not experiments silently performed on the already evaluated test set.
+
+\textbf{Reproducibility and delivery.} The README separates verification from retraining. Automated comparison CSVs, models, predictions, source data and environment pins accompany the editable report and presentation. Historical protocols and member commits are preserved. Course-platform submission and member identities require group confirmation.
+
+\sect{Member contribution statement (identities to confirm)}
+\begin{tabularx}{\linewidth}{@{}p{18mm}Xp{26mm}@{}}\toprule
+Role & Substantive presentation responsibility / contribution scope & Identity / share\\\midrule
+Part 1 & Data cleaning, partition design, logistic model and provenance limitations; slides 1--3 & \textbf{NAME, ID, \% TBD}\\
+Part 2 & Decision-tree tuning, overfitting, rules and group ranking comparison; slides 4--6 & \textbf{NAME, ID, \% TBD}\\
+Part 3 & Random-forest search, error profiles, fair-comparison evidence; slides 7--9 & \textbf{NAME, ID, \% TBD}\\
+Part 4 & XGBoost, thresholds, costs, uncertainty and synthesis; slides 10--12 & \textbf{NAME, ID, \% TBD}\\\bottomrule
+\end{tabularx}
+\smallcap{Roles describe documented scopes and planned speaking, not confirmed contribution shares. Integration and the LR supplement were prepared with AI assistance for member review. Each role speaks for 3 minutes; Q\&A has 3 minutes.}
+
+\sect{References}
+{\small
+[1] I.-C. Yeh. \emph{Default of Credit Card Clients}. UCI Machine Learning Repository, 2009. \url{https://doi.org/10.24432/C55S3H}. CC BY 4.0.\par
+[2] scikit-learn developers. \emph{average\_precision\_score} documentation. \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html}. Accessed 7 September 2026; experiments use scikit-learn 1.8.0.\par
+[3] T. Chen and C. Guestrin. ``XGBoost: A Scalable Tree Boosting System.'' KDD, 2016, pp. 785--794. \url{https://doi.org/10.1145/2939672.2939785}.\par
+[4] Group 5. \emph{SC6122 Credit Default repository}, member experiment protocols and integration evidence, 2026. \href{https://github.com/IcantFind-a-username/-SC6122-Group5-Credit-Default}{Repository and audit artifacts}.}
+\end{document}

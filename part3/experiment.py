@@ -13,6 +13,7 @@ import json
 import platform
 import time
 from datetime import datetime, timezone
+from typing import Any
 from pathlib import Path
 
 from integration.artifacts import file_hash as file_hash, save_predictions as save_predictions, write_json as write_json
@@ -33,7 +34,7 @@ from .evaluation import (COST_RATIOS, feature_target, metrics, paired_bootstrap,
 BASELINE = dict(n_estimators=100, max_depth=None, min_samples_split=2,
                 min_samples_leaf=1, max_features="sqrt", criterion="gini",
                 class_weight=None)
-SEARCH_SPACE = dict(n_estimators=[150, 300, 500], max_depth=[4, 8, 12, None],
+SEARCH_SPACE: dict[str, Any] = dict(n_estimators=[150, 300, 500], max_depth=[4, 8, 12, None],
                     min_samples_split=[2, 5, 10], min_samples_leaf=[1, 2, 5],
                     max_features=["sqrt", "log2", .3, .5],
                     class_weight=[None, {0: 1, 1: 3}])
@@ -78,7 +79,7 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     pd.concat([fit[["row_id"]].assign(Partition="fit"),
                validation[["row_id"]].assign(Partition="validation")]).to_csv(output / "development_membership.csv", index=False)
     cv = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(x_fit, y_fit))
-    cv_members = []
+    cv_members: list[dict[str, int]] = []
     for fold, (_, holdout) in enumerate(cv):
         cv_members.extend({"row_id": int(v), "CV_fold": fold} for v in fit.iloc[holdout].row_id)
     pd.DataFrame(cv_members).to_csv(output / "cv_membership.csv", index=False)

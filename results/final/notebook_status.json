@@ -1,0 +1,29 @@
+{
+  "Status": "Passed",
+  "Executed": [
+    {
+      "notebook": "03_logistic_regression.ipynb",
+      "code_cells": 3,
+      "status": "Executed successfully in unified environment"
+    },
+    {
+      "notebook": "04_decision_tree.ipynb",
+      "code_cells": 5,
+      "status": "Executed successfully in unified environment"
+    },
+    {
+      "notebook": "05_random_forest.ipynb",
+      "code_cells": 3,
+      "status": "Executed successfully in unified environment"
+    },
+    {
+      "notebook": "06_xgboost.ipynb",
+      "code_cells": 7,
+      "status": "Executed successfully in unified environment"
+    }
+  ],
+  "Not_executed": {
+    "01_data_inspection.ipynb": "Historical network/source inspection; source audit independently verifies data.",
+    "02_preprocessing.ipynb": "Historical writer would overwrite frozen data; independent source and membership audit replaces rerun."
+  }
+}

@@ -1,87 +1,92 @@
-from integration.artifacts import save_predictions
 import numpy as np
-import pandas as pd
 import pytest
 
-from part4.evaluation import feature_target, metrics, select_threshold, split_development, threshold_table
-from part4.experiment import make_pipeline, paired_bootstrap
+from part1.experiment import run as run_lr
+from part2.experiment import run as run_tree
+from part3.experiment import run as run_rf
+from part4.evaluation import feature_target, metrics, select_threshold, threshold_table
+from part4.experiment import run as run_xgb
 
 
-def test_row_id_and_label_cannot_be_predictors(frame):
-    x, y = feature_target(frame())
-    assert "row_id" not in x and "default" not in x
-    assert list(y) == frame()["default"].tolist()
+@pytest.mark.parametrize("quantity", ["features", "labels"])
+def test_row_id_and_label_cannot_be_predictors(frame, quantity):
+    original = frame()
+    x, y = feature_target(original)
+    expected = {"features": original.columns.drop(["row_id", "default"]).tolist(),
+                "labels": original.default.tolist()}
+    observed = {"features": x.columns.tolist(), "labels": y.tolist()}
+    assert observed[quantity] == expected[quantity]
 
 
-def test_inner_split_preserves_membership_is_disjoint_and_repeatable(frame):
-    a, b = split_development(frame())
-    a2, b2 = split_development(frame())
-    assert (len(a), len(b)) == (60, 20)
-    assert set(a.row_id).isdisjoint(b.row_id)
-    assert set(a.row_id) | set(b.row_id) == set(range(80))
-    assert a.equals(a2) and b.equals(b2)
-    assert a.default.mean() == b.default.mean() == 0.25
+@pytest.mark.parametrize("quantity,expected", [
+    ("sizes", (60, 20)), ("disjoint", True), ("complete", True),
+    ("repeatable", True), ("prevalence", (.25, .25)),
+])
+def test_inner_split_preserves_membership_and_stratification(split_results, quantity, expected):
+    original, (fit, validation), (again_fit, again_validation) = split_results
+    observed = {"sizes": (len(fit), len(validation)),
+                "disjoint": set(fit.row_id).isdisjoint(validation.row_id),
+                "complete": set(fit.row_id) | set(validation.row_id) == set(original.row_id),
+                "repeatable": fit.equals(again_fit) and validation.equals(again_validation),
+                "prevalence": (fit.default.mean(), validation.default.mean())}
+    assert observed[quantity] == expected
 
 
-def test_metrics_match_hand_calculation():
-    m = metrics([0, 1, 0, 1], [.1, .2, .8, .9], .5)
-    assert [m[k] for k in ["TN", "FP", "FN", "TP"]] == [1, 1, 1, 1]
-    assert m["Accuracy"] == m["Recall"] == m["Precision"] == .5
-    assert m["Cost_5"] == 6
-    assert m["ROC-AUC"] == .75
-    assert m["AP"] == pytest.approx(5 / 6)
+@pytest.mark.parametrize("quantity,expected", [
+    ("TN", 1), ("FP", 1), ("FN", 1), ("TP", 1), ("Accuracy", .5),
+    ("Recall", .5), ("Precision", .5), ("Cost_5", 6), ("ROC-AUC", .75), ("AP", 5 / 6),
+])
+def test_metrics_match_hand_calculation(hand_metrics, quantity, expected):
+    assert hand_metrics[quantity] == pytest.approx(expected)
 
 
-def test_threshold_selection_counts_tied_scores_as_a_group():
-    y = [0, 1, 0, 1]
-    p = [.1, .2, .8, .9]
-    t = threshold_table(y, p)
-    selected = select_threshold(t, 5)
-    assert selected == .2  # one FP, no FN: cost 1
-    assert metrics(y, p, selected)["Cost_5"] == 1
-    tied = threshold_table([0, 1, 0, 1], [.2, .2, .8, .8])
-    assert len(tied) == 3  # predict none, both high-score rows, all rows
-    for _, r in tied.iterrows():
-        direct = metrics([0, 1, 0, 1], [.2, .2, .8, .8], r.Threshold)
-        assert r.Cost_5 == direct["Cost_5"]
+@pytest.mark.parametrize("position,counts", [(0, [2, 0, 2, 0]), (1, [1, 1, 1, 1]), (2, [0, 2, 0, 2])])
+def test_threshold_table_moves_tied_scores_as_one_group(tied_thresholds, position, counts):
+    assert tied_thresholds.loc[position, ["TN", "FP", "FN", "TP"]].tolist() == counts
 
 
-def test_equal_cost_tie_prefers_largest_threshold():
-    t = threshold_table([0, 1], [.5, .5])
-    assert select_threshold(t, 1) > 1  # all-negative endpoint, cost equal to all-positive
+@pytest.mark.parametrize("scores,ratio,expected", [
+    ([.1, .2, .8, .9], 5, .2), ([.2, .2, .8, .8], 5, .2),
+    ([.5, .5, .5, .5], 1, np.nextafter(1., 2.)),
+])
+def test_validation_cost_selection_and_largest_threshold_tie(score_sample, scores, ratio, expected):
+    labels, _ = score_sample
+    assert select_threshold(threshold_table(labels, scores), ratio) == expected
 
 
-@pytest.mark.parametrize("p", [[.1, float("nan")], [-.1, .2], [.1, 1.1]])
-def test_invalid_scores_fail_instead_of_producing_plausible_metrics(p):
+@pytest.mark.parametrize("scores", [[.1, float("nan")], [-.1, .2], [.1, 1.1]])
+def test_invalid_scores_fail_instead_of_producing_plausible_metrics(scores):
     with pytest.raises(ValueError):
-        metrics([0, 1], p, .5)
+        metrics([0, 1], scores, .5)
 
 
-def test_pipeline_encodes_categories_without_learning_validation_values(frame):
-    x, y = feature_target(frame())
-    estimator = make_pipeline({"n_estimators": 3, "max_depth": 2}, threads=1)
-    estimator.fit(x, y)
-    before = [v.copy() for v in estimator.named_steps["preprocess"].named_transformers_["categorical"].categories_]
-    unseen = x.iloc[:2].copy()
-    unseen["EDUCATION"] = 99
-    assert np.isfinite(estimator.predict_proba(unseen)).all()
-    after = estimator.named_steps["preprocess"].named_transformers_["categorical"].categories_
-    assert all(np.array_equal(a, b) for a, b in zip(before, after))
+@pytest.mark.parametrize("invariant", ["finite_scores", "fit_state_unchanged"])
+def test_preprocessing_does_not_learn_prediction_values(preprocessing_probe, invariant):
+    assert preprocessing_probe[invariant]
 
 
-def test_identical_models_have_zero_paired_bootstrap_differences():
-    p = np.array([.1, .2, .8, .9])
-    result = paired_bootstrap([0, 1, 0, 1], p, p, .5, repeats=100).set_index("Quantity")
-    for metric in ["AP", "ROC-AUC"]:
-        row = result.loc[f"{metric} difference: tuned - baseline"]
-        assert row.Estimate == row.CI_low == row.CI_high == 0
+@pytest.mark.parametrize("metric", ["AP", "ROC-AUC"])
+@pytest.mark.parametrize("quantity", ["Estimate", "CI_low", "CI_high"])
+def test_identical_models_have_zero_paired_bootstrap_differences(identical_bootstrap, metric, quantity):
+    assert identical_bootstrap.loc[f"{metric} difference: tuned - baseline", quantity] == 0
 
 
-def test_csv_roundtrip_preserves_decisions_at_float32_threshold(tmp_path):
-    scores = np.array([.1, .31501567, .8, .9], dtype=np.float32)
+@pytest.mark.parametrize("quantity", ["scores", "metrics"])
+def test_csv_roundtrip_preserves_decisions_at_float32_threshold(roundtrip_predictions, quantity):
+    labels, scores, restored = roundtrip_predictions
     threshold = float(scores[1])
-    path = tmp_path / "predictions.csv"
-    save_predictions(path, np.arange(4), [0, 1, 0, 1], scores, scores)
-    restored = pd.read_csv(path, float_precision="round_trip")
-    assert np.array_equal(restored.Tuned_probability.to_numpy(), scores.astype(float))
-    assert metrics(restored.default, restored.Tuned_probability, threshold) == metrics([0, 1, 0, 1], scores, threshold)
+    observed = {"scores": restored.Tuned_probability.tolist(),
+                "metrics": metrics(restored.default, restored.Tuned_probability, threshold)}
+    expected = {"scores": scores.astype(float).tolist(), "metrics": metrics(labels, scores, threshold)}
+    assert observed[quantity] == expected[quantity]
+
+
+@pytest.mark.parametrize("runner,kwargs", [
+    (run_lr, {}), (run_tree, {}),
+    (run_rf, {"candidates": 2, "bootstrap_repeats": 100}),
+    (run_xgb, {"candidates": 2, "bootstrap_repeats": 100}),
+])
+def test_frozen_experiments_cannot_be_overwritten(frozen_output, runner, kwargs):
+    with pytest.raises(FileExistsError):
+        runner(output_dir=frozen_output, **kwargs)
+    assert (frozen_output / "protocol_frozen.json").read_text() == "frozen"

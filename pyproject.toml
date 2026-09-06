@@ -8,4 +8,10 @@ select = ["E4", "E7", "E9", "F"]
 ignore_missing_imports = true
 check_untyped_defs = true
 follow_imports = "silent"
+explicit_package_bases = true
 exclude = ["^\\.venv/"]
+
+[[tool.mypy.overrides]]
+module = "part1.experiment"
+disable_error_code = ["var-annotated"]
+# Preserve the exact pre-execution LR script hash; its empty CV-member accumulator is populated immediately.

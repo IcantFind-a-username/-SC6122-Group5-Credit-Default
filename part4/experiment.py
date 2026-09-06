@@ -67,7 +67,7 @@ def run(output_dir=None, candidates=24, threads=2, bootstrap_repeats=1000):
     pd.concat([fit[["row_id"]].assign(Partition="fit"),
                validation[["row_id"]].assign(Partition="validation")]).to_csv(output / "development_membership.csv", index=False)
     cv = list(StratifiedKFold(n_splits=5, shuffle=True, random_state=42).split(x_fit, y_fit))
-    cv_members = []
+    cv_members: list[dict[str, int]] = []
     for fold, (_, holdout) in enumerate(cv):
         cv_members.extend({"row_id": int(v), "CV_fold": fold} for v in fit.iloc[holdout].row_id)
     pd.DataFrame(cv_members).to_csv(output / "cv_membership.csv", index=False)

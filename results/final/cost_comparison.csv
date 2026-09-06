@@ -1,0 +1,105 @@
+Family,Model,Evidence_status,Threshold,Cost_ratio,FP,FN,Cost,Cost_per_1000
+Decision Tree,Baseline Decision Tree,Historical frozen experiment,0.5,1,881,791,1672,278.6666666666667
+Decision Tree,Baseline Decision Tree,Historical frozen experiment,0.5,3,881,791,3254,542.3333333333334
+Decision Tree,Baseline Decision Tree,Historical frozen experiment,0.5,5,881,791,4836,806.0
+Decision Tree,Baseline Decision Tree,Historical frozen experiment,0.5,10,881,791,8791,1465.1666666666667
+Decision Tree,Tuned Decision Tree,Historical frozen experiment,0.5,1,246,853,1099,183.16666666666669
+Decision Tree,Tuned Decision Tree,Historical frozen experiment,0.5,3,246,853,2805,467.5
+Decision Tree,Tuned Decision Tree,Historical frozen experiment,0.5,5,246,853,4511,751.8333333333334
+Decision Tree,Tuned Decision Tree,Historical frozen experiment,0.5,10,246,853,8776,1462.6666666666665
+RF,Baseline RF,Historical frozen experiment,0.5,1,279,822,1101,183.5
+RF,Baseline RF,Historical frozen experiment,0.5,3,279,822,2745,457.5
+RF,Baseline RF,Historical frozen experiment,0.5,5,279,822,4389,731.5
+RF,Baseline RF,Historical frozen experiment,0.5,10,279,822,8499,1416.5
+RF,Tuned RF,Historical frozen experiment,0.5,1,573,637,1210,201.66666666666666
+RF,Tuned RF,Historical frozen experiment,0.5,3,573,637,2484,414.0
+RF,Tuned RF,Historical frozen experiment,0.5,5,573,637,3758,626.3333333333333
+RF,Tuned RF,Historical frozen experiment,0.5,10,573,637,6943,1157.1666666666667
+RF,Tuned RF / cost ratio 1,Historical frozen experiment,0.706811715757006,1,237,870,1107,184.5
+RF,Tuned RF / cost ratio 1,Historical frozen experiment,0.706811715757006,3,237,870,2847,474.5
+RF,Tuned RF / cost ratio 1,Historical frozen experiment,0.706811715757006,5,237,870,4587,764.5
+RF,Tuned RF / cost ratio 1,Historical frozen experiment,0.706811715757006,10,237,870,8937,1489.5
+RF,Tuned RF / cost ratio 3,Historical frozen experiment,0.45258283874818894,1,768,550,1318,219.66666666666669
+RF,Tuned RF / cost ratio 3,Historical frozen experiment,0.45258283874818894,3,768,550,2418,403.0
+RF,Tuned RF / cost ratio 3,Historical frozen experiment,0.45258283874818894,5,768,550,3518,586.3333333333334
+RF,Tuned RF / cost ratio 3,Historical frozen experiment,0.45258283874818894,10,768,550,6268,1044.6666666666667
+RF,Tuned RF / cost ratio 5,Historical frozen experiment,0.32288101060928226,1,1884,304,2188,364.66666666666663
+RF,Tuned RF / cost ratio 5,Historical frozen experiment,0.32288101060928226,3,1884,304,2796,466.0
+RF,Tuned RF / cost ratio 5,Historical frozen experiment,0.32288101060928226,5,1884,304,3404,567.3333333333334
+RF,Tuned RF / cost ratio 5,Historical frozen experiment,0.32288101060928226,10,1884,304,4924,820.6666666666666
+RF,Tuned RF / cost ratio 10,Historical frozen experiment,0.24897366446801708,1,2951,128,3079,513.1666666666666
+RF,Tuned RF / cost ratio 10,Historical frozen experiment,0.24897366446801708,3,2951,128,3335,555.8333333333333
+RF,Tuned RF / cost ratio 10,Historical frozen experiment,0.24897366446801708,5,2951,128,3591,598.5
+RF,Tuned RF / cost ratio 10,Historical frozen experiment,0.24897366446801708,10,2951,128,4231,705.1666666666667
+RF,Always negative,Historical frozen experiment,1.0,1,0,1327,1327,221.16666666666669
+RF,Always negative,Historical frozen experiment,1.0,3,0,1327,3981,663.5
+RF,Always negative,Historical frozen experiment,1.0,5,0,1327,6635,1105.8333333333333
+RF,Always negative,Historical frozen experiment,1.0,10,0,1327,13270,2211.6666666666665
+RF,Always positive,Historical frozen experiment,0.0,1,4673,0,4673,778.8333333333334
+RF,Always positive,Historical frozen experiment,0.0,3,4673,0,4673,778.8333333333334
+RF,Always positive,Historical frozen experiment,0.0,5,4673,0,4673,778.8333333333334
+RF,Always positive,Historical frozen experiment,0.0,10,4673,0,4673,778.8333333333334
+XGBoost,Baseline XGBoost,Historical frozen experiment,0.5,1,247,855,1102,183.66666666666669
+XGBoost,Baseline XGBoost,Historical frozen experiment,0.5,3,247,855,2812,468.6666666666667
+XGBoost,Baseline XGBoost,Historical frozen experiment,0.5,5,247,855,4522,753.6666666666667
+XGBoost,Baseline XGBoost,Historical frozen experiment,0.5,10,247,855,8797,1466.1666666666665
+XGBoost,Tuned XGBoost,Historical frozen experiment,0.5,1,690,599,1289,214.83333333333331
+XGBoost,Tuned XGBoost,Historical frozen experiment,0.5,3,690,599,2487,414.5
+XGBoost,Tuned XGBoost,Historical frozen experiment,0.5,5,690,599,3685,614.1666666666666
+XGBoost,Tuned XGBoost,Historical frozen experiment,0.5,10,690,599,6680,1113.3333333333333
+XGBoost,Tuned XGBoost / cost ratio 1,Historical frozen experiment,0.7327737808227539,1,236,858,1094,182.33333333333331
+XGBoost,Tuned XGBoost / cost ratio 1,Historical frozen experiment,0.7327737808227539,3,236,858,2810,468.3333333333333
+XGBoost,Tuned XGBoost / cost ratio 1,Historical frozen experiment,0.7327737808227539,5,236,858,4526,754.3333333333333
+XGBoost,Tuned XGBoost / cost ratio 1,Historical frozen experiment,0.7327737808227539,10,236,858,8816,1469.3333333333335
+XGBoost,Tuned XGBoost / cost ratio 3,Historical frozen experiment,0.5344873666763306,1,602,629,1231,205.16666666666666
+XGBoost,Tuned XGBoost / cost ratio 3,Historical frozen experiment,0.5344873666763306,3,602,629,2489,414.8333333333333
+XGBoost,Tuned XGBoost / cost ratio 3,Historical frozen experiment,0.5344873666763306,5,602,629,3747,624.5
+XGBoost,Tuned XGBoost / cost ratio 3,Historical frozen experiment,0.5344873666763306,10,602,629,6892,1148.6666666666667
+XGBoost,Tuned XGBoost / cost ratio 5,Historical frozen experiment,0.31501567363739014,1,2248,232,2480,413.3333333333333
+XGBoost,Tuned XGBoost / cost ratio 5,Historical frozen experiment,0.31501567363739014,3,2248,232,2944,490.66666666666663
+XGBoost,Tuned XGBoost / cost ratio 5,Historical frozen experiment,0.31501567363739014,5,2248,232,3408,568.0
+XGBoost,Tuned XGBoost / cost ratio 5,Historical frozen experiment,0.31501567363739014,10,2248,232,4568,761.3333333333333
+XGBoost,Tuned XGBoost / cost ratio 10,Historical frozen experiment,0.2706960439682007,1,2845,143,2988,498.0
+XGBoost,Tuned XGBoost / cost ratio 10,Historical frozen experiment,0.2706960439682007,3,2845,143,3274,545.6666666666666
+XGBoost,Tuned XGBoost / cost ratio 10,Historical frozen experiment,0.2706960439682007,5,2845,143,3560,593.3333333333334
+XGBoost,Tuned XGBoost / cost ratio 10,Historical frozen experiment,0.2706960439682007,10,2845,143,4275,712.5
+XGBoost,Always negative,Historical frozen experiment,1.0,1,0,1327,1327,221.16666666666669
+XGBoost,Always negative,Historical frozen experiment,1.0,3,0,1327,3981,663.5
+XGBoost,Always negative,Historical frozen experiment,1.0,5,0,1327,6635,1105.8333333333333
+XGBoost,Always negative,Historical frozen experiment,1.0,10,0,1327,13270,2211.6666666666665
+XGBoost,Always positive,Historical frozen experiment,0.0,1,4673,0,4673,778.8333333333334
+XGBoost,Always positive,Historical frozen experiment,0.0,3,4673,0,4673,778.8333333333334
+XGBoost,Always positive,Historical frozen experiment,0.0,5,4673,0,4673,778.8333333333334
+XGBoost,Always positive,Historical frozen experiment,0.0,10,4673,0,4673,778.8333333333334
+Logistic Regression,Baseline LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,1,147,988,1135,189.16666666666669
+Logistic Regression,Baseline LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,3,147,988,3111,518.5
+Logistic Regression,Baseline LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,5,147,988,5087,847.8333333333334
+Logistic Regression,Baseline LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,10,147,988,10027,1671.1666666666667
+Logistic Regression,Tuned LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,1,145,991,1136,189.33333333333331
+Logistic Regression,Tuned LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,3,145,991,3118,519.6666666666667
+Logistic Regression,Tuned LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,5,145,991,5100,850.0
+Logistic Regression,Tuned LR supplement,Post-hoc reproducibility supplement after historic test results existed,0.5,10,145,991,10055,1675.8333333333333
+Logistic Regression,Tuned LR supplement / cost ratio 1,Post-hoc reproducibility supplement after historic test results existed,0.4453536666170534,1,223,886,1109,184.83333333333331
+Logistic Regression,Tuned LR supplement / cost ratio 1,Post-hoc reproducibility supplement after historic test results existed,0.4453536666170534,3,223,886,2881,480.1666666666667
+Logistic Regression,Tuned LR supplement / cost ratio 1,Post-hoc reproducibility supplement after historic test results existed,0.4453536666170534,5,223,886,4653,775.5
+Logistic Regression,Tuned LR supplement / cost ratio 1,Post-hoc reproducibility supplement after historic test results existed,0.4453536666170534,10,223,886,9083,1513.8333333333333
+Logistic Regression,Tuned LR supplement / cost ratio 3,Post-hoc reproducibility supplement after historic test results existed,0.26511536570131244,1,701,649,1350,225.0
+Logistic Regression,Tuned LR supplement / cost ratio 3,Post-hoc reproducibility supplement after historic test results existed,0.26511536570131244,3,701,649,2648,441.33333333333337
+Logistic Regression,Tuned LR supplement / cost ratio 3,Post-hoc reproducibility supplement after historic test results existed,0.26511536570131244,5,701,649,3946,657.6666666666666
+Logistic Regression,Tuned LR supplement / cost ratio 3,Post-hoc reproducibility supplement after historic test results existed,0.26511536570131244,10,701,649,7191,1198.5
+Logistic Regression,Tuned LR supplement / cost ratio 5,Post-hoc reproducibility supplement after historic test results existed,0.23431561971886616,1,1177,539,1716,286.0
+Logistic Regression,Tuned LR supplement / cost ratio 5,Post-hoc reproducibility supplement after historic test results existed,0.23431561971886616,3,1177,539,2794,465.6666666666667
+Logistic Regression,Tuned LR supplement / cost ratio 5,Post-hoc reproducibility supplement after historic test results existed,0.23431561971886616,5,1177,539,3872,645.3333333333333
+Logistic Regression,Tuned LR supplement / cost ratio 5,Post-hoc reproducibility supplement after historic test results existed,0.23431561971886616,10,1177,539,6567,1094.5
+Logistic Regression,Tuned LR supplement / cost ratio 10,Post-hoc reproducibility supplement after historic test results existed,0.00394068689681157,1,4667,0,4667,777.8333333333334
+Logistic Regression,Tuned LR supplement / cost ratio 10,Post-hoc reproducibility supplement after historic test results existed,0.00394068689681157,3,4667,0,4667,777.8333333333334
+Logistic Regression,Tuned LR supplement / cost ratio 10,Post-hoc reproducibility supplement after historic test results existed,0.00394068689681157,5,4667,0,4667,777.8333333333334
+Logistic Regression,Tuned LR supplement / cost ratio 10,Post-hoc reproducibility supplement after historic test results existed,0.00394068689681157,10,4667,0,4667,777.8333333333334
+Logistic Regression,Always negative,Post-hoc reproducibility supplement after historic test results existed,1.0,1,0,1327,1327,221.16666666666669
+Logistic Regression,Always negative,Post-hoc reproducibility supplement after historic test results existed,1.0,3,0,1327,3981,663.5
+Logistic Regression,Always negative,Post-hoc reproducibility supplement after historic test results existed,1.0,5,0,1327,6635,1105.8333333333333
+Logistic Regression,Always negative,Post-hoc reproducibility supplement after historic test results existed,1.0,10,0,1327,13270,2211.6666666666665
+Logistic Regression,Always positive,Post-hoc reproducibility supplement after historic test results existed,0.0,1,4673,0,4673,778.8333333333334
+Logistic Regression,Always positive,Post-hoc reproducibility supplement after historic test results existed,0.0,3,4673,0,4673,778.8333333333334
+Logistic Regression,Always positive,Post-hoc reproducibility supplement after historic test results existed,0.0,5,4673,0,4673,778.8333333333334
+Logistic Regression,Always positive,Post-hoc reproducibility supplement after historic test results existed,0.0,10,4673,0,4673,778.8333333333334

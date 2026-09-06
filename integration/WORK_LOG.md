@@ -24,3 +24,16 @@
 - controller: all other files, shared helpers, dependencies, existing tests, report/slides/notes/checklist and final integration.
 
 Workers reuse the above tools; no duplicate utilities. Propose new utilities before implementing. Every measurement script must be committed before execution. Workers request controller commit when ready; final report includes diff --stat, reused tools and new tools.
+
+## Completed experiment integration
+- Official UCI fresh-source cleaning replay exact; original download bytes were not preserved.
+- Frozen experiment audit: 223/223 checks passed. Original CV fit jobs were not rerun.
+- Legacy LR source was unrecoverable across refs/reflogs/unreachable objects; separate supplement predeclared in dd6f673 and run once.
+- Historical train/test and RF metadata hashes explained with LF/CRLF evidence; RF environment-regeneration chronology retained.
+- XGBoost platform probability drift at most 5.96e-8, with frozen decisions identical; reporting retains original probabilities.
+- RF per-threshold case exports and group profiles are correct, including legitimately repeated extreme errors.
+- Shared artifact writer/hash/prediction serializer and paired bootstrap now each have one implementation. DT retains only an adapter that computes model probabilities. No re-export __init__ modules added.
+- Four artifact-reading notebooks executed in unified environment; source-writing notebooks retained with only redundant imports removed.
+- Integration gate: 70 pytest tests passed, ruff all files passed, mypy 28 source files passed. Subsequent nonbehavioral DT serializer adapter is covered by the final gate.
+- Six-page report rendered including all references, using 11pt body and normal math scripts. Teacher template missing, standard LaTeX fallback declared. Contact sheet and pages 3/6 visually inspected: no truncation/overlap, clear tables/charts.
+- New test fixture structure replaces repeated setup; existing test files only, no new setup-heavy test file.

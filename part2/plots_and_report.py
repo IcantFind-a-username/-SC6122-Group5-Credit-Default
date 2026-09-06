@@ -164,7 +164,7 @@ The root split was `{root_name} <= {root_cut:g}`. Within the fitting data, the d
 ## Limitations and integration
 Hyperparameter selection uses CV scores and can introduce selection optimism; final claims therefore use held-out test metrics. The test data were first loaded by this runner after parameters and fitted models were frozen. Other team members' test results were already visible; this is not a new globally untouched dataset. No additional parameter changes were made after this decision-tree test evaluation. No confidence intervals or significance claims are supplied. The historical Taiwan sample and retained identical feature vectors limit generalization claims. Model rules describe associations, not causal explanations.
 
-This contribution matches Part 4's supplied splits, encoding, AP selection, fitting sample size and threshold convention. Search budgets differ (21 decision-tree versus 24 XGBoost candidates). The logistic-regression notebook was empty in the reviewed snapshot, so its preprocessing, AP/PR-AUC definition and development procedure remain unverified; its results should not be labelled fully protocol-matched. Random-forest results were absent. Full four-model comparison and the final group report remain team tasks.
+The integration now includes verified RF results and a separately labelled post-hoc logistic supplement. Legacy logistic CSVs remain unverified: their original training procedure and PR-AUC definition were not recoverable. The complete comparison and submission materials are in results/final/ and submission/. Shared splits do not imply identical search budgets or globally unseen historical test data.
 
 ## Sources
 - Team repository, reviewed base commit `{protocol["Source_commit"]}`: https://github.com/IcantFind-a-username/-SC6122-Group5-Credit-Default
@@ -204,8 +204,8 @@ AP 是 Average Precision，概括 precision–recall 表现；不要把 AP 直�
 ## 为什么与旧版结果不同
 旧版使用未合并类别的 Excel，在 24,000 人上按 ROC-AUC 选参；新版使用小组清洗 CSV，在与第四位相同的 18,000 人上按 AP 选参。旧版成绩是交叉验证；这里的主要成绩是最终测试，不能混在一起比较。
 
-## 尚需小组完成
-逻辑回归 notebook 在本次仓库快照中为空，完整方法尚待其负责人补充；随机森林结果尚未出现。正式报告要等全组结果汇总，控制总页数；PPT 排版和全组排练另行完成。本包已提供你这部分的英文报告内容及三页展示文案，但不含排版好的 PPTX。
+## 最终整合说明
+整合分支现已包含随机森林核验结果和单独标记的逻辑回归事后复现补充。原逻辑回归 CSV 的训练过程与 PR-AUC 定义仍不可恢复，不与补充实验混淆。完整比较与交付文件位于 results/final/ 和 submission/；共同划分不代表搜索预算相同或历史测试集从未被全组查看。
 """
     (out / "report_zh.md").write_text(zh, encoding="utf-8")
     slides = f"""# Member 2: three-minute presentation content

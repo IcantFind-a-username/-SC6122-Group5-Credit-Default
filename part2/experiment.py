@@ -11,7 +11,7 @@ import platform
 from datetime import datetime, timezone
 from pathlib import Path
 
-from integration.artifacts import file_hash as file_hash, write_json as write_json
+from integration.artifacts import file_hash as file_hash, write_json as write_json, save_predictions as write_probabilities
 
 import joblib
 import numpy as np
@@ -38,12 +38,9 @@ def make_pipeline(params):
         random_state=42, criterion='gini', class_weight=None, **params))])
 
 
-def save_predictions(path, frame, baseline, tuned):
+def save_model_predictions(path, frame, baseline, tuned):
     x, y = feature_target(frame)
-    pd.DataFrame({'row_id': frame.row_id.to_numpy(), 'default': y.to_numpy(),
-                  'Baseline_probability': baseline.predict_proba(x)[:, 1],
-                  'Tuned_probability': tuned.predict_proba(x)[:, 1]}).to_csv(path, index=False)
-
+    write_probabilities(path, frame.row_id, y, baseline.predict_proba(x)[:, 1], tuned.predict_proba(x)[:, 1])
 
 def save_rules(output, tuned, x_fit, y_fit):
     tree = tuned.named_steps['model']
@@ -138,7 +135,7 @@ def run(output_dir=None):
         pd.DataFrame([{'Model': label, **metrics(y, model.predict_proba(x)[:, 1])}
                       for label, model in [('Baseline Decision Tree', baseline), ('Tuned Decision Tree', tuned)]]
                      ).to_csv(out / f'{name}_metrics.csv', index=False)
-    save_predictions(out / 'validation_predictions.csv', validation, baseline, tuned)
+    save_model_predictions(out / 'validation_predictions.csv', validation, baseline, tuned)
     names = save_rules(out, tuned, x_fit, y_fit)
     for label, model in [('baseline', baseline), ('tuned', tuned)]:
         joblib.dump(model, out / f'{label}_pipeline.joblib', compress=3)
@@ -167,7 +164,7 @@ def run(output_dir=None):
         raise ValueError('Unexpected test order/membership')
     assert set(train.row_id).isdisjoint(test.row_id)
     x_test, y_test = feature_target(test)
-    save_predictions(out / 'test_predictions.csv', test, baseline, tuned)
+    save_model_predictions(out / 'test_predictions.csv', test, baseline, tuned)
     final = pd.DataFrame([{'Model': label, **metrics(y_test, model.predict_proba(x_test)[:, 1])}
                           for label, model in [('Baseline Decision Tree', baseline), ('Tuned Decision Tree', tuned)]])
     final.to_csv(out / 'test_metrics.csv', index=False)

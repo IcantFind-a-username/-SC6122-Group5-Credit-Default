@@ -70,7 +70,7 @@ The full run uses 24 configurations, five folds, and 1,000 paired bootstrap repl
 
 When loading probability or threshold CSVs, use `pd.read_csv(path, float_precision="round_trip")` so an observation exactly at a selected cutoff keeps the same decision. Predictions are exported as full-precision float64 representations of the model scores.
 
-AP is computed by `average_precision_score`; it is not trapezoidal integration of a precision-recall curve. Verify how other members compute a column named PR-AUC before combining tables. All models must share the test membership, and their fitting/validation allocations must be documented. The existing logistic-regression result files are not treated as a controlled comparison because its notebook is currently empty. This contribution makes no claim to be the group's best model.
+AP is computed by `average_precision_score`; it is not trapezoidal integration of a precision-recall curve. Verify how other members compute a column named PR-AUC before combining tables. All models must share the test membership, and their fitting/validation allocations must be documented. The existing logistic-regression result files are not treated as a controlled comparison because its original notebook was empty and its workflow could not be recovered; see `integration/LOGISTIC_PROVENANCE.md` for the separately labelled supplement. This contribution makes no claim to be the group's best model.
 
 ## Sources
 
