@@ -1,0 +1,9 @@
+{
+  "Training_rows": 24000,
+  "Test_rows": 6000,
+  "Row_ID_overlap": 0,
+  "Training_duplicate_feature_rows": 39,
+  "Test_rows_with_features_seen_in_development": 15,
+  "Source_test_SHA256": "ac8606dd171f9982227242f8c4b31e8b22320e231851a14783b7144d0e8455e8",
+  "Note": "Identical feature vectors are retained per group protocol; they do not establish duplicate customers."
+}
