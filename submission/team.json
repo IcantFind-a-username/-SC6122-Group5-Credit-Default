@@ -1,6 +1,46 @@
 [
-  {"role": "Part 1", "name": "Lei Peng", "student_id": "G2509090C", "share_percent": 25, "slides": "1–3", "scope": "Data and logistic regression", "qa_primary": "Q1–Q6", "qa_support": "Q7, Q15, Q22"},
-  {"role": "Part 2", "name": "Zhang Hanyu", "student_id": "G2509091L", "share_percent": 25, "slides": "4–6", "scope": "Decision tree and model comparison", "qa_primary": "Q7–Q11", "qa_support": "Q2, Q3, Q13"},
-  {"role": "Part 3", "name": "Zhou Xinzhe", "student_id": "G2509033F", "share_percent": 25, "slides": "7–9", "scope": "Random forest and experiment audit", "qa_primary": "Q12–Q16", "qa_support": "Q3, Q19, Q21"},
-  {"role": "Part 4", "name": "Xu Yiqun", "student_id": "G2509092H", "share_percent": 25, "slides": "10–12", "scope": "XGBoost and cost analysis", "qa_primary": "Q17–Q22", "qa_support": "Q8, Q10, Q15"}
+  {
+    "role": "Part 1",
+    "name": "Lei Peng",
+    "student_id": "G2509090C",
+    "share_percent": 25,
+    "slides": "1–3",
+    "scope": "Data and logistic regression",
+    "qa_primary": "Q1–Q6",
+    "qa_support": "Q7, Q15, Q22",
+    "contribution_scope": "Data checks and preprocessing; logistic baseline; data characteristics and baseline performance"
+  },
+  {
+    "role": "Part 2",
+    "name": "Zhang Hanyu",
+    "student_id": "G2509091L",
+    "share_percent": 25,
+    "slides": "4–6",
+    "scope": "Decision tree and overfitting",
+    "qa_primary": "Q7–Q11",
+    "qa_support": "Q2, Q3, Q13",
+    "contribution_scope": "Decision-tree tuning; learned rules and overfitting control"
+  },
+  {
+    "role": "Part 3",
+    "name": "Zhou Xinzhe",
+    "student_id": "G2509033F",
+    "share_percent": 25,
+    "slides": "7–9",
+    "scope": "Random forest and error analysis",
+    "qa_primary": "Q12–Q14",
+    "qa_support": "Q3, Q7, Q15–Q16, Q19, Q21",
+    "contribution_scope": "Random-forest tuning; feature importance and illustrative misclassification cases"
+  },
+  {
+    "role": "Part 4",
+    "name": "Xu Yiqun",
+    "student_id": "G2509092H",
+    "share_percent": 25,
+    "slides": "10–12",
+    "scope": "XGBoost and threshold trade-offs",
+    "qa_primary": "Q17–Q22",
+    "qa_support": "Q8, Q10, Q15",
+    "contribution_scope": "XGBoost tuning; threshold trade-offs between missed defaults and false alarms"
+  }
 ]

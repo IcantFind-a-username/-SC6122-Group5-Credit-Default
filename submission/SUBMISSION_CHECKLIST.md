@@ -49,9 +49,11 @@ Prepare the editable source, PPTX/PDF, notes/Q&A, code/data/models/results and e
 | Member | Student ID | Responsibility | Slides | Share |
 |---|---|---|---|---|
 | Lei Peng | G2509090C | Data and logistic regression | 1–3 | 25% |
-| Zhang Hanyu | G2509091L | Decision tree and model comparison | 4–6 | 25% |
-| Zhou Xinzhe | G2509033F | Random forest and experiment audit | 7–9 | 25% |
-| Xu Yiqun | G2509092H | XGBoost and cost analysis | 10–12 | 25% |
+| Zhang Hanyu | G2509091L | Decision tree, rules and overfitting | 4–6 | 25% |
+| Zhou Xinzhe | G2509033F | Random forest, feature importance and error cases | 7–9 | 25% |
+| Xu Yiqun | G2509092H | XGBoost tuning and threshold trade-offs | 10–12 | 25% |
+
+Shared work: all four agree data splits, preprocessing and metrics; write individual sections; jointly integrate, verify results and rehearse. Audit preparation is shared, rather than the main Part 3 topic.
 
 ## Human confirmation before upload
 

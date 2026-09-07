@@ -70,3 +70,7 @@ python -m integration.reproduce package
 ```
 
 The reproduction archive contains committed repository files only, under `Group5/`. A separate `Group5_Dataset.zip` contains only the committed `data/` folder and its source/license documentation, for a platform that requests the dataset separately. `.gitattributes` excludes the archive itself and temporary render logs. No `.git`, `.venv`, caches or unrelated local files are included. Check `submission/package_manifest.json` for the packaged commit and SHA256 when using the prepared archive.
+
+### Confirmed presentation responsibilities
+
+Lei Peng: data checks/preprocessing and logistic baseline (slides 1–3). Zhang Hanyu: decision-tree tuning, rules and overfitting (4–6). Zhou Xinzhe: random-forest tuning, validation feature importance and saved error examples (7–9). Xu Yiqun: XGBoost tuning and threshold trade-offs (10–12). All four share protocol agreement, their own writing, final integration, result checking and rehearsal; each contributes 25%.

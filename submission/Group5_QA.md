@@ -5,11 +5,11 @@
 | 主答成员（贡献均为 25%） | 演讲归属 | 优先准备 | 共同接答 |
 |---|---|---|---|
 | Lei Peng · G2509090C | Part 1：数据与 LR，第 1–3 页 | Q1–Q6 | Q7、Q15、Q22 |
-| Zhang Hanyu · G2509091L | Part 2：决策树与比较，第 4–6 页 | Q7–Q11 | Q2、Q3、Q13 |
-| Zhou Xinzhe · G2509033F | Part 3：随机森林与审计，第 7–9 页 | Q12–Q16 | Q3、Q19、Q21 |
+| Zhang Hanyu · G2509091L | Part 2：决策树、规则与过拟合，第 4–6 页 | Q7–Q11 | Q2、Q3、Q13 |
+| Zhou Xinzhe · G2509033F | Part 3：随机森林、重要性与误判，第 7–9 页 | Q12–Q14 | Q3、Q7、Q15–Q16、Q19、Q21 |
 | Xu Yiqun · G2509092H | Part 4：XGBoost 与成本，第 10–12 页 | Q17–Q22 | Q8、Q10、Q15 |
 
-答辩时先由上表主答人回应，再请对应模型负责人补充；所有人都应熟悉 Q2、Q3、Q7、Q8 的共同实验设定。PPT 备注已经嵌入逐页英文讲稿、姓名、学号、计时与交接句，可在演讲者视图查看。
+答辩时先由上表主答人回应，再请对应模型负责人补充；所有人都应熟悉 Q2、Q3、Q7、Q8 的共同实验设定；Q15–Q16 的整合核验问题也由四人共同准备。共同工作包括确定数据划分、预处理和指标，各自写报告与 PPT，再一起整合、核对结果和排练。PPT 备注已经嵌入逐页英文讲稿、姓名、学号、计时与交接句，可在演讲者视图查看。
 
 备份页负责人：第 13 页指标定义由 Zhang Hanyu 主答；第 14 页成本与置信区间由 Xu Yiqun 主答；第 15 页数据与 LR 证据由 Lei Peng 主答；第 16 页来源与复现由 Zhou Xinzhe 主答。
 
@@ -91,11 +91,13 @@
 
 **English answer:** “Permutation importance measures the drop in validation AP when a feature is shuffled. It describes predictive reliance, not causality. Correlated features can substitute for one another, and permutation can create unrealistic combinations; the error bars show variation across five shuffles, not confidence intervals.”
 
-## Q14. RF 在 0.5 和 r=5 下的代表性错误样本相同，是不是导出错了？
+## Q14. RF 的典型误判说明什么？两个阈值的案例相同是否导出错了？
 
-**中文理解：** 不一定。case 文件挑的是分数最低的 FN 与分数最高的 FP；降低阈值后，这些最极端错误可能仍属于同一错误组。真正要检查的是各文件是否满足各自阈值的分组条件。已按完整精度分数、真实标签和 row_id 重新核验，两份代表性案例与总体分组均正确。RF 在 0.5 下 FN=637、FP=573；在验证选定的 0.32288101060928226 下 FN=304、FP=1,884，说明整体分组确实发生变化。
+**中文理解：** 第 9 页用保存文件里的极端错误作示例：row_id=982 实际违约，但得分仅 0.1012，PAY_0=-2；row_id=28747 实际未违约，但得分 0.9415，PAY_0=3。这说明还款历史并不能确定每个人的结局；不要编造客户违约的真实原因，也不要把这两例当作平均客户。
 
-**English answer:** “The most confident errors can remain identical when the cutoff changes: the lowest-scoring defaults and highest-scoring non-defaults remain errors. We verified each case against its own threshold. Overall RF counts change from 637 FN and 573 FP to 304 FN and 1,884 FP, so identical extreme examples do not indicate a faulty export.”
+两个阈值下案例相同不一定是导出错了。case 文件挑的是分数最低的 FN 与分数最高的 FP；降低阈值后，这些最极端错误可能仍属于同一错误组。真正要检查的是各文件是否满足各自阈值的分组条件。已按完整精度分数、真实标签和 row_id 重新核验，两份代表性案例与总体分组均正确。RF 在 0.5 下 FN=637、FP=573；在验证选定的 0.32288101060928226 下 FN=304、FP=1,884，说明整体分组确实发生变化。
+
+**English answer:** “One saved default scores only 0.1012, while a non-default scores 0.9415. Repayment patterns are informative but not deterministic; these extreme examples do not represent average clients. The most confident errors can remain identical when the cutoff changes: the lowest-scoring defaults and highest-scoring non-defaults remain errors. We verified each case against its own threshold. Overall RF counts change from 637 FN and 573 FP to 304 FN and 1,884 FP, so identical extreme examples do not indicate a faulty export.”
 
 ## Q15. SHA256 不一致是否说明用了不同的数据？模型重放也要逐位一样吗？
 

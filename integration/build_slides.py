@@ -22,6 +22,7 @@ from pptx.oxml.xmlchemy import OxmlElement
 
 from integration.artifacts import file_hash, write_json
 from integration.audit import read_csv
+from integration.presentation_evidence import rf_interpretation
 
 ROOT = Path(__file__).resolve().parents[1]
 NAVY, TEAL, ORANGE = "183447", "187B78", "C8784A"
@@ -122,7 +123,7 @@ def editable_chart(slide, spec):
         if len(spec["series"]) == 1:
             for point_index, point in enumerate(series.points):
                 point.format.fill.solid()
-                point.format.fill.fore_color.rgb = RGBColor.from_string(palette[point_index % 2])
+                point.format.fill.fore_color.rgb = RGBColor.from_string(TEAL if spec.get("uniform_color") else palette[point_index % 2])
                 point.format.line.fill.background()
 
 
@@ -139,13 +140,15 @@ def make_slides(frame):
     db = row("Decision Tree", "Baseline Decision Tree")
     rf = row("RF", "Tuned RF")
     rb = row("RF", "Baseline RF")
-    rc = row("RF", "Tuned RF / cost ratio 5")
     xg = row("XGBoost", "Tuned XGBoost")
     xb = row("XGBoost", "Baseline XGBoost")
     xc = row("XGBoost", "Tuned XGBoost / cost ratio 5")
     rf_parameters = json.loads((ROOT / "results/rf/protocol_frozen.json").read_text())["Selected_parameters"]
     xg_parameters = json.loads((ROOT / "results/xgboost/protocol_frozen.json").read_text())["Selected_parameters"]
     xg_interval = read_csv(ROOT / "results/xgboost/bootstrap_intervals.csv").set_index("Quantity").loc["AP difference: tuned - baseline"]
+    importance, examples = rf_interpretation()
+    fn, fp = examples.loc["FN"], examples.loc["FP"]
+    top_importance = importance.head(5).iloc[::-1]
     source = "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1"
     note = "LR* = post-hoc reproducibility supplement after historic test results existed."
     comparison = {"categories": ["LR*", "Tree", "RF", "XGBoost"],
@@ -177,20 +180,25 @@ def make_slides(frame):
         Slide("Ranking performance across four models", "Part 2", 55,
           ["AP emphasizes positive-class retrieval", "AP is not trapezoidal PR-AUC", "CV selection precedes these test comparisons"],
           "Test average precision", "Baseline and selected models are both retained.\nSmall ensemble differences do not establish superiority.", source + " | " + note,
-          f"This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP {rf.AP:.4f}, and selected XGBoost has {xg.AP:.4f}. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Part three will examine the forest and the fairness of our comparison.", comparison),
+          f"This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP {rf.AP:.4f}, and selected XGBoost has {xg.AP:.4f}. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Zhou Xinzhe will now explain the forest, its feature importance, and examples of its errors.", comparison),
         Slide("Random forest: averaging and regularization", "Part 3", 70,
           ["Baseline + 23 seeded candidate settings", f"Selected: {rf_parameters['n_estimators']} trees, depth {rf_parameters['max_depth']}, minimum leaf {rf_parameters['min_samples_leaf']}", f"Positive-class weight {rf_parameters['class_weight']['1']}; feature fraction {rf_parameters['max_features']}"],
           "Test average precision", "Averaging reduces dependence on one tree.\nWeights also change the score distribution.", source + " | results/rf/protocol_frozen.json",
-          f"Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from {rb.AP:.4f} to {rf.AP:.4f}. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next inspect the operating threshold and the resulting workload rather than relying on ranking alone.",
+          f"Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from {rb.AP:.4f} to {rf.AP:.4f}. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next examine which features the fitted forest relies on and where it makes errors.",
           {"categories": ["Baseline", "Selected"], "series": [("AP", [rb.AP, rf.AP])], "maximum": .65}),
-        Slide("Random forest: the review workload", "Part 3", 60,
-          [f"Validation selected r=5 threshold: {rc.Threshold:.4f}", f"Recall: {rf.Recall:.1%} → {rc.Recall:.1%}", f"Alert rate: {rf.Alert_rate:.1%} → {rc.Alert_rate:.1%}"],
-          f"{int(rf.Cost_5):,} → {int(rc.Cost_5):,}", "Test cost = FP + 5 × FN\nError cases checked under each policy\nSame extreme cases can legitimately recur", source + " | RF misclassification audit; costs hypothetical.",
-          f"For the forest, validation selected a threshold of {rc.Threshold:.4f} under the hypothetical assumption that a missed default costs five times a false-positive review. On the historical test set, recall rises from {rf.Recall:.1%} to {rc.Recall:.1%}, but the alert rate also rises from {rf.Alert_rate:.1%} to {rc.Alert_rate:.1%}. Cost falls from {int(rf.Cost_5)} to {int(rc.Cost_5)} units. We independently checked the saved error profiles and case rules for both policies. The most confident errors can appear in both exports because they remain errors at both thresholds. Identical extreme examples alone therefore do not demonstrate an export mistake."),
-        Slide("What makes the comparison credible", "Part 3", 50,
-          ["Identical fit / validation / five-fold memberships", "Metrics recomputed after row-ID alignment", "Frozen thresholds use score ≥ threshold at full precision"],
-          "Shared evidence, different searches", "Shared data and objective\nDifferent search budgets\nHistorical exposure and LR* caveat remain", "Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md",
-          "Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result."),
+        Slide("Random forest: which features matter?", "Part 3", 60,
+          ["PAY_0 has the largest validation AP decrease", "Permutation measures predictive reliance", "Correlated variables can substitute for each other"],
+          "Mean decrease in validation AP", "Five saved shuffles per feature.\nPredictive association, not causality.", "Source: results/rf/validation_importance.csv | Five validation permutations; frozen model.",
+          f"We measure importance by shuffling one feature on validation data and observing the fall in average precision. The forest relies most strongly on recent repayment status, PAY zero: its mean AP decrease is {importance.iloc[0].Mean_AP_decrease:.4f}. Earlier repayment status, PAY two, follows at {importance.iloc[1].Mean_AP_decrease:.4f}. These values come from five saved permutations of each feature. They describe the fitted forest's predictive reliance, not a causal effect or a feature's isolated contribution. Correlated predictors can substitute for one another, and shuffling may create combinations that do not occur naturally. The chart shows mean decreases; variation across shuffles is recorded in the report. Even an influential variable cannot explain every customer's outcome.",
+          {"categories": top_importance.Feature.tolist(), "series": [("Mean AP decrease", top_importance.Mean_AP_decrease.tolist())],
+           "maximum": .24, "format": "0.000", "horizontal": True, "uniform_color": True}),
+        Slide("Random forest: two illustrative errors", "Part 3", 50,
+          [f"At 0.5: {int(rf.FN):,} missed defaults; {int(rf.FP):,} false alarms",
+           f"Missed default · row {int(fn.row_id)}\nScore {fn.Tuned_probability:.4f}; actual default = 1",
+           f"False alarm · row {int(fp.row_id)}\nScore {fp.Tuned_probability:.4f}; actual default = 0"],
+          "Why the predictions can fail", f"Missed default: PAY_0 = {int(fn.PAY_0)}\nFalse alarm: PAY_0 = {int(fp.PAY_0)}\n\nIllustrative extreme errors, not typical clients.",
+          "Source: results/rf/misclassification_cases_05.csv | Tuned RF; score ≥ 0.5 predicts default.",
+          f"At the fixed threshold of zero point five, the selected forest misses {int(rf.FN)} defaults and falsely flags {int(rf.FP)} non-defaults. Consider two examples already present in the saved error export. Row {int(fn.row_id)} actually defaults but receives a score of {fn.Tuned_probability:.4f}; its recent repayment code is {int(fn.PAY_0)}. Row {int(fp.row_id)} does not default but scores {fp.Tuned_probability:.4f}; its recent repayment code is {int(fp.PAY_0)}. These examples show that repayment history is informative but not deterministic. They are the most confident errors from the existing export, not representative average customers. We do not change the model after inspecting them. Xu Yiqun will now examine the separate trade-off created by changing a validation-selected threshold."),
         Slide("XGBoost: no gain in test ranking", "Part 4", 60,
           ["24 configurations; select by CV AP", f"Selected: {xg_parameters['n_estimators']} trees, depth {xg_parameters['max_depth']}, rate {xg_parameters['learning_rate']}", f"Selected ROC-AUC: {xg['ROC-AUC']:.4f}"],
           "Test average precision", f"Tuned − baseline AP: {xg_interval.Estimate:.4f}\nConditional 95% interval: [{xg_interval.CI_low:.4f}, {xg_interval.CI_high:.4f}]", source + " | results/xgboost/bootstrap_intervals.csv",
@@ -220,7 +228,7 @@ def make_slides(frame):
         Slide("Backup D • Sources, responsibilities and reproducibility", "Q&A", 0,
           ["UCI: doi.org/10.24432/C55S3H", "scikit-learn: average_precision_score documentation", "XGBoost paper: doi.org/10.1145/2939672.2939785"],
           "Member contributions", "Equal contribution: 25% per member", "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
-          "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models."),
+          "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest with feature importance and error cases, and XGBoost with threshold trade-offs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Data-split and metric agreement, final integration, checking and rehearsal are shared by all four members. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models."),
     ]
     transitions = [
         "First, let us see how the shared data supports a fair comparison.",
@@ -228,9 +236,9 @@ def make_slides(frame):
         "I will now hand over to Zhang Hanyu to explain decision-tree regularization.",
         "Next, we inspect one rule to understand the tree's predictive pattern.",
         "We can now place the tree beside the other models using a common ranking metric.",
-        "I will now hand over to Zhou Xinzhe for random forest and the comparison audit.",
-        "We next move from the forest's ranking to its decision threshold.",
-        "Before comparing policies, we should check that the underlying evidence aligns.",
+        "I will now hand over to Zhou Xinzhe for random forest, feature importance, and error cases.",
+        "We next examine which features the forest uses to rank risk.",
+        "We now look at two saved errors to understand the limits of these patterns.",
         "I will now hand over to Xu Yiqun for XGBoost and the cost of acting on its scores.",
         "The next slide holds scores fixed and changes only the validation-selected threshold.",
         "This trade-off leads to our main conclusion about ranking, costs, and workload.",
@@ -346,9 +354,10 @@ def run(soffice=None):
              "All scripts below are also embedded in the PPTX speaker notes for Presenter View.",
              "## Speaker assignments"]
     assignment_table = ["| Speaker / student ID | Section | Slides | Contribution |", "|---|---|---|---|"]
-    assignment_table += [f"| {m['name']} / {m['student_id']} | {m['role']}: {m['scope']} | {m['slides']} | {m['share_percent']}% |" for m in team]
+    assignment_table += [f"| {m['name']} / {m['student_id']} | {m['role']}: {m['contribution_scope']} | {m['slides']} | {m['share_percent']}% |" for m in team]
     notes.append("\n".join(assignment_table))
-    notes += ["Q&A backup leads: slide 13 Zhang Hanyu; slide 14 Xu Yiqun; slide 15 Lei Peng; slide 16 Zhou Xinzhe. Other members support questions in their model area.",
+    notes += ["Shared by all four members: agree splits, preprocessing and metrics; write individual report/slides; jointly integrate, check results and rehearse. Q15–Q16 audit questions are shared preparation.",
+              "Q&A backup leads: slide 13 Zhang Hanyu; slide 14 Xu Yiqun; slide 15 Lei Peng; slide 16 Zhou Xinzhe. Other members support questions in their model area.",
               "Integration and LR supplement prepared with AI assistance for member review."]
     speaker_map = {}
     for index, spec in enumerate(slides, 1):
@@ -401,7 +410,7 @@ end run'''
         tile = Image.frombytes("RGB", (pixmap.width, pixmap.height), pixmap.samples)
         tile.thumbnail((480, 270))
         contact.paste(tile, ((index % 4) * 480, (index // 4) * 270))
-        if index in [2, 5, 10, 13]:
+        if index in [2, 5, 7, 8, 10, 13]:
             page.get_pixmap(matrix=fitz.Matrix(1.2, 1.2), alpha=False).save(str(assets / f"slide_{index+1:02}.png"))
     contact.save(assets / "contact_sheet.jpg", quality=85)
     write_json(output / "slide_manifest.json", {
@@ -411,6 +420,8 @@ end run'''
         "role_seconds": {role: 180 for role in ["Part 1", "Part 2", "Part 3", "Part 4"]},
         "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
         "source_csv_sha256": file_hash(ROOT / "results/final/model_comparison.csv"),
+        "interpretation_sources": {name: file_hash(ROOT / "results/rf" / name) for name in
+            ["validation_importance.csv", "misclassification_cases_05.csv", "test_predictions.csv"]},
         "generator_sha256": file_hash(Path(__file__)),
         "artifacts": {p.name: file_hash(p) for p in [pptx_path, pdf_path, notes_path]}})
     print(f"Created {len(slides)} editable slides, PDF, English notes and manifest.")

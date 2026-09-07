@@ -13,6 +13,7 @@ import numpy as np
 
 from integration.artifacts import file_hash, write_json
 from integration.audit import read_csv
+from integration.presentation_evidence import rf_interpretation
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'submission'
@@ -83,7 +84,8 @@ def run():
         ax.set(title=title,ylim=(0,max(base[key],selected[key])*1.25))
         ax.grid(axis='y',alpha=.12)
     save_figure(fig,'cost_tradeoff')
-    imp=read_csv(ROOT/'results/xgboost/validation_importance.csv').head(6).iloc[::-1]
+    rf_importance, rf_examples = rf_interpretation()
+    imp=rf_importance.head(6).iloc[::-1]
     fig,ax=plt.subplots(figsize=(9,2.8))
     ax.barh(imp.Feature,imp.Mean_AP_decrease,xerr=imp.SD_AP_decrease,color=TEAL,capsize=3)
     ax.set(xlabel='Decrease in validation AP after permutation')
@@ -108,9 +110,15 @@ def run():
         '\\begin{center}\\small\\begin{tabularx}{\\linewidth}{@{}p{34mm}Xr@{}}\\toprule\n'
         'Member / student ID & Responsibility and presentation & Share\\\\\\midrule\n' +
         '\n'.join('\\shortstack[l]{' + member['name'] + r'\\' + '\n' + member['student_id'] + '} & ' +
-                  member['role'] + ': ' + member['scope'] + '; slides ' +
+                  member['role'] + ': ' + member['contribution_scope'] + '; slides ' +
                   member['slides'].replace('–', '--') + ' & ' + str(member['share_percent']) + '\\%\\\\'
                   for member in team) + '\n\\bottomrule\\end{tabularx}\\end{center}')
+    values['RF_TOP_IMPORTANCE'] = f'{rf_importance.iloc[0].Mean_AP_decrease:.4f}'
+    values['RF_SECOND_IMPORTANCE'] = f'{rf_importance.iloc[1].Mean_AP_decrease:.4f}'
+    for group, example in rf_examples.iterrows():
+        values[f'RF_{group}_ROW'] = str(int(example.row_id))
+        values[f'RF_{group}_SCORE'] = f'{example.Tuned_probability:.4f}'
+        values[f'RF_{group}_PAY'] = str(int(example.PAY_0))
     template=(OUT/'report_template.tex').read_text()
     for key,value in values.items():
         template=template.replace('{{'+key+'}}',value)
