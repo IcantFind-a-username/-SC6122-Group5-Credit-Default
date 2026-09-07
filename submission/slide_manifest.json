@@ -1,7 +1,7 @@
 {
   "slides": [
     {
-      "title": "Credit default: rank risk, then choose an action",
+      "title": "Credit Card Default Prediction",
       "role": "Part 1",
       "seconds": 45,
       "bullets": [
@@ -9,15 +9,15 @@
         "What changes when missed defaults cost more?",
         "Four models. One auditable comparison."
       ],
-      "headline": "12 MIN + 3 MIN Q&A",
-      "detail": "SC6122 \u2022 Group 5\nFour speakers \u00d7 three minutes\nNAME / ID / SHARE TO CONFIRM",
+      "headline": "Risk, interpretation and decision costs",
+      "detail": "NTU SC6122\nEmerging Topics in FinTech\nGroup 5",
       "source": "UCI Default of Credit Card Clients; group experiment artifacts.",
-      "script": "Our question is how to identify default risk while balancing predictive ranking, interpretability, and the cost of taking action. We compare logistic regression, a decision tree, random forest, and XGBoost on shared historical records. A model score ranks accounts, but a threshold decides which accounts receive attention. Those are different questions, and our results will show why the distinction matters. Each of our four roles has three minutes, followed by three minutes for questions. Member names, student IDs, and contribution shares remain visibly marked for confirmation. I will begin with the data and the evidence boundary.",
+      "script": "Our question is how to identify default risk while balancing predictive ranking, interpretability, and the cost of taking action. We compare logistic regression, a decision tree, random forest, and XGBoost on shared historical records. A model score ranks accounts, but a threshold decides which accounts receive attention. Those are different questions, and our results will show why the distinction matters. I am Lei Peng, and I will begin with the data and logistic regression. Zhang Hanyu will cover the decision tree, Zhou Xinzhe the random forest, and Xu Yiqun XGBoost and decision costs.",
       "chart": null,
       "transition": "First, let us see how the shared data supports a fair comparison."
     },
     {
-      "title": "One split, shared folds, distinct responsibilities",
+      "title": "How we split and use the data",
       "role": "Part 1",
       "seconds": 70,
       "bullets": [
@@ -33,7 +33,7 @@
       "transition": "With the data roles fixed, we can introduce the logistic reference and its caveat."
     },
     {
-      "title": "Logistic regression: a transparent reference, with a caveat",
+      "title": "Logistic regression: the linear reference",
       "role": "Part 1",
       "seconds": 65,
       "bullets": [
@@ -46,10 +46,10 @@
       "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | LR* = post-hoc reproducibility supplement after historic test results existed.",
       "script": "Logistic regression offers a linear reference whose coefficients describe regularized associations. We used fold-trained scaling and categorical encoding, then compared twelve declared combinations of regularization strength and class weighting. Cross-validation selected C equal to zero point one without class weighting. The test AP is 0.4967, versus 0.4970 for the baseline, so selection did not improve ranking here. Crucially, the original logistic notebook was empty, and its original procedure cannot be verified. We preserve those artifacts and label our reproducible run as a post-hoc supplement after earlier test results existed. Part two now examines how tree regularization changes performance.",
       "chart": null,
-      "transition": "Part two now explains what changes when we regularize a decision tree."
+      "transition": "I will now hand over to Zhang Hanyu to explain decision-tree regularization."
     },
     {
-      "title": "Decision tree: constrain leaves to reduce overfitting",
+      "title": "Decision tree: controlling overfitting",
       "role": "Part 2",
       "seconds": 65,
       "bullets": [
@@ -80,7 +80,7 @@
       "transition": "Next, we inspect one rule to understand the tree's predictive pattern."
     },
     {
-      "title": "Tree rules make a predictive association inspectable",
+      "title": "Reading the tree\u2019s first decision",
       "role": "Part 2",
       "seconds": 60,
       "bullets": [
@@ -96,7 +96,7 @@
       "transition": "We can now place the tree beside the other models using a common ranking metric."
     },
     {
-      "title": "Compare ranking point estimates without declaring a winner",
+      "title": "Ranking performance across four models",
       "role": "Part 2",
       "seconds": 55,
       "bullets": [
@@ -139,10 +139,10 @@
         "format": "0.000",
         "horizontal": true
       },
-      "transition": "Part three will explain the forest result and the evidence behind our comparison."
+      "transition": "I will now hand over to Zhou Xinzhe for random forest and the comparison audit."
     },
     {
-      "title": "Random forest: average trees, then tune complexity",
+      "title": "Random forest: averaging and regularization",
       "role": "Part 3",
       "seconds": 70,
       "bullets": [
@@ -173,7 +173,7 @@
       "transition": "We next move from the forest's ranking to its decision threshold."
     },
     {
-      "title": "Forest policy: fewer misses, more review alerts",
+      "title": "Random forest: the review workload",
       "role": "Part 3",
       "seconds": 60,
       "bullets": [
@@ -189,7 +189,7 @@
       "transition": "Before comparing policies, we should check that the underlying evidence aligns."
     },
     {
-      "title": "What the audit establishes\u2014and what it cannot",
+      "title": "What makes the comparison credible",
       "role": "Part 3",
       "seconds": 50,
       "bullets": [
@@ -197,19 +197,19 @@
         "Metrics recomputed after row-ID alignment",
         "Frozen thresholds use score \u2265 threshold at full precision"
       ],
-      "headline": "COMPARABLE \u2260 IDENTICAL",
+      "headline": "Shared evidence, different searches",
       "detail": "Shared data and objective\nDifferent search budgets\nHistorical exposure and LR* caveat remain",
       "source": "Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md",
       "script": "Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result.",
       "chart": null,
-      "transition": "Part four now separates XGBoost's ranking result from its action-policy result."
+      "transition": "I will now hand over to Xu Yiqun for XGBoost and the cost of acting on its scores."
     },
     {
-      "title": "XGBoost: tuning did not improve test ranking",
+      "title": "XGBoost: no gain in test ranking",
       "role": "Part 4",
       "seconds": 60,
       "bullets": [
-        "Baseline + 23 seeded configurations; select by CV AP",
+        "24 configurations; select by CV AP",
         "Selected: 150 trees, depth 4, rate 0.03",
         "Selected ROC-AUC: 0.7762"
       ],
@@ -236,7 +236,7 @@
       "transition": "The next slide holds scores fixed and changes only the validation-selected threshold."
     },
     {
-      "title": "A lower threshold trades review capacity for fewer misses",
+      "title": "XGBoost: fewer misses, more reviews",
       "role": "Part 4",
       "seconds": 80,
       "bullets": [
@@ -275,7 +275,7 @@
       "transition": "This trade-off leads to our main conclusion about ranking, costs, and workload."
     },
     {
-      "title": "Choose the decision question before choosing the policy",
+      "title": "What the results mean for credit review",
       "role": "Part 4",
       "seconds": 40,
       "bullets": [
@@ -283,10 +283,10 @@
         "No clear ensemble winner from these small differences",
         "Next: fresh temporal data, calibration, subgroup errors"
       ],
-      "headline": "QUESTIONS \u2022 3 MIN",
-      "detail": "Freeze realistic costs and capacity first.\nValidate a new policy on new data.\nNAME / ID / SHARE TO CONFIRM",
+      "headline": "Discussion",
+      "detail": "Set realistic costs and review capacity.\nValidate the policy on fresh data.",
       "source": "Historical educational study; no causal or deployment-readiness claim.",
-      "script": "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you; we now have three minutes for questions.",
+      "script": "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you. We welcome your questions.",
       "chart": null,
       "transition": "We welcome your questions; the following slides provide supporting details."
     },
@@ -299,7 +299,7 @@
         "ROC-AUC measures positive/negative score ordering",
         "Precision, recall, F1 and accuracy require a threshold"
       ],
-      "headline": "AP \u2260 TRAPEZOIDAL PR-AUC",
+      "headline": "Two different definitions",
       "detail": "Saved continuous scores supply ranking metrics.\nChanging the cutoff changes decisions only.",
       "source": "Source: scikit-learn average_precision_score documentation; part4/evaluation.py",
       "script": "If asked about the ranking metric, explain that average precision weights each precision value by the associated increase in recall. It does not linearly interpolate the precision-recall curve with trapezoids, so similarly named PR-AUC values need not agree. ROC-AUC instead summarizes positive-versus-negative score ordering. Neither metric changes when we apply a different operating threshold to the same saved scores. Precision and recall do change because the decision set changes. The historical logistic CSV uses a PR-AUC label whose computation cannot be verified, which is one reason it is excluded from our verified ranking table.",
@@ -315,7 +315,7 @@
         "Validation minimum cost; ties prefer largest cutoff",
         "1,000 stratified paired bootstrap resamples"
       ],
-      "headline": "CONDITIONAL UNCERTAINTY",
+      "headline": "What the intervals cover",
       "detail": "Fixed models / thresholds / class counts\nExcludes fitting / selection uncertainty\nExcludes population / prevalence shifts",
       "source": "Source: frozen protocols; integration/uncertainty.py; bootstrap_intervals.csv",
       "script": "The cost experiment declares four ratios rather than searching for a convenient ratio after viewing test results. At each ratio, the validation table includes all distinct score-based decision sets, with tied scores moving together. Equal costs select the largest threshold and therefore fewer alerts. The paired bootstrap samples the same test-row indices for each compared prediction vector, stratified by outcome. Its intervals are conditional on frozen models, thresholds, and class counts. They do not include uncertainty from refitting, hyperparameter search, threshold search, or a shift to another population. Real operational costs would require information that this dataset does not provide.",
@@ -331,12 +331,12 @@
         "EDUCATION 0/5/6 \u2192 4; MARRIAGE 0 \u2192 3",
         "Retained duplicate vectors can span partitions"
       ],
-      "headline": "HISTORICAL TEST REUSED",
+      "headline": "The limits of historical evidence",
       "detail": "Original LR process remains unverified.\nLR* source was committed before its one run.\nNo new unseen-test claim is made.",
       "source": "Sources: results/final/source_audit.json; integration/LOGISTIC_PROVENANCE.md",
       "script": "The integration audit redownloaded the official source and reproduced the committed cleaned dataset in values, types, order, and schema. Undocumented education categories are consolidated, and marriage category zero is mapped to other. The original download bytes were not preserved, so the new download and its hash are documented separately. Duplicate feature vectors remain under the established protocol and may create dependence across partitions. For logistic regression, the original notebook history contained an empty model notebook. The supplement's code and search declaration were committed before execution, but previous team test results already existed. This makes the supplement reproducible without making it independent external evidence.",
       "chart": null,
-      "transition": "The last backup lists our references and the responsibilities still to confirm."
+      "transition": "The last backup lists the references and each member\u2019s contribution."
     },
     {
       "title": "Backup D \u2022 Sources, responsibilities and reproducibility",
@@ -347,14 +347,74 @@
         "scikit-learn: average_precision_score documentation",
         "XGBoost paper: doi.org/10.1145/2939672.2939785"
       ],
-      "headline": "FOUR ROLES \u2022 REVIEW REQUIRED",
-      "detail": "P1 data/LR \u2022 P2 tree/ranking\nP3 forest/audit \u2022 P4 XGBoost/costs\nNAME / ID / SHARE TO CONFIRM",
+      "headline": "Member contributions",
+      "detail": "Equal contribution: 25% per member",
       "source": "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
-      "script": "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Member identities and contribution percentages must be confirmed by the group; we have not invented them. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.",
+      "script": "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.",
       "chart": null,
       "transition": "We can return to the main conclusion or discuss a specific model or policy."
     }
   ],
+  "team": [
+    {
+      "role": "Part 1",
+      "name": "Lei Peng",
+      "student_id": "G2509090C",
+      "share_percent": 25,
+      "slides": "1\u20133",
+      "scope": "Data and logistic regression",
+      "qa_primary": "Q1\u2013Q6",
+      "qa_support": "Q7, Q15, Q22"
+    },
+    {
+      "role": "Part 2",
+      "name": "Zhang Hanyu",
+      "student_id": "G2509091L",
+      "share_percent": 25,
+      "slides": "4\u20136",
+      "scope": "Decision tree and model comparison",
+      "qa_primary": "Q7\u2013Q11",
+      "qa_support": "Q2, Q3, Q13"
+    },
+    {
+      "role": "Part 3",
+      "name": "Zhou Xinzhe",
+      "student_id": "G2509033F",
+      "share_percent": 25,
+      "slides": "7\u20139",
+      "scope": "Random forest and experiment audit",
+      "qa_primary": "Q12\u2013Q16",
+      "qa_support": "Q3, Q19, Q21"
+    },
+    {
+      "role": "Part 4",
+      "name": "Xu Yiqun",
+      "student_id": "G2509092H",
+      "share_percent": 25,
+      "slides": "10\u201312",
+      "scope": "XGBoost and cost analysis",
+      "qa_primary": "Q17\u2013Q22",
+      "qa_support": "Q8, Q10, Q15"
+    }
+  ],
+  "speaker_map": {
+    "1": "Lei Peng",
+    "2": "Lei Peng",
+    "3": "Lei Peng",
+    "4": "Zhang Hanyu",
+    "5": "Zhang Hanyu",
+    "6": "Zhang Hanyu",
+    "7": "Zhou Xinzhe",
+    "8": "Zhou Xinzhe",
+    "9": "Zhou Xinzhe",
+    "10": "Xu Yiqun",
+    "11": "Xu Yiqun",
+    "12": "Xu Yiqun",
+    "13": "Zhang Hanyu",
+    "14": "Xu Yiqun",
+    "15": "Lei Peng",
+    "16": "Zhou Xinzhe"
+  },
   "main_slides": 12,
   "backup_slides": 4,
   "rendered_pdf_pages": 16,
@@ -370,10 +430,10 @@
   },
   "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
   "source_csv_sha256": "90ec1df8bb42f20604ceea5f208ca031f042d48932cd850f7007a7df8a8b4acb",
-  "generator_sha256": "bb6c6521b90b32281f56cce745a4574be4f4b28017134578457332095a9a0804",
+  "generator_sha256": "53cbe8cf041f5ab690ae7a1349168ff1c6c8bc716732c1631227696dc476db96",
   "artifacts": {
-    "Group5_Presentation.pptx": "e2d08a5a288d18cec77df47b102c9c7d9f252a09d8574d6487cb4695a424323f",
-    "Group5_Presentation.pdf": "9d62f6563dc74d0f2d3192993e6f9afea3d04ff09ed52f0b7a08c09b7d06f7c3",
-    "Group5_Speaker_Notes.md": "ab2f5de8623064d61e97644c4e491d59d21034b90bd02ff49cc9f500f1738e67"
+    "Group5_Presentation.pptx": "b550f926c8a6cdda9b2a8a3c9a4009ff3d9ed8f41bd673b7e7c6f51fe53c82e8",
+    "Group5_Presentation.pdf": "1ec3fcc39786b6da51917e5e71023c64399565b56101f776ac3cf1bdcc069ab4",
+    "Group5_Speaker_Notes.md": "97f8497cb2a39d747178693c7337c76cdcecf70c913efa694db93bcae94251e5"
   }
 }

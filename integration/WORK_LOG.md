@@ -46,3 +46,12 @@ Workers reuse the above tools; no duplicate utilities. Propose new utilities bef
 - Final gate after document/precision changes: 70 tests passed (1.29s), full Ruff passed, mypy passed on 28 source files.
 - Final main remote recheck: 15c6d1c, unchanged. All changes stay on integration branch. No course upload, teacher email, force-push or main merge.
 - Remaining human information: member identities/actual contribution percentages, teacher template, final course platform deadline/date/upload fields, any original LR code outside the searched repository.
+
+## Presentation and member details revision (2026-09-07)
+
+- Applied user-supplied identities: Lei Peng G2509090C (part 1), Zhang Hanyu G2509091L (part 2), Zhou Xinzhe G2509033F (part 3), Xu Yiqun G2509092H (part 4). Equal contributions of 25% each are stored in `submission/team.json` and displayed in final materials.
+- Replaced the report's three decorative partition cards with an ordinary partition/use table; removed the unused card image. The report remains six pages with three numbered figures.
+- Redesigned the slide cover and body layouts with open chart space, a real partition table, an editable tree-rule diagram, thin rules and no theme shadows. Audience slides contain no rehearsal timing labels; timing remains in notes.
+- Main slide ownership: Lei 1–3, Zhang 4–6, Zhou 7–9, Xu 10–12. All sixteen native PPTX note sections contain the full script, named speaker, student ID and transition. Four backup leads and 22 bilingual Q&A priorities are named explicitly.
+- Rendered the actual PPTX with the official hash-verified, signed LibreOffice runtime. Inspected the report first/contribution pages, the slide contact sheet and detailed cost/uncertainty slides. Delivery validation checks all 182 nonempty text boxes against PDF, all scripts against native notes, and names/IDs against report/cover/Q&A. Experiment CSVs and frozen artifacts were not changed.
+- Full repository gate after layout/identity changes: 70 pytest tests passed; Ruff passed; mypy passed for 28 source files. Subsequent rendering refinements were checked with Ruff/mypy and the delivery validator.
