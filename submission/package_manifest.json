@@ -1,10 +1,10 @@
 {
-  "packaged_commit": "427173952d9d9004e7acd0e8b589967cf7b3fc3a",
-  "archive_SHA256": "34cc50222e88d86adaa851a8b1e9226d3f8c4eeebd25d75462d694e0102a0abb",
-  "archive_bytes": 20782413,
-  "dataset_archive_SHA256": "c11269be7e5c122069fd751cb2ef75f6d9694ba8f5f6d761cafa360e446bc947",
+  "packaged_commit": "1f67eb959b99de9ade6a6e214ba379fefe43031c",
+  "archive_SHA256": "a2e5f034d297f75cac9b94756e9aef350a2415d5a57e90e18779bd819a08eb76",
+  "archive_bytes": 20964349,
+  "dataset_archive_SHA256": "4cea915ee521ec3b1257df0344c38d07dbe616a15bb937b15693e2ea67eeed7a",
   "dataset_archive_bytes": 3117487,
-  "entries": 216,
+  "entries": 219,
   "required_deliverables_present": true,
   "forbidden_content_absent": true,
   "scope": "Committed HEAD; archive/manifest self-excluded by export-ignore"
