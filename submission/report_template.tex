@@ -14,8 +14,8 @@
 \begin{document}
 {\LARGE\bfseries\color{navy} Credit Card Default Prediction}\par
 {\large Ranking risk, explaining patterns and choosing an action}\par
-NTU SC6122 Emerging Topics in FinTech --- Group 5\hfill 7 September 2026
-\smallcap{Members: \textbf{NAME / STUDENT ID TO CONFIRM for all four roles}. Planned presentation: 8 September 2026; course platform deadline pending confirmation.}
+NTU SC6122 Emerging Topics in FinTech --- Group 5\hfill 7 September 2026\par
+{{MEMBER_HEADER}}
 \sect{1. Problem, objectives and data}
 Credit default prediction can support the prioritization of account reviews. A missed default and an unnecessary review impose different costs, so the model with the best classification accuracy need not support the best decision. We ask: \textbf{how well can models identify default risk, and how should ranking ability, interpretability and decision cost be balanced?} We compare logistic regression (LR), a decision tree (DT), random forest (RF) and XGBoost on the same historical records. Objectives are to evaluate ranking using average precision (AP) and ROC-AUC, explain predictive associations, and examine threshold policies under explicit hypothetical error costs.
 
@@ -24,8 +24,14 @@ We use UCI's Default of Credit Card Clients dataset [1]: 30,000 Taiwan clients, 
 \textbf{Cleaning and identity.} There are no missing entries. Undocumented EDUCATION values 0/5/6 are mapped to 4 (345 rows); MARRIAGE 0 is mapped to 3 (54 rows). Other values, including negative repayment codes and large or negative amounts, are retained. No rows, outliers or duplicate records are removed; 35 identical feature--label repetitions remain. Equal records alone do not establish repeated customers, but retaining them can create dependence across partitions. The final audit finds {{DUP_TEST}} test rows whose feature vectors also appear in development data. This limitation is retained rather than changing the established split after evaluation.
 
 \textbf{Traceability.} The official UCI CSV was downloaded again during integration, and the above transformation reproduces the committed clean file exactly in values, types, row order and column order. The original download bytes were not saved; the new raw file and SHA256 audit are provided. The repository's zero-based \texttt{row\_id} equals original UCI ID minus one. Neither identifier nor the label enters any model.
-\begin{center}\includegraphics[width=.97\linewidth]{figures/split.png}\end{center}
-\smallcap{Figure 1. Fixed stratified partitions, seed 42. The 18,000 fitting rows supply five inner CV folds (14,400 train / 3,600 holdout each). Validation selects decision thresholds; the 6,000 historical test rows supply reported outcomes.}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}lrX@{}}\toprule
+Partition & Clients & Use in the experiment\\\midrule
+Fitting & 18,000 & Five-fold CV for model selection; selected model fitted on all fitting rows\\
+Validation & 6,000 & Selection of decision thresholds\\
+Test & 6,000 & Evaluation of frozen models and decisions\\\bottomrule
+\end{tabularx}\end{center}
+\smallcap{Fixed stratified partitions, seed 42. Each inner CV fold uses 14,400 training and 3,600 holdout rows.}
 \newpage
 \sect{2. Experimental design and model selection}
 The original 80/20 split yields 24,000 development and 6,000 test rows. A further stratified 75/25 development split produces 18,000 fit and 6,000 validation rows. Positive counts are {{FIT_POS}}, 1,327 and 1,327 respectively. All four reproducible experiments have identical row-level development and five-fold CV memberships. IDs are unique and partitions disjoint. Final models fit only the 18,000 rows; validation rows are not incorporated by a later refit.
@@ -51,7 +57,7 @@ LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its g
 
 AP is computed by \texttt{average\_precision\_score}, a recall-increment weighted sum of precision, not trapezoidal PR-AUC [2]. ROC-AUC summarizes positive--negative score ordering. Both use continuous scores and are independent of the chosen operating threshold; precision, recall, F1 and accuracy describe a particular decision rule.
 \begin{center}\includegraphics[width=.94\linewidth]{figures/ranking.png}\end{center}
-\smallcap{Figure 2. Test AP for declared baselines and CV-selected models. The dashed reference is positive prevalence (0.2212). Selection uses fit-fold CV, never this chart.}
+\smallcap{Figure 1. Test AP for declared baselines and CV-selected models. The dashed reference is positive prevalence (0.2212). Selection uses fit-fold CV, never this chart.}
 
 The unrestricted DT strongly overfits: mean fit-fold AP is about 1.0000 while CV AP is 0.2970. A minimum leaf size of 100 raises test AP from 0.2843 to 0.5221. RF selection raises AP from 0.5312 to 0.5508. XGBoost changes from 0.5544 to 0.5516: the selected configuration does not improve test ranking. LR* changes from {{LR_BASE_AP}} to {{LR_TUNE_AP}}, also without a ranking gain. Among the displayed point estimates the XGBoost baseline has the highest AP, but this retrospective observation does not authorize a new model-selection round. Small differences between RF and XGBoost do not establish superiority.
 \newpage
@@ -60,7 +66,7 @@ We treat one false-positive review as one hypothetical cost unit, and a missed d
 {{COST_TABLE}}
 \smallcap{Table 4. Same-model test comparison at 0.5 versus its validation-selected $r=5$ policy. Alert rate is the share flagged for review; costs are total hypothetical units across 6,000 rows. LR* remains a post-hoc supplement. DT has no historical validation-selected cost policy.}
 \begin{center}\includegraphics[width=.94\linewidth]{figures/cost_tradeoff.png}\end{center}
-\smallcap{Figure 3. Moving the same tuned XGBoost from 0.5 to its validation cutoff changes FP/FN and workload. Ranking scores remain unchanged.}
+\smallcap{Figure 2. Moving the same tuned XGBoost from 0.5 to its validation cutoff changes FP/FN and workload. Ranking scores remain unchanged.}
 
 For XGBoost, $t={{XGB_THR}}$ changes cost from 3,685 to 3,408, a reduction of {{XGB_REDUCTION}}\%. Recall rises from 54.86\% to 82.52\%, while false positives rise from 690 to 2,248 and 55.72\% of clients are flagged. Precision falls from 51.34\% to 32.76\%. The benefit is fewer missed defaults under the assumed cost ratio; it is not a gain in AP or ROC-AUC. If that review load is infeasible, the policy would need a separately validated capacity constraint, not a threshold changed after viewing test errors.
 
@@ -73,7 +79,7 @@ RF at its validation $r=5$ threshold costs 3,404 and flags 48.45\%, versus XGBoo
 
 RF averages many trees; this reduces reliance on a single unstable partition but makes full decision paths less concise. XGBoost sequentially builds boosted trees with regularization. We use saved validation permutation importance to ask which variable perturbations most reduce AP. Repayment status, especially recent status, is influential. Correlated predictors can substitute for one another; shuffling can form unrealistic combinations. Importance and rules should therefore be interpreted as predictive associations.
 \begin{center}\includegraphics[width=.93\linewidth]{figures/importance.png}\end{center}
-\smallcap{Figure 4. Tuned XGBoost validation permutation importance, top six features. Error bars are the SD across five permutations, not confidence intervals or causal estimates. Horizontal units: decrease in validation AP.}
+\smallcap{Figure 3. Tuned XGBoost validation permutation importance, top six features. Error bars are the SD across five permutations, not confidence intervals or causal estimates. Horizontal units: decrease in validation AP.}
 
 \textbf{Misclassification evidence.} RF's saved profiles and representative cases were recomputed separately under 0.5 and its validation-selected $r=5$ threshold. Both files satisfy their own FP/FN decision rules. The most confident errors can be the same in both files: lowest-scoring defaults remain false negatives and highest-scoring non-defaults remain false positives. Identical extreme examples alone do not imply a duplicated export; group counts and rule membership provide the relevant verification.
 
@@ -90,17 +96,11 @@ Limitations include one historical geography/time period; a random rather than t
 
 A defensible next study would freeze a new protocol on fresh temporal/external data, assess calibration and subgroup errors, collect realistic loss and intervention-cost estimates, and evaluate policies constrained by review capacity. These are future steps, not experiments silently performed on the already evaluated test set.
 
-\textbf{Reproducibility and delivery.} The README separates verification from retraining. Automated comparison CSVs, models, predictions, source data and environment pins accompany the editable report and presentation. Historical protocols and member commits are preserved. Course-platform submission and member identities require group confirmation.
+\textbf{Reproducibility and delivery.} The README separates verification from retraining. Automated comparison CSVs, models, predictions, source data and environment pins accompany the editable report and presentation. Historical protocols and member commits are preserved. Course-platform deadline and upload details require group confirmation.
 
-\sect{Member contribution statement (identities to confirm)}
-\begin{tabularx}{\linewidth}{@{}p{18mm}Xp{26mm}@{}}\toprule
-Role & Substantive presentation responsibility / contribution scope & Identity / share\\\midrule
-Part 1 & Data cleaning, partition design, logistic model and provenance limitations; slides 1--3 & \textbf{NAME, ID, \% TBD}\\
-Part 2 & Decision-tree tuning, overfitting, rules and group ranking comparison; slides 4--6 & \textbf{NAME, ID, \% TBD}\\
-Part 3 & Random-forest search, error profiles, fair-comparison evidence; slides 7--9 & \textbf{NAME, ID, \% TBD}\\
-Part 4 & XGBoost, thresholds, costs, uncertainty and synthesis; slides 10--12 & \textbf{NAME, ID, \% TBD}\\\bottomrule
-\end{tabularx}
-\smallcap{Roles describe documented scopes and planned speaking, not confirmed contribution shares. Integration and the LR supplement were prepared with AI assistance for member review. Each role speaks for 3 minutes; Q\&A has 3 minutes.}
+\sect{Member contribution statement}
+{{MEMBER_CONTRIBUTIONS}}
+\smallcap{Contribution shares are equal at 25\% per member, as confirmed by the group. Integration and the LR supplement were prepared with AI assistance for member review. Each member presents a substantive model section.}
 
 \sect{References}
 {\small

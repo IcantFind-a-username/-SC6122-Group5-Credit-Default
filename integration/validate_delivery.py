@@ -21,6 +21,14 @@ def run():
     pdf = fitz.open(OUT/'Group5_Final_Report.pdf')
     print('Report page openings:', [(i+1, p.get_text()[:100]) for i,p in enumerate(pdf)])
     report_text = '\n'.join(p.get_text() for p in pdf)
+    team = json.loads((OUT/'team.json').read_text())
+    qa = (OUT/'Group5_QA.md').read_text()
+    assert sum(member['share_percent'] for member in team) == 100
+    for member in team:
+        assert member['name'] in report_text and member['student_id'] in report_text
+        assert member['name'] in qa and member['student_id'] in qa
+        assert member['share_percent'] == 25
+    assert not re.search(r'TO CONFIRM|\bTBD\b|NAME /', report_text)
     for text in ['Problem','References','contribution','hypothetical','post-hoc']:
         assert text.lower() in report_text.lower(), text
     test = read_csv(ROOT/'results/final/model_comparison.csv')
@@ -51,6 +59,7 @@ def run():
         slides_pdf=fitz.open(OUT/'Group5_Presentation.pdf')
         assert len(deck.slides)==len(slides_pdf)==16
         manifest = json.loads((OUT/'slide_manifest.json').read_text())
+        assert manifest['team'] == team
         assert manifest['talk_seconds'] == 720 and manifest['qa_seconds'] == 180
         assert manifest['role_seconds'] == {f'Part {i}':180 for i in range(1,5)}
         assert manifest['source_csv_sha256'] == file_hash(ROOT/'results/final/model_comparison.csv')
@@ -65,7 +74,17 @@ def run():
                     text_checks += 1
             spec = manifest['slides'][number-1]
             assert spec['script'] in notes and spec['transition'] in notes
-            assert spec['transition'] in slide.notes_slide.notes_text_frame.text
+            native = slide.notes_slide.notes_text_frame.text
+            assert spec['transition'] in native and spec['script'] in native
+            speaker = manifest['speaker_map'][str(number)]
+            member = next(m for m in team if m['name'] == speaker)
+            assert member['name'] in native and member['student_id'] in native
+            assert member['name'] in page.get_text()
+            assert not re.search(r'TO CONFIRM|\bTBD\b|NAME /|\bMIN\b|\bSEC\b', page.get_text())
+        for member in team:
+            assert member['name'] in slides_pdf[0].get_text()
+            assert member['student_id'] in slides_pdf[0].get_text()
+        result['member_identity_and_notes'] = 'Four named members; matching student IDs; 25% each; all 16 slides have complete native scripts and named leads'
         result['slide_text_boxes_verified'] = text_checks
         result['speaker_scripts_and_transitions'] = 'Match manifest, Markdown and native speaker notes'
         result.update({'slide_pages':len(slides_pdf),'slide_first_text_matches_pdf':True,

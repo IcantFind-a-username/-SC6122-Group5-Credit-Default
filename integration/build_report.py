@@ -64,14 +64,6 @@ def run():
                 row = test[(test.Family == family) & (test.Model == model)].iloc[0]
                 costs.append([label, policy, f'{row.Threshold:.5f}', f'{row.Recall*100:.2f}',
                               f'{row.Alert_rate*100:.2f}', str(int(row.FP)), str(int(row.FN)), str(int(row.Cost_5))])
-    fig, ax = plt.subplots(figsize=(10, 1.65))
-    ax.set(xlim=(0,10), ylim=(0,2))
-    ax.axis('off')
-    for x, title, sub, color in [(0,'18,000 FIT','5-fold CV: select parameters',TEAL), (3.5,'6,000 VALIDATION','Select cost thresholds',ORANGE), (7,'6,000 TEST','Evaluate frozen decisions',NAVY)]:
-        ax.add_patch(plt.Rectangle((x,.25),3,1.4,color=color,alpha=.10))
-        ax.text(x+1.5,1.2,title,ha='center',weight='bold',fontsize=14)
-        ax.text(x+1.5,.65,sub,ha='center',fontsize=10)
-    save_figure(fig,'split')
     fig, ax = plt.subplots(figsize=(9, 2.8))
     positions = np.arange(4)
     for offset,index,label,color in [(-.18,1,'Baseline',GREY),(.18,2,'CV-selected',TEAL)]:
@@ -106,6 +98,19 @@ def run():
               'LR_BASE_AP':f"{selected_rows['LR*_B'].AP:.4f}", 'LR_TUNE_AP':f"{selected_rows['LR*_T'].AP:.4f}",
               'XGB_THR':f'{selected.Threshold:.5f}',
               'XGB_REDUCTION':f'{100*(base.Cost_5-selected.Cost_5)/base.Cost_5:.2f}'}
+    team = json.loads((OUT/'team.json').read_text())
+    values['MEMBER_HEADER'] = '{\\small ' + ' \\quad '.join(
+        member['name'] + ' (' + member['student_id'] + ')' for member in team[:2]
+    ) + r'\\' + '\n' + ' \\quad '.join(
+        member['name'] + ' (' + member['student_id'] + ')' for member in team[2:]
+    ) + '}\\par'
+    values['MEMBER_CONTRIBUTIONS'] = (
+        '\\begin{center}\\small\\begin{tabularx}{\\linewidth}{@{}p{34mm}Xr@{}}\\toprule\n'
+        'Member / student ID & Responsibility and presentation & Share\\\\\\midrule\n' +
+        '\n'.join('\\shortstack[l]{' + member['name'] + r'\\' + '\n' + member['student_id'] + '} & ' +
+                  member['role'] + ': ' + member['scope'] + '; slides ' +
+                  member['slides'].replace('–', '--') + ' & ' + str(member['share_percent']) + '\\%\\\\'
+                  for member in team) + '\n\\bottomrule\\end{tabularx}\\end{center}')
     template=(OUT/'report_template.tex').read_text()
     for key,value in values.items():
         template=template.replace('{{'+key+'}}',value)

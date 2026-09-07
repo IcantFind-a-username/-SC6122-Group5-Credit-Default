@@ -9,18 +9,18 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 | Real data and an applied ML problem | UCI credit-card default data; source, CC BY 4.0 attribution, raw/clean files and source audit included. |
 | Reasonable hyperparameters, comparisons and interpretation | Four reproducible model workflows; explicit baseline/selected settings and search budgets; AP, ROC-AUC and threshold metrics; association-only interpretations. |
 | Test excluded from training/tuning/threshold choice | Shared fit/validation/CV membership; pipeline fit boundaries and validation-only thresholds checked. Historical test exposure, original LR gap and RF regeneration are explicitly disclosed. No new independent unseen-test claim. |
-| Entire English report, including references, ≤7 pages | **6 pages**, `Group5_Final_Report.pdf`; normal 11pt body; four figures and four tables. Math subscripts are smaller glyphs, not reduced body type. |
-| Required report sections | Background/problem, data/target, objectives, methods, findings/comparison, conclusions/discussion and member contribution roles are included. Identities/shares still require confirmation. |
+| Entire English report, including references, ≤7 pages | **6 pages**, `Group5_Final_Report.pdf`; normal 11pt body; three figures, four numbered result tables and a plain partition table. Math subscripts are smaller glyphs, not reduced body type. |
+| Required report sections | Background/problem, data/target, objectives, methods, findings/comparison, conclusions/discussion and member contribution roles are included. All four names, student IDs and equal 25% shares are confirmed. |
 | Preferred teacher Word/LaTeX template | Repository and Documents/Downloads/NTU/Desktop filename search found no teacher template or named samples. Complete standard LaTeX fallback provided; swap to the actual template if supplied and recheck ≤7 pages. |
 | Report + applicable dataset submitted day before presentation | Files ready locally; **group must confirm 7 September deadline time/portal and upload**. Data are in `data/`, also included in reproduction archive when packaged. |
 | 15 minutes including Q&A; all four speak | 12 main slides: 720 seconds speaking; four roles ×180 seconds; 180 seconds Q&A. Four backup slides outside main talk. Rehearse actual speaking pace. |
-| 25% group / 75% individual assessment | Four substantive role assignments; per-slide English scripts and 22 bilingual Q&A items with role priorities. Confirm names/IDs/actual contribution shares. |
+| 25% group / 75% individual assessment | Four substantive role assignments; per-slide English scripts and 22 bilingual Q&A items with role priorities. Named assignments and equal 25% contribution shares are recorded in `team.json`. |
 
 ## Actual deliverables
 
 - [Report PDF](Group5_Final_Report.pdf); [editable LaTeX](Group5_Final_Report.tex); [report prose template](report_template.tex).
 - [Editable PPTX](Group5_Presentation.pptx); [PDF backup](Group5_Presentation.pdf).
-- [English speaker notes](Group5_Speaker_Notes.md): each slide, role, target time, script and transition.
+- [English speaker notes](Group5_Speaker_Notes.md): each slide, named speaker, student ID, target time, script and transition; the same text is embedded in native PPTX notes for Presenter View.
 - [Bilingual Q&A](Group5_QA.md): 22 questions, role-priority map and evidence links.
 - [Model comparison](model_comparison.csv), [cost comparison](cost_comparison.csv), [README](../README.md), [dataset provenance](../data/README.md).
 - [Experiment audit](../results/final/audit.json), [audit interpretation](../integration/AUDIT_FINDINGS.md), [source audit](../results/final/source_audit.json), [notebook execution status](../results/final/notebook_status.json).
@@ -44,16 +44,24 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 
 Prepare the editable source, PPTX/PDF, notes/Q&A, code/data/models/results and environment pins. The course screenshots supplied in the task did **not** establish that code or slides must be uploaded. The reproduction ZIP excludes Git internals, virtual environments, caches, render scratch files and unrelated personal files. Optional rendered preview images are evidence/backup, not extra report pages.
 
+## Confirmed members
+
+| Member | Student ID | Responsibility | Slides | Share |
+|---|---|---|---|---|
+| Lei Peng | G2509090C | Data and logistic regression | 1–3 | 25% |
+| Zhang Hanyu | G2509091L | Decision tree and model comparison | 4–6 | 25% |
+| Zhou Xinzhe | G2509033F | Random forest and experiment audit | 7–9 | 25% |
+| Xu Yiqun | G2509092H | XGBoost and cost analysis | 10–12 | 25% |
+
 ## Human confirmation before upload
 
-1. Four members' **English names, student IDs, final actual contribution shares**. No percentages have been invented. Part 4 is the requesting member's role; identity is still unverified.
-2. Course announcement: final presentation date, report deadline **time/timezone**, submission portal/field, dataset packaging rules, and whether code/PPT must also be uploaded.
-3. Teacher `Word Template.docx` or `Latex Template.zip`; named sample report/slides if available. Samples never override the explicit seven-page cap.
-4. Team review of substantive contribution statements, source attribution, AI-assisted integration/supplement, and historical-exposure limitations; practice all four sections aloud.
-5. If any additional original LR training source exists outside the searched repository/workspace, supply it for provenance reconciliation; do not silently substitute it for the labelled supplement.
+1. Course announcement: final presentation date, report deadline **time/timezone**, submission portal/field, dataset packaging rules, and whether code/PPT must also be uploaded.
+2. Teacher `Word Template.docx` or `Latex Template.zip`; named sample report/slides if available. Samples never override the explicit seven-page cap.
+3. Team review of substantive contribution statements, source attribution, AI-assisted integration/supplement, and historical-exposure limitations; practice all four sections aloud.
+4. If any additional original LR training source exists outside the searched repository/workspace, supply it for provenance reconciliation; do not silently substitute it for the labelled supplement.
 
 ## Final presentation acceptance
 
-Actual PPTX exported by official LibreOffice 26.8.0.3 to a 16-page PDF. All 144 text boxes match the rendered PDF; scripts and explicit transitions match Markdown, native speaker notes and the manifest. Full contact sheet and dense slides inspected; backup-page overflow corrected. Main talk: 720 seconds; Q&A: 180 seconds. Report is complete and visually inspected at 6 pages. `slide_manifest.json` and `delivery_validation.json` record hashes and counts.
+Actual PPTX exported by official LibreOffice 26.8.0.3 to a 16-page PDF. All nonempty slide text boxes are checked against the rendered PDF; scripts and explicit transitions match Markdown, native speaker notes and the manifest. The revised cover, open chart layouts, partition table and backup pages are rendered for visual inspection. Main talk: 720 seconds; Q&A: 180 seconds. Report is complete and visually inspected at 6 pages. `slide_manifest.json` and `delivery_validation.json` record hashes and counts.
 
 Integration branch only: `integration/final-submission-20260907`. No force-push, main merge, course upload or teacher email.

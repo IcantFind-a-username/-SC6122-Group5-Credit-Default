@@ -1,6 +1,6 @@
 # SC6122 Group 5 · Credit Card Default Prediction
 
-Final integration branch: `integration/final-submission-20260907`. Main and member histories are preserved. **Course upload is performed by the group.** Planned report date: 7 September 2026; presentation: 8 September 2026. Exact deadline, upload fields and member identities must be confirmed.
+Final integration branch: `integration/final-submission-20260907`. Main and member histories are preserved. **Course upload is performed by the group.** Planned report date: 7 September 2026; presentation: 8 September 2026. Exact deadline and upload fields must be confirmed. Member identities and equal 25% shares are recorded in `submission/team.json`.
 
 ## Deliverables
 
@@ -63,7 +63,7 @@ Historical source-train/test hashes differ due to LF/CRLF line endings; parsed d
 
 ## Editing / package
 
-Update report prose in `submission/report_template.tex`, then regenerate; generated tables come from the final comparison. Slide editable content lives in `integration/build_slides.py` and the PPTX. Confirm member names, IDs and actual contribution shares rather than inventing them. An edit to source requires rebuilding and rechecking PDF/PPT consistency.
+Update report prose in `submission/report_template.tex`, then regenerate; generated tables come from the final comparison. Slide editable content lives in `integration/build_slides.py` and the PPTX. Confirmed member names, IDs, roles and equal 25% shares are maintained in `submission/team.json`; native PPTX notes include each named speaker’s script. An edit to source requires rebuilding and rechecking PDF/PPT consistency.
 
 ```bash
 python -m integration.reproduce package
