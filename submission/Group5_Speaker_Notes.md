@@ -10,10 +10,12 @@ All scripts below are also embedded in the PPTX speaker notes for Presenter View
 
 | Speaker / student ID | Section | Slides | Contribution |
 |---|---|---|---|
-| Lei Peng / G2509090C | Part 1: Data and logistic regression | 1–3 | 25% |
-| Zhang Hanyu / G2509091L | Part 2: Decision tree and model comparison | 4–6 | 25% |
-| Zhou Xinzhe / G2509033F | Part 3: Random forest and experiment audit | 7–9 | 25% |
-| Xu Yiqun / G2509092H | Part 4: XGBoost and cost analysis | 10–12 | 25% |
+| Lei Peng / G2509090C | Part 1: Data checks and preprocessing; logistic baseline; data characteristics and baseline performance | 1–3 | 25% |
+| Zhang Hanyu / G2509091L | Part 2: Decision-tree tuning; learned rules and overfitting control | 4–6 | 25% |
+| Zhou Xinzhe / G2509033F | Part 3: Random-forest tuning; feature importance and illustrative misclassification cases | 7–9 | 25% |
+| Xu Yiqun / G2509092H | Part 4: XGBoost tuning; threshold trade-offs between missed defaults and false alarms | 10–12 | 25% |
+
+Shared by all four members: agree splits, preprocessing and metrics; write individual report/slides; jointly integrate, check results and rehearse. Q15–Q16 audit questions are shared preparation.
 
 Q&A backup leads: slide 13 Zhang Hanyu; slide 14 Xu Yiqun; slide 15 Lei Peng; slide 16 Zhou Xinzhe. Other members support questions in their model area.
 
@@ -57,7 +59,7 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 
 
 ## Slide 4: Decision tree: controlling overfitting
 
-**Zhang Hanyu (G2509091L) | Part 2: Decision tree and model comparison | Contribution 25%**
+**Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
 Target: 65 seconds
 
@@ -69,7 +71,7 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1
 
 ## Slide 5: Reading the tree’s first decision
 
-**Zhang Hanyu (G2509091L) | Part 2: Decision tree and model comparison | Contribution 25%**
+**Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
 Target: 60 seconds
 
@@ -81,55 +83,55 @@ Source: saved decision-tree model; integration audit/report evidence.
 
 ## Slide 6: Ranking performance across four models
 
-**Zhang Hanyu (G2509091L) | Part 2: Decision tree and model comparison | Contribution 25%**
+**Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
 Target: 55 seconds
 
-This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Part three will examine the forest and the fairness of our comparison.
+This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Zhou Xinzhe will now explain the forest, its feature importance, and examples of its errors.
 
-**Transition:** I will now hand over to Zhou Xinzhe for random forest and the comparison audit.
+**Transition:** I will now hand over to Zhou Xinzhe for random forest, feature importance, and error cases.
 
 Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | LR* = post-hoc reproducibility supplement after historic test results existed.
 
 ## Slide 7: Random forest: averaging and regularization
 
-**Zhou Xinzhe (G2509033F) | Part 3: Random forest and experiment audit | Contribution 25%**
+**Zhou Xinzhe (G2509033F) | Part 3: Random forest and error analysis | Contribution 25%**
 
 Target: 70 seconds
 
-Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from 0.5312 to 0.5508. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next inspect the operating threshold and the resulting workload rather than relying on ranking alone.
+Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from 0.5312 to 0.5508. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next examine which features the fitted forest relies on and where it makes errors.
 
-**Transition:** We next move from the forest's ranking to its decision threshold.
+**Transition:** We next examine which features the forest uses to rank risk.
 
 Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | results/rf/protocol_frozen.json
 
-## Slide 8: Random forest: the review workload
+## Slide 8: Random forest: which features matter?
 
-**Zhou Xinzhe (G2509033F) | Part 3: Random forest and experiment audit | Contribution 25%**
+**Zhou Xinzhe (G2509033F) | Part 3: Random forest and error analysis | Contribution 25%**
 
 Target: 60 seconds
 
-For the forest, validation selected a threshold of 0.3229 under the hypothetical assumption that a missed default costs five times a false-positive review. On the historical test set, recall rises from 52.0% to 77.1%, but the alert rate also rises from 21.1% to 48.4%. Cost falls from 3758 to 3404 units. We independently checked the saved error profiles and case rules for both policies. The most confident errors can appear in both exports because they remain errors at both thresholds. Identical extreme examples alone therefore do not demonstrate an export mistake.
+We measure importance by shuffling one feature on validation data and observing the fall in average precision. The forest relies most strongly on recent repayment status, PAY zero: its mean AP decrease is 0.1971. Earlier repayment status, PAY two, follows at 0.0196. These values come from five saved permutations of each feature. They describe the fitted forest's predictive reliance, not a causal effect or a feature's isolated contribution. Correlated predictors can substitute for one another, and shuffling may create combinations that do not occur naturally. The chart shows mean decreases; variation across shuffles is recorded in the report. Even an influential variable cannot explain every customer's outcome.
 
-**Transition:** Before comparing policies, we should check that the underlying evidence aligns.
+**Transition:** We now look at two saved errors to understand the limits of these patterns.
 
-Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | RF misclassification audit; costs hypothetical.
+Source: results/rf/validation_importance.csv | Five validation permutations; frozen model.
 
-## Slide 9: What makes the comparison credible
+## Slide 9: Random forest: two illustrative errors
 
-**Zhou Xinzhe (G2509033F) | Part 3: Random forest and experiment audit | Contribution 25%**
+**Zhou Xinzhe (G2509033F) | Part 3: Random forest and error analysis | Contribution 25%**
 
 Target: 50 seconds
 
-Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result.
+At the fixed threshold of zero point five, the selected forest misses 637 defaults and falsely flags 573 non-defaults. Consider two examples already present in the saved error export. Row 982 actually defaults but receives a score of 0.1012; its recent repayment code is -2. Row 28747 does not default but scores 0.9415; its recent repayment code is 3. These examples show that repayment history is informative but not deterministic. They are the most confident errors from the existing export, not representative average customers. We do not change the model after inspecting them. Xu Yiqun will now examine the separate trade-off created by changing a validation-selected threshold.
 
 **Transition:** I will now hand over to Xu Yiqun for XGBoost and the cost of acting on its scores.
 
-Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md
+Source: results/rf/misclassification_cases_05.csv | Tuned RF; score ≥ 0.5 predicts default.
 
 ## Slide 10: XGBoost: no gain in test ranking
 
-**Xu Yiqun (G2509092H) | Part 4: XGBoost and cost analysis | Contribution 25%**
+**Xu Yiqun (G2509092H) | Part 4: XGBoost and threshold trade-offs | Contribution 25%**
 
 Target: 60 seconds
 
@@ -141,7 +143,7 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 
 
 ## Slide 11: XGBoost: fewer misses, more reviews
 
-**Xu Yiqun (G2509092H) | Part 4: XGBoost and cost analysis | Contribution 25%**
+**Xu Yiqun (G2509092H) | Part 4: XGBoost and threshold trade-offs | Contribution 25%**
 
 Target: 80 seconds
 
@@ -153,7 +155,7 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 
 
 ## Slide 12: What the results mean for credit review
 
-**Xu Yiqun (G2509092H) | Part 4: XGBoost and cost analysis | Contribution 25%**
+**Xu Yiqun (G2509092H) | Part 4: XGBoost and threshold trade-offs | Contribution 25%**
 
 Target: 40 seconds
 
@@ -165,7 +167,7 @@ Historical educational study; no causal or deployment-readiness claim.
 
 ## Slide 13: Backup A • AP, ROC-AUC and threshold metrics
 
-**Zhang Hanyu (G2509091L) | Part 2: Decision tree and model comparison | Contribution 25%**
+**Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
 Q&A backup — use when relevant
 
@@ -177,7 +179,7 @@ Source: scikit-learn average_precision_score documentation; part4/evaluation.py
 
 ## Slide 14: Backup B • Cost ratios and fixed-prediction uncertainty
 
-**Xu Yiqun (G2509092H) | Part 4: XGBoost and cost analysis | Contribution 25%**
+**Xu Yiqun (G2509092H) | Part 4: XGBoost and threshold trade-offs | Contribution 25%**
 
 Q&A backup — use when relevant
 
@@ -201,11 +203,11 @@ Sources: results/final/source_audit.json; integration/LOGISTIC_PROVENANCE.md
 
 ## Slide 16: Backup D • Sources, responsibilities and reproducibility
 
-**Zhou Xinzhe (G2509033F) | Part 3: Random forest and experiment audit | Contribution 25%**
+**Zhou Xinzhe (G2509033F) | Part 3: Random forest and error analysis | Contribution 25%**
 
 Q&A backup — use when relevant
 
-The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.
+The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest with feature importance and error cases, and XGBoost with threshold trade-offs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Data-split and metric agreement, final integration, checking and rehearsal are shared by all four members. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.
 
 **Transition:** We can return to the main conclusion or discuss a specific model or policy.
 

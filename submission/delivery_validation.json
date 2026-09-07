@@ -27,26 +27,27 @@
     },
     {
       "page": 5,
-      "words": 394,
+      "words": 411,
       "min_font_pt": 7.97,
       "rightmost_text_pt": 541.43
     },
     {
       "page": 6,
-      "words": 418,
+      "words": 447,
       "min_font_pt": 9.96,
       "rightmost_text_pt": 541.42
     }
   ],
   "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
-  "report_pdf_SHA256": "20db02e9678ae102e8e589c6f2fe405f455dde514af4676861ab199ec7545e03",
-  "report_latex_SHA256": "94df5500a9f28affd2b393fe82fc5cc6342c2241ecbef69bffdc623e6e632a37",
+  "report_pdf_SHA256": "4c1633ea0d9ae94850546e0f7cffea4e1cc954aaa99420f18efd4f92a7075e0b",
+  "report_latex_SHA256": "1d104ce07ad21e73e2c8e539bed2cc497efb239711c86d143a5b79812cf12ad6",
   "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality.",
+  "rf_interpretation": "Native importance chart matches frozen validation data; illustrated error scores/IDs match saved predictions and both final documents",
   "member_identity_and_notes": "Four named members; matching student IDs; 25% each; all 16 slides have complete native scripts and named leads",
   "slide_text_boxes_verified": 182,
   "speaker_scripts_and_transitions": "Match manifest, Markdown and native speaker notes",
   "slide_pages": 16,
   "slide_first_text_matches_pdf": true,
-  "presentation_pptx_SHA256": "b550f926c8a6cdda9b2a8a3c9a4009ff3d9ed8f41bd673b7e7c6f51fe53c82e8",
-  "presentation_pdf_SHA256": "1ec3fcc39786b6da51917e5e71023c64399565b56101f776ac3cf1bdcc069ab4"
+  "presentation_pptx_SHA256": "6ce4cc0b29adb1bcb7541c57fb8fb16084a833409e662518e31f938ec4280551",
+  "presentation_pdf_SHA256": "6ad1b4c937eeea6c1b340d1ae834ec61a852bf2bd32dff6f19cb6dc0e5580e74"
 }

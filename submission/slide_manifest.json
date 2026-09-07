@@ -107,7 +107,7 @@
       "headline": "Test average precision",
       "detail": "Baseline and selected models are both retained.\nSmall ensemble differences do not establish superiority.",
       "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | LR* = post-hoc reproducibility supplement after historic test results existed.",
-      "script": "This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Part three will examine the forest and the fairness of our comparison.",
+      "script": "This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Zhou Xinzhe will now explain the forest, its feature importance, and examples of its errors.",
       "chart": {
         "categories": [
           "LR*",
@@ -139,7 +139,7 @@
         "format": "0.000",
         "horizontal": true
       },
-      "transition": "I will now hand over to Zhou Xinzhe for random forest and the comparison audit."
+      "transition": "I will now hand over to Zhou Xinzhe for random forest, feature importance, and error cases."
     },
     {
       "title": "Random forest: averaging and regularization",
@@ -153,7 +153,7 @@
       "headline": "Test average precision",
       "detail": "Averaging reduces dependence on one tree.\nWeights also change the score distribution.",
       "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | results/rf/protocol_frozen.json",
-      "script": "Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from 0.5312 to 0.5508. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next inspect the operating threshold and the resulting workload rather than relying on ranking alone.",
+      "script": "Random forest averages many trees, reducing dependence on any single partition. We evaluated a baseline and twenty-three seeded candidate configurations using the same five fitting folds and average-precision objective. The selected configuration uses five hundred trees, maximum depth eight, a minimum leaf size of two, and half the features at each split. It also weights the positive class three times as heavily. Test AP changes from 0.5312 to 0.5508. Class weighting affects the learned score distribution, so we should not assume these scores are calibrated probabilities. We next examine which features the fitted forest relies on and where it makes errors.",
       "chart": {
         "categories": [
           "Baseline",
@@ -170,37 +170,61 @@
         ],
         "maximum": 0.65
       },
-      "transition": "We next move from the forest's ranking to its decision threshold."
+      "transition": "We next examine which features the forest uses to rank risk."
     },
     {
-      "title": "Random forest: the review workload",
+      "title": "Random forest: which features matter?",
       "role": "Part 3",
       "seconds": 60,
       "bullets": [
-        "Validation selected r=5 threshold: 0.3229",
-        "Recall: 52.0% \u2192 77.1%",
-        "Alert rate: 21.1% \u2192 48.4%"
+        "PAY_0 has the largest validation AP decrease",
+        "Permutation measures predictive reliance",
+        "Correlated variables can substitute for each other"
       ],
-      "headline": "3,758 \u2192 3,404",
-      "detail": "Test cost = FP + 5 \u00d7 FN\nError cases checked under each policy\nSame extreme cases can legitimately recur",
-      "source": "Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | RF misclassification audit; costs hypothetical.",
-      "script": "For the forest, validation selected a threshold of 0.3229 under the hypothetical assumption that a missed default costs five times a false-positive review. On the historical test set, recall rises from 52.0% to 77.1%, but the alert rate also rises from 21.1% to 48.4%. Cost falls from 3758 to 3404 units. We independently checked the saved error profiles and case rules for both policies. The most confident errors can appear in both exports because they remain errors at both thresholds. Identical extreme examples alone therefore do not demonstrate an export mistake.",
-      "chart": null,
-      "transition": "Before comparing policies, we should check that the underlying evidence aligns."
+      "headline": "Mean decrease in validation AP",
+      "detail": "Five saved shuffles per feature.\nPredictive association, not causality.",
+      "source": "Source: results/rf/validation_importance.csv | Five validation permutations; frozen model.",
+      "script": "We measure importance by shuffling one feature on validation data and observing the fall in average precision. The forest relies most strongly on recent repayment status, PAY zero: its mean AP decrease is 0.1971. Earlier repayment status, PAY two, follows at 0.0196. These values come from five saved permutations of each feature. They describe the fitted forest's predictive reliance, not a causal effect or a feature's isolated contribution. Correlated predictors can substitute for one another, and shuffling may create combinations that do not occur naturally. The chart shows mean decreases; variation across shuffles is recorded in the report. Even an influential variable cannot explain every customer's outcome.",
+      "chart": {
+        "categories": [
+          "BILL_AMT1",
+          "LIMIT_BAL",
+          "PAY_3",
+          "PAY_2",
+          "PAY_0"
+        ],
+        "series": [
+          [
+            "Mean AP decrease",
+            [
+              0.008748613100078417,
+              0.010001940536327946,
+              0.010869789890604298,
+              0.019572348649687286,
+              0.19707230912780407
+            ]
+          ]
+        ],
+        "maximum": 0.24,
+        "format": "0.000",
+        "horizontal": true,
+        "uniform_color": true
+      },
+      "transition": "We now look at two saved errors to understand the limits of these patterns."
     },
     {
-      "title": "What makes the comparison credible",
+      "title": "Random forest: two illustrative errors",
       "role": "Part 3",
       "seconds": 50,
       "bullets": [
-        "Identical fit / validation / five-fold memberships",
-        "Metrics recomputed after row-ID alignment",
-        "Frozen thresholds use score \u2265 threshold at full precision"
+        "At 0.5: 637 missed defaults; 573 false alarms",
+        "Missed default \u00b7 row 982\nScore 0.1012; actual default = 1",
+        "False alarm \u00b7 row 28747\nScore 0.9415; actual default = 0"
       ],
-      "headline": "Shared evidence, different searches",
-      "detail": "Shared data and objective\nDifferent search budgets\nHistorical exposure and LR* caveat remain",
-      "source": "Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md",
-      "script": "Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result.",
+      "headline": "Why the predictions can fail",
+      "detail": "Missed default: PAY_0 = -2\nFalse alarm: PAY_0 = 3\n\nIllustrative extreme errors, not typical clients.",
+      "source": "Source: results/rf/misclassification_cases_05.csv | Tuned RF; score \u2265 0.5 predicts default.",
+      "script": "At the fixed threshold of zero point five, the selected forest misses 637 defaults and falsely flags 573 non-defaults. Consider two examples already present in the saved error export. Row 982 actually defaults but receives a score of 0.1012; its recent repayment code is -2. Row 28747 does not default but scores 0.9415; its recent repayment code is 3. These examples show that repayment history is informative but not deterministic. They are the most confident errors from the existing export, not representative average customers. We do not change the model after inspecting them. Xu Yiqun will now examine the separate trade-off created by changing a validation-selected threshold.",
       "chart": null,
       "transition": "I will now hand over to Xu Yiqun for XGBoost and the cost of acting on its scores."
     },
@@ -350,7 +374,7 @@
       "headline": "Member contributions",
       "detail": "Equal contribution: 25% per member",
       "source": "Sources: Group 5 repository, frozen protocols, row-level predictions and integration audit.",
-      "script": "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest and audit, and XGBoost and costs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.",
+      "script": "The numerical source for this editable presentation is the audited final comparison CSV, with model-specific protocols and bootstrap artifacts supplying supporting context. The UCI dataset, scikit-learn average-precision documentation, and the XGBoost paper are the core external references. The role plan assigns three minutes each to data and logistic regression, decision trees and ranking, random forest with feature importance and error cases, and XGBoost with threshold trade-offs. Lei Peng covers part one, Zhang Hanyu part two, Zhou Xinzhe part three, and Xu Yiqun part four. The group has confirmed equal contributions of twenty-five percent each. Data-split and metric agreement, final integration, checking and rehearsal are shared by all four members. Integration and the logistic supplement were prepared with AI assistance for member review. Reproducing artifacts is distinct from retraining and selecting new models.",
       "chart": null,
       "transition": "We can return to the main conclusion or discuss a specific model or policy."
     }
@@ -364,7 +388,8 @@
       "slides": "1\u20133",
       "scope": "Data and logistic regression",
       "qa_primary": "Q1\u2013Q6",
-      "qa_support": "Q7, Q15, Q22"
+      "qa_support": "Q7, Q15, Q22",
+      "contribution_scope": "Data checks and preprocessing; logistic baseline; data characteristics and baseline performance"
     },
     {
       "role": "Part 2",
@@ -372,9 +397,10 @@
       "student_id": "G2509091L",
       "share_percent": 25,
       "slides": "4\u20136",
-      "scope": "Decision tree and model comparison",
+      "scope": "Decision tree and overfitting",
       "qa_primary": "Q7\u2013Q11",
-      "qa_support": "Q2, Q3, Q13"
+      "qa_support": "Q2, Q3, Q13",
+      "contribution_scope": "Decision-tree tuning; learned rules and overfitting control"
     },
     {
       "role": "Part 3",
@@ -382,9 +408,10 @@
       "student_id": "G2509033F",
       "share_percent": 25,
       "slides": "7\u20139",
-      "scope": "Random forest and experiment audit",
-      "qa_primary": "Q12\u2013Q16",
-      "qa_support": "Q3, Q19, Q21"
+      "scope": "Random forest and error analysis",
+      "qa_primary": "Q12\u2013Q14",
+      "qa_support": "Q3, Q7, Q15\u2013Q16, Q19, Q21",
+      "contribution_scope": "Random-forest tuning; feature importance and illustrative misclassification cases"
     },
     {
       "role": "Part 4",
@@ -392,9 +419,10 @@
       "student_id": "G2509092H",
       "share_percent": 25,
       "slides": "10\u201312",
-      "scope": "XGBoost and cost analysis",
+      "scope": "XGBoost and threshold trade-offs",
       "qa_primary": "Q17\u2013Q22",
-      "qa_support": "Q8, Q10, Q15"
+      "qa_support": "Q8, Q10, Q15",
+      "contribution_scope": "XGBoost tuning; threshold trade-offs between missed defaults and false alarms"
     }
   ],
   "speaker_map": {
@@ -430,10 +458,15 @@
   },
   "editable": "Native PowerPoint text, shapes and charts with embedded workbooks",
   "source_csv_sha256": "90ec1df8bb42f20604ceea5f208ca031f042d48932cd850f7007a7df8a8b4acb",
-  "generator_sha256": "53cbe8cf041f5ab690ae7a1349168ff1c6c8bc716732c1631227696dc476db96",
+  "interpretation_sources": {
+    "validation_importance.csv": "83792a977b7d72aab99bfc3f8c4432f85b9f3fa3d82f501e520ddd816b092268",
+    "misclassification_cases_05.csv": "5e547312cf176ec571c3e23aa01c07e5659673f1f5e87e8097fbdcab637d222b",
+    "test_predictions.csv": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050"
+  },
+  "generator_sha256": "c77e1451afb0c900d16cf0181e618e5fcdec4a2618728397108d514d5810f3a8",
   "artifacts": {
-    "Group5_Presentation.pptx": "b550f926c8a6cdda9b2a8a3c9a4009ff3d9ed8f41bd673b7e7c6f51fe53c82e8",
-    "Group5_Presentation.pdf": "1ec3fcc39786b6da51917e5e71023c64399565b56101f776ac3cf1bdcc069ab4",
-    "Group5_Speaker_Notes.md": "97f8497cb2a39d747178693c7337c76cdcecf70c913efa694db93bcae94251e5"
+    "Group5_Presentation.pptx": "6ce4cc0b29adb1bcb7541c57fb8fb16084a833409e662518e31f938ec4280551",
+    "Group5_Presentation.pdf": "6ad1b4c937eeea6c1b340d1ae834ec61a852bf2bd32dff6f19cb6dc0e5580e74",
+    "Group5_Speaker_Notes.md": "2ca6ae09b5a5b325f4306fa64aa7479c8e046bb90be9d45fa350d3e70e69b98f"
   }
 }

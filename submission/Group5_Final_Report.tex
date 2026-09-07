@@ -112,11 +112,11 @@ RF at its validation $r=5$ threshold costs 3,404 and flags 48.45\%, versus XGBoo
 \sect{5. Interpretation and audit evidence}
 \textbf{Complementary explanations.} LR coefficients summarize regularized associations on standardized numeric and encoded categorical scales. Correlated bill/payment variables and full one-hot coding limit isolated coefficient interpretations. DT offers explicit paths: its root splits on \texttt{PAY\_0 <= 1.5}; within fit rows, default proportions are 16.51\% on the left and 70.13\% on the right. These are node-level sample summaries, not causal effects or calibrated individual probabilities. The selected tree has 134 leaves and depth 18: no explicit depth cap does not mean no regularization, since every leaf requires at least 100 observations.
 
-RF averages many trees; this reduces reliance on a single unstable partition but makes full decision paths less concise. XGBoost sequentially builds boosted trees with regularization. We use saved validation permutation importance to ask which variable perturbations most reduce AP. Repayment status, especially recent status, is influential. Correlated predictors can substitute for one another; shuffling can form unrealistic combinations. Importance and rules should therefore be interpreted as predictive associations.
+RF averages many trees, making full decision paths less concise. Its saved validation permutation importance identifies recent repayment status, PAY\_0, as most influential: shuffling it reduces AP by 0.1971 on average, versus 0.0196 for PAY\_2. Correlated variables can substitute for one another, and shuffling can create unrealistic combinations; importance describes predictive reliance, not causality. XGBoost instead builds regularized trees sequentially; its threshold trade-offs are evaluated in Section 4.
 \begin{center}\includegraphics[width=.93\linewidth]{figures/importance.png}\end{center}
-\smallcap{Figure 3. Tuned XGBoost validation permutation importance, top six features. Error bars are the SD across five permutations, not confidence intervals or causal estimates. Horizontal units: decrease in validation AP.}
+\smallcap{Figure 3. Tuned random-forest validation permutation importance, top six features. Error bars are the SD across five permutations, not confidence intervals or causal estimates. Horizontal units: decrease in validation AP.}
 
-\textbf{Misclassification evidence.} RF's saved profiles and representative cases were recomputed separately under 0.5 and its validation-selected $r=5$ threshold. Both files satisfy their own FP/FN decision rules. The most confident errors can be the same in both files: lowest-scoring defaults remain false negatives and highest-scoring non-defaults remain false positives. Identical extreme examples alone do not imply a duplicated export; group counts and rule membership provide the relevant verification.
+\textbf{Illustrative RF errors.} At 0.5, the selected forest has 637 false negatives and 573 false positives. In the existing saved error export, row 982 defaults despite score 0.1012 and PAY\_0=-2; row 28747 does not default despite score 0.9415 and PAY\_0=3. These most-confident errors illustrate that repayment history is not deterministic; they are not representative average clients and are not used to retune the model. Both threshold-specific case exports satisfy their own classification rules. Extreme cases can remain errors under both policies even when overall error counts change.
 
 \textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
 
@@ -137,15 +137,15 @@ A defensible next study would freeze a new protocol on fresh temporal/external d
 \begin{center}\small\begin{tabularx}{\linewidth}{@{}p{34mm}Xr@{}}\toprule
 Member / student ID & Responsibility and presentation & Share\\\midrule
 \shortstack[l]{Lei Peng\\
-G2509090C} & Part 1: Data and logistic regression; slides 1--3 & 25\%\\
+G2509090C} & Part 1: Data checks and preprocessing; logistic baseline; data characteristics and baseline performance; slides 1--3 & 25\%\\
 \shortstack[l]{Zhang Hanyu\\
-G2509091L} & Part 2: Decision tree and model comparison; slides 4--6 & 25\%\\
+G2509091L} & Part 2: Decision-tree tuning; learned rules and overfitting control; slides 4--6 & 25\%\\
 \shortstack[l]{Zhou Xinzhe\\
-G2509033F} & Part 3: Random forest and experiment audit; slides 7--9 & 25\%\\
+G2509033F} & Part 3: Random-forest tuning; feature importance and illustrative misclassification cases; slides 7--9 & 25\%\\
 \shortstack[l]{Xu Yiqun\\
-G2509092H} & Part 4: XGBoost and cost analysis; slides 10--12 & 25\%\\
+G2509092H} & Part 4: XGBoost tuning; threshold trade-offs between missed defaults and false alarms; slides 10--12 & 25\%\\
 \bottomrule\end{tabularx}\end{center}
-\smallcap{Contribution shares are equal at 25\% per member, as confirmed by the group. Integration and the LR supplement were prepared with AI assistance for member review. Each member presents a substantive model section.}
+\smallcap{Contribution shares are equal at 25\% per member, as confirmed by the group. Integration and the LR supplement were prepared with AI assistance for member review. All four agree data splits, preprocessing and metrics, write their sections, and jointly integrate, check and rehearse.}
 
 \sect{References}
 {\small
