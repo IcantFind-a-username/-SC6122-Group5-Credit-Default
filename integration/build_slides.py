@@ -76,6 +76,7 @@ def rule(slide, x1, y1, x2, y2, color=LIGHT, width=1):
         Inches(x1), Inches(y1), Inches(x2), Inches(y2))
     line.line.color.rgb = RGBColor.from_string(color)
     line.line.width = Pt(width)
+    line._element.spPr.append(OxmlElement("a:effectLst"))
 
 
 def editable_chart(slide, spec):
@@ -86,7 +87,7 @@ def editable_chart(slide, spec):
         data.add_series(name, values)
     chart_type = XL_CHART_TYPE.BAR_CLUSTERED if spec.get("horizontal") else XL_CHART_TYPE.COLUMN_CLUSTERED
     chart = slide.shapes.add_chart(chart_type,
-        Inches(.65), Inches(2.05), Inches(7.3), Inches(4.15), data).chart
+        Inches(.65), Inches(2.45), Inches(7.3), Inches(3.75), data).chart
     chart.has_title = False
     chart.has_legend = len(spec["series"]) > 1
     if chart.has_legend:
@@ -108,10 +109,16 @@ def editable_chart(slide, spec):
     plot.data_labels.position = XL_LABEL_POSITION.OUTSIDE_END
     plot.data_labels.font.size = Pt(17)
     plot.data_labels.number_format = spec.get("format", "0.000")
+    palette = ("899CA5", ORANGE if spec.get("format") == "0" else TEAL)
     for index, series in enumerate(chart.series):
         series.format.fill.solid()
-        series.format.fill.fore_color.rgb = RGBColor.from_string((TEAL, ORANGE)[index % 2])
+        series.format.fill.fore_color.rgb = RGBColor.from_string(palette[index % 2])
         series.format.line.fill.background()
+        if len(spec["series"]) == 1:
+            for point_index, point in enumerate(series.points):
+                point.format.fill.solid()
+                point.format.fill.fore_color.rgb = RGBColor.from_string(palette[point_index % 2])
+                point.format.line.fill.background()
 
 
 def make_slides(frame):
@@ -180,7 +187,7 @@ def make_slides(frame):
           "Shared evidence, different searches", "Shared data and objective\nDifferent search budgets\nHistorical exposure and LR* caveat remain", "Source: results/final/audit.json; integration/LOGISTIC_PROVENANCE.md",
           "Our audit checks that comparisons use the same clients, labels, development partitions, and five-fold memberships. It recomputes metrics from row-aligned saved predictions and applies the exact greater-than-or-equal decision rule before rounding. Saved-model replay reproduces frozen decisions; minor floating-point differences are documented. These checks make the comparison traceable, but they do not make every aspect identical: search budgets differ, and the logistic supplement has a distinct evidence history. Nor can a repository audit prove everything performed outside the repository. With those boundaries explicit, part four now separates XGBoost's ranking result from its threshold-policy result."),
         Slide("XGBoost: no gain in test ranking", "Part 4", 60,
-          ["Baseline + 23 seeded configurations; select by CV AP", f"Selected: {xg_parameters['n_estimators']} trees, depth {xg_parameters['max_depth']}, rate {xg_parameters['learning_rate']}", f"Selected ROC-AUC: {xg['ROC-AUC']:.4f}"],
+          ["24 configurations; select by CV AP", f"Selected: {xg_parameters['n_estimators']} trees, depth {xg_parameters['max_depth']}, rate {xg_parameters['learning_rate']}", f"Selected ROC-AUC: {xg['ROC-AUC']:.4f}"],
           "Test average precision", f"Tuned − baseline AP: {xg_interval.Estimate:.4f}\nConditional 95% interval: [{xg_interval.CI_low:.4f}, {xg_interval.CI_high:.4f}]", source + " | results/xgboost/bootstrap_intervals.csv",
           f"XGBoost builds trees sequentially with regularization. We retained the baseline and searched twenty-three additional seeded configurations using the shared CV objective. The selected configuration has test AP {xg.AP:.4f}, compared with {xb.AP:.4f} for the baseline. The paired bootstrap interval for the difference spans zero, so we do not claim a ranking improvement. This bootstrap resamples the fixed predictions and does not include model retraining or selection uncertainty. The useful next question is separate: given the selected model's scores, how does a validation-chosen action threshold change missed defaults, false positives, and the stated hypothetical cost?",
           {"categories": ["Baseline", "Selected"], "series": [("AP", [xb.AP, xg.AP])], "maximum": .65}),
@@ -264,6 +271,7 @@ def content_slide(slide, spec, index, member, team):
     textbox(slide, .7, 1.0, 12.0, .86, spec.title, 31, NAVY, True)
     rule(slide, .73, 1.91, 12.58, 1.91)
     if spec.chart:
+        textbox(slide, .76, 2.1, 7.1, .35, spec.headline, 16, TEAL, True)
         editable_chart(slide, spec.chart)
         rule(slide, 8.27, 2.35, 8.27, 6.15)
         for j, bullet in enumerate(spec.bullets):
