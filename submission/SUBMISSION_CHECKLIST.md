@@ -13,7 +13,7 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 | Required report sections | Background/problem, data/target, objectives, methods, findings/comparison, conclusions/discussion and member contribution roles are included. All four names, student IDs and equal 25% shares are confirmed. |
 | Preferred teacher Word/LaTeX template | Repository and Documents/Downloads/NTU/Desktop filename search found no teacher template or named samples. Complete standard LaTeX fallback provided; swap to the actual template if supplied and recheck ≤7 pages. |
 | Report + applicable dataset submitted day before presentation | Files ready locally; **group must confirm 7 September deadline time/portal and upload**. Data are in `data/`, also included in reproduction archive when packaged. |
-| 15 minutes including Q&A; all four speak | 12 main slides: 720 seconds speaking; four roles ×180 seconds; 180 seconds Q&A. Four backup slides outside main talk. Rehearse actual speaking pace. |
+| 15 minutes including Q&A; all four speak | 12 main slides: 720 seconds speaking; four roles ×180 seconds; 180 seconds Q&A. Conclude on slide 12 (Thank you / Q&A). Slides 13–16 are question-triggered backups, not sequential speaking content. Rehearse actual speaking pace. |
 | 25% group / 75% individual assessment | Four substantive role assignments; per-slide English scripts and 22 bilingual Q&A items with role priorities. Named assignments and equal 25% contribution shares are recorded in `team.json`. |
 
 ## Actual deliverables
@@ -21,7 +21,7 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 - [Report PDF](Group5_Final_Report.pdf); [editable LaTeX](Group5_Final_Report.tex); [report prose template](report_template.tex).
 - [Editable PPTX](Group5_Presentation.pptx); [PDF backup](Group5_Presentation.pdf).
 - [English speaker notes](Group5_Speaker_Notes.md): each slide, named speaker, student ID, target time, script and transition; the same text is embedded in native PPTX notes for Presenter View.
-- [Bilingual Q&A](Group5_QA.md): 22 questions, role-priority map and evidence links.
+- [Bilingual Q&A](Group5_QA.md): 22 questions, role-priority map and evidence links. [Xu Yiqun’s Part 4 Q&A](Group5_Part4_QA.md) provides ten focused questions and a numeric crib sheet.
 - [Model comparison](model_comparison.csv), [cost comparison](cost_comparison.csv), [README](../README.md), [dataset provenance](../data/README.md).
 - [Experiment audit](../results/final/audit.json), [audit interpretation](../integration/AUDIT_FINDINGS.md), [source audit](../results/final/source_audit.json), [notebook execution status](../results/final/notebook_status.json).
 - `Group5_Dataset.zip` (data-only) and `Group5_Reproduction.zip` (code/data/results/materials), with `package_manifest.json`: suggested backup; packaged Git commit and archive SHA256 recorded after final build.

@@ -209,9 +209,9 @@ def make_slides(frame):
           "Test confusion trade-off", "Same ranking scores, different action policy.\nReview costs are hypothetical; capacity is unmeasured.", source + " | FP + 5×FN; threshold selected only on validation.",
           f"At a cost ratio of five, validation selects XGBoost's threshold at {xc.Threshold:.4f}. Applying it unchanged to the historical test set reduces false negatives from {int(xg.FN)} to {int(xc.FN)}, while false positives rise from {int(xg.FP)} to {int(xc.FP)}. Recall reaches {xc.Recall:.1%}, but {xc.Alert_rate:.1%} of clients are flagged. The total hypothetical cost falls from {int(xg.Cost_5)} to {int(xc.Cost_5)}, about {(1-xc.Cost_5/xg.Cost_5):.1%}. This is not an improvement in AP or ROC-AUC; the scores have not changed. The policy may be impractical if review capacity is limited. Real exposure, loss severity, and intervention benefits are unavailable, so these cost units are a sensitivity analysis.",
           {"categories": ["False positives", "False negatives"], "series": [("Threshold 0.5", [xg.FP, xg.FN]), ("Validation r=5", [xc.FP, xc.FN])], "maximum": 2700, "format": "0"}),
-        Slide("What the results mean for credit review", "Part 4", 40,
+        Slide("Conclusions & Q&A", "Part 4", 40,
           ["Ranking, explanations, and workload need separate evidence", "No clear ensemble winner from these small differences", "Next: fresh temporal data, calibration, subgroup errors"],
-          "Discussion", "Set realistic costs and review capacity.\nValidate the policy on fresh data.", "Historical educational study; no causal or deployment-readiness claim.",
+          "Thank you", "Questions & discussion\n\nLei Peng · Zhang Hanyu\nZhou Xinzhe · Xu Yiqun", "Historical educational study; no causal or deployment-readiness claim.",
           "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you. We welcome your questions."),
         Slide("Backup A • AP, ROC-AUC and threshold metrics", "Q&A", 0,
           ["AP = sum of recall increments × precision", "ROC-AUC measures positive/negative score ordering", "Precision, recall, F1 and accuracy require a threshold"],
@@ -351,6 +351,7 @@ def run(soffice=None):
     backup_leads = {13: 'Part 2', 14: 'Part 4', 15: 'Part 1', 16: 'Part 3'}
     notes = ["# Group 5 — English speaker notes", "12-minute talk + 3-minute Q&A. Each member: 180 seconds.",
              "Timing is a rehearsal guide and appears only in notes, not on audience slides.",
+             "Finish the main talk on slide 12 (Conclusions & Q&A) and stay there for questions. Slides 13–16 are supporting material: open one only when a question calls for it; do not present them in sequence.",
              "All scripts below are also embedded in the PPTX speaker notes for Presenter View.",
              "## Speaker assignments"]
     assignment_table = ["| Speaker / student ID | Section | Slides | Contribution |", "|---|---|---|---|"]
