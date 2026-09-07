@@ -1,0 +1,13 @@
+{
+  "pdf_pages": 9,
+  "purpose": "Personal learning guide, not the final group report",
+  "source_SHA256": "13ce38a1fa5efc3edd60f1365a67cd3a5609123c4546cbc891b6a0faefeb9000",
+  "files": {
+    "Group5_Part4_Understanding_Guide.md": "13ce38a1fa5efc3edd60f1365a67cd3a5609123c4546cbc891b6a0faefeb9000",
+    "Group5_Part4_Understanding_Guide.pdf": "4bbec4244e7c32da22c3e65348bcab55fd7b6a7f1c875272972ea3668b419df1",
+    "Group5_Part4_Understanding_Guide.docx": "cfe649e4ca1a0c5a680dbf20cecd6dd9148c506a714fc7c013c71eaf11682c4b"
+  },
+  "model_comparison_SHA256": "90ec1df8bb42f20604ceea5f208ca031f042d48932cd850f7007a7df8a8b4acb",
+  "protocol_SHA256": "e49c6067222cb029279e37b70e91e17c730c934f616117065ebb398f88ba1264",
+  "cv_results_SHA256": "bba93a32f061bd102b052a8aa8cf1317359ddaac411cd2f8b88f880da6545e6e"
+}
