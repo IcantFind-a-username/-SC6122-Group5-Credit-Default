@@ -350,4 +350,4 @@ min_child_weight 约束子节点的二阶导数统计量之和，不等于决策
 | part4/experiment.py | fitting-CV 搜索、pipeline 和拟合流程 |
 | part4/evaluation.py | score ≥ threshold、指标与成本公式 |
 
-只查看文件或运行既有核验入口，不会提高模型分数；明天展示前也不需要重新搜索参数或改变阈值。现有数字足够支持一次诚实、完整的讨论。
+无需重跑模型，先用现有数字把流程、算账与限制讲清楚。
