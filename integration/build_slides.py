@@ -344,8 +344,10 @@ def run(soffice=None):
     notes = ["# Group 5 — English speaker notes", "12-minute talk + 3-minute Q&A. Each member: 180 seconds.",
              "Timing is a rehearsal guide and appears only in notes, not on audience slides.",
              "All scripts below are also embedded in the PPTX speaker notes for Presenter View.",
-             "## Speaker assignments", "| Speaker / student ID | Section | Slides | Contribution |", "|---|---|---|---|"]
-    notes += [f"| {m['name']} / {m['student_id']} | {m['role']}: {m['scope']} | {m['slides']} | {m['share_percent']}% |" for m in team]
+             "## Speaker assignments"]
+    assignment_table = ["| Speaker / student ID | Section | Slides | Contribution |", "|---|---|---|---|"]
+    assignment_table += [f"| {m['name']} / {m['student_id']} | {m['role']}: {m['scope']} | {m['slides']} | {m['share_percent']}% |" for m in team]
+    notes.append("\n".join(assignment_table))
     notes += ["Q&A backup leads: slide 13 Zhang Hanyu; slide 14 Xu Yiqun; slide 15 Lei Peng; slide 16 Zhou Xinzhe. Other members support questions in their model area.",
               "Integration and LR supplement prepared with AI assistance for member review."]
     speaker_map = {}
