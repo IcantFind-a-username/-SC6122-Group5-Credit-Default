@@ -61,14 +61,19 @@ def textbox(slide, x, y, w, h, text, size=22, color=NAVY, bold=False):
     return box
 
 
+def remove_shadow(shape):
+    """Disable both local and theme effects for consistent Office/PDF rendering."""
+    shape._element.spPr.append(OxmlElement("a:effectLst"))
+    for reference in shape._element.xpath("p:style/a:effectRef"):
+        reference.set("idx", "0")
+
+
 def panel(slide, x, y, w, h, color):
     shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
     shape.fill.solid()
     shape.fill.fore_color.rgb = RGBColor.from_string(color)
     shape.line.fill.background()
-    # Explicitly remove the theme's default shadow from native shapes.
-    from_theme = shape._element.spPr
-    from_theme.append(OxmlElement("a:effectLst"))
+    remove_shadow(shape)
 
 
 def rule(slide, x1, y1, x2, y2, color=LIGHT, width=1):
@@ -76,7 +81,7 @@ def rule(slide, x1, y1, x2, y2, color=LIGHT, width=1):
         Inches(x1), Inches(y1), Inches(x2), Inches(y2))
     line.line.color.rgb = RGBColor.from_string(color)
     line.line.width = Pt(width)
-    line._element.spPr.append(OxmlElement("a:effectLst"))
+    remove_shadow(line)
 
 
 def editable_chart(slide, spec):
