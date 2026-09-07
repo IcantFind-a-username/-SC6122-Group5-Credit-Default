@@ -62,6 +62,10 @@ Shared work: all four agree data splits, preprocessing and metrics; write indivi
 3. Team review of substantive contribution statements, source attribution, AI-assisted integration/supplement, and historical-exposure limitations; practice all four sections aloud.
 4. If any additional original LR training source exists outside the searched repository/workspace, supply it for provenance reconciliation; do not silently substitute it for the labelled supplement.
 
+## Which presentation to use
+
+Use `submission/Group5_Presentation.pptx` and its matching PDF. The uploaded `Group5_Presentation_new.pptx` and root-level PPTX are retained source copies, based on an older deck; their approved Part 2 text/notes have been incorporated into the master without reverting member details or RF slides.
+
 ## Final presentation acceptance
 
 Actual PPTX exported by official LibreOffice 26.8.0.3 to a 16-page PDF. All nonempty slide text boxes are checked against the rendered PDF; scripts and explicit transitions match Markdown, native speaker notes and the manifest. The revised cover, open chart layouts, partition table and backup pages are rendered for visual inspection. Main talk: 720 seconds; Q&A: 180 seconds. Report is complete and visually inspected at 6 pages. `slide_manifest.json` and `delivery_validation.json` record hashes and counts.

@@ -10,6 +10,8 @@ Final integration branch: `integration/final-submission-20260907`. Main and memb
 - [Final comparison](results/final/model_comparison.csv) and [cost scenarios](results/final/cost_comparison.csv). Corresponding submission copies are generated from these files.
 - [Acceptance findings](integration/AUDIT_FINDINGS.md), [machine-readable evidence](results/final/audit.json), [source audit](results/final/source_audit.json), [LR provenance](integration/LOGISTIC_PROVENANCE.md).
 
+The presentation to rehearse and submit is **`submission/Group5_Presentation.pptx`**. The root-level `Group5_Presentation.pptx` and `submission/Group5_Presentation_new.pptx` are preserved member uploads based on an earlier layout. Their Part 2 content has been selectively integrated into the current master; do not substitute either full upload for the master. See [member-edit review](integration/PART2_EDIT_REVIEW.md).
+
 ## Environment
 
 Use Python 3.12. The accepted environment is Python 3.12.2, numpy 2.3.5, pandas 2.2.3, scikit-learn 1.8.0, scipy 1.17.0, matplotlib 3.10.8, joblib 1.5.3, and XGBoost 3.0.5. `requirements.txt` unifies the previously separate member dependency files; OS markers choose the appropriate XGBoost distribution. The report build uses Tectonic; editable slides use python-pptx. Actual slide PDF rendering uses official LibreOffice 26.8.0.3; PowerPoint is also supported by the generator on macOS. Native Keynote/PowerPoint export encountered local application access problems during integration, so an official portable LibreOffice runtime was used. Recheck layout after exporting with another renderer.
