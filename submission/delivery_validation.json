@@ -48,6 +48,6 @@
   "speaker_scripts_and_transitions": "Match manifest, Markdown and native speaker notes",
   "slide_pages": 16,
   "slide_first_text_matches_pdf": true,
-  "presentation_pptx_SHA256": "bb23e2a0d5a4b9af15a25aa5d4cc521b458325e44b1ba5b4ccbcf6cf0090a301",
-  "presentation_pdf_SHA256": "db361848b98d70f4f1d82e6c67e64bcab7c0c9f8984f19885c1306ebc37b07aa"
+  "presentation_pptx_SHA256": "39eea599b573d4974a63d0a63edbca46ca6747e4374e08069d5348939fbe9a83",
+  "presentation_pdf_SHA256": "5c79fc70a5f6017ebb4a32d732fa231a08fe45e4f2f9bd011e99e6cccacff0a3"
 }

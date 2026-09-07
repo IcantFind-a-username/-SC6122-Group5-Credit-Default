@@ -4,6 +4,8 @@
 
 Timing is a rehearsal guide and appears only in notes, not on audience slides.
 
+Finish the main talk on slide 12 (Conclusions & Q&A) and stay there for questions. Slides 13–16 are supporting material: open one only when a question calls for it; do not present them in sequence.
+
 All scripts below are also embedded in the PPTX speaker notes for Presenter View.
 
 ## Speaker assignments
@@ -168,7 +170,7 @@ At a cost ratio of five, validation selects XGBoost's threshold at 0.3150. Apply
 
 Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 | FP + 5×FN; threshold selected only on validation.
 
-## Slide 12: What the results mean for credit review
+## Slide 12: Conclusions & Q&A
 
 **Xu Yiqun (G2509092H) | Part 4: XGBoost and threshold trade-offs | Contribution 25%**
 

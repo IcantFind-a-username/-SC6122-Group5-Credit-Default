@@ -299,7 +299,7 @@
       "transition": "This trade-off leads to our main conclusion about ranking, costs, and workload."
     },
     {
-      "title": "What the results mean for credit review",
+      "title": "Conclusions & Q&A",
       "role": "Part 4",
       "seconds": 40,
       "bullets": [
@@ -307,8 +307,8 @@
         "No clear ensemble winner from these small differences",
         "Next: fresh temporal data, calibration, subgroup errors"
       ],
-      "headline": "Discussion",
-      "detail": "Set realistic costs and review capacity.\nValidate the policy on fresh data.",
+      "headline": "Thank you",
+      "detail": "Questions & discussion\n\nLei Peng \u00b7 Zhang Hanyu\nZhou Xinzhe \u00b7 Xu Yiqun",
       "source": "Historical educational study; no causal or deployment-readiness claim.",
       "script": "Ranking and action policy answer different questions. Tree regularization improves its baseline, while the selected ensembles have similar ranking estimates. Lower thresholds reduce the stated cost by creating more reviews. Operational recommendations require realistic costs and capacity constraints. Historical data, duplicates, random splitting, and logistic provenance remain limitations. A new study should use fresh temporal or external data and examine calibration and subgroup errors. Thank you. We welcome your questions.",
       "chart": null,
@@ -463,10 +463,10 @@
     "misclassification_cases_05.csv": "5e547312cf176ec571c3e23aa01c07e5659673f1f5e87e8097fbdcab637d222b",
     "test_predictions.csv": "402aa0b7563d4d363af9af6e78eba7a88d087f301a69a8e4530578dc71de0050"
   },
-  "generator_sha256": "1c5a52e04bb51d89690aaabc71a86bf9e892da20c74bcdd63299d952d7a88bd0",
+  "generator_sha256": "ed522e0c100895aedde18e184cccd9eefc8fc4839c30401f41d935088907092e",
   "artifacts": {
-    "Group5_Presentation.pptx": "bb23e2a0d5a4b9af15a25aa5d4cc521b458325e44b1ba5b4ccbcf6cf0090a301",
-    "Group5_Presentation.pdf": "db361848b98d70f4f1d82e6c67e64bcab7c0c9f8984f19885c1306ebc37b07aa",
-    "Group5_Speaker_Notes.md": "bf8491a4aae97bdf334d4eddf582749a5c6c0e7a4e8bbb7785cae4b843e50b8d"
+    "Group5_Presentation.pptx": "39eea599b573d4974a63d0a63edbca46ca6747e4374e08069d5348939fbe9a83",
+    "Group5_Presentation.pdf": "5c79fc70a5f6017ebb4a32d732fa231a08fe45e4f2f9bd011e99e6cccacff0a3",
+    "Group5_Speaker_Notes.md": "5928e7111289e7befc93ce3322e511141a93202cce974b303e8576ad84d745bf"
   }
 }
