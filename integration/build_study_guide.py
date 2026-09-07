@@ -109,14 +109,14 @@ def run():
     css = '''
     @font-face {font-family: Study; src: url("STHeiti Light.ttc");}
     @font-face {font-family: Study; font-weight: bold; src: url("STHeiti Medium.ttc");}
-    body {font-family: Study; font-size:11pt; line-height:1.48; color:#233640;}
+    body {font-family: Study; font-size:11pt; line-height:1.32; color:#233640;}
     h1 {font-size:22pt; color:#183447; margin:0 0 12pt;}
     h2 {font-size:18pt; color:#183447; margin:0 0 12pt;}
-    h3 {font-size:12.5pt; color:#187B78; margin:12pt 0 5pt;}
-    p {margin:0 0 8pt;}
+    h3 {font-size:12.5pt; color:#187B78; margin:10pt 0 4pt;}
+    p {margin:0 0 6pt;}
     b {font-weight:bold;}
     table {width:100%; border-collapse:collapse; font-size:9.5pt; margin:8pt 0 12pt;}
-    th,td {padding:5pt; border-bottom:0.5pt solid #d5dfe1; vertical-align:top;}
+    th,td {padding:4pt; border-bottom:0.5pt solid #d5dfe1; vertical-align:top;}
     th {background:#edf3f3; text-align:left;}
     code {font-family: Study;}
     '''
