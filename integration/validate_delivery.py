@@ -1,5 +1,6 @@
 """Render and mechanically check delivered documents against accepted metrics."""
 import json
+import math
 from pathlib import Path
 import re
 import unicodedata
@@ -10,6 +11,7 @@ from pptx import Presentation
 
 from integration.artifacts import file_hash, write_json
 from integration.audit import read_csv
+from integration.presentation_evidence import rf_interpretation
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'submission'
@@ -29,6 +31,11 @@ def run():
         assert member['name'] in qa and member['student_id'] in qa
         assert member['share_percent'] == 25
     assert not re.search(r'TO CONFIRM|\bTBD\b|NAME /', report_text)
+    rf_importance, rf_examples = rf_interpretation()
+    assert f'{rf_importance.iloc[0].Mean_AP_decrease:.4f}' in report_text
+    for _, example in rf_examples.iterrows():
+        assert str(int(example.row_id)) in report_text
+        assert f'{example.Tuned_probability:.4f}' in report_text
     for text in ['Problem','References','contribution','hypothetical','post-hoc']:
         assert text.lower() in report_text.lower(), text
     test = read_csv(ROOT/'results/final/model_comparison.csv')
@@ -60,6 +67,8 @@ def run():
         assert len(deck.slides)==len(slides_pdf)==16
         manifest = json.loads((OUT/'slide_manifest.json').read_text())
         assert manifest['team'] == team
+        for name, digest in manifest['interpretation_sources'].items():
+            assert digest == file_hash(ROOT/'results/rf'/name)
         assert manifest['talk_seconds'] == 720 and manifest['qa_seconds'] == 180
         assert manifest['role_seconds'] == {f'Part {i}':180 for i in range(1,5)}
         assert manifest['source_csv_sha256'] == file_hash(ROOT/'results/final/model_comparison.csv')
@@ -84,6 +93,15 @@ def run():
         for member in team:
             assert member['name'] in slides_pdf[0].get_text()
             assert member['student_id'] in slides_pdf[0].get_text()
+        rf_chart = next(shape.chart for shape in deck.slides[7].shapes if shape.has_chart)
+        expected = rf_importance.head(5).iloc[::-1]
+        assert [category.label for category in rf_chart.plots[0].categories] == expected.Feature.tolist()
+        assert all(math.isclose(actual, value, abs_tol=1e-12) for actual, value in
+                   zip(rf_chart.series[0].values, expected.Mean_AP_decrease, strict=True))
+        for _, example in rf_examples.iterrows():
+            assert str(int(example.row_id)) in slides_pdf[8].get_text()
+            assert f'{example.Tuned_probability:.4f}' in slides_pdf[8].get_text()
+        result['rf_interpretation'] = 'Native importance chart matches frozen validation data; illustrated error scores/IDs match saved predictions and both final documents'
         result['member_identity_and_notes'] = 'Four named members; matching student IDs; 25% each; all 16 slides have complete native scripts and named leads'
         result['slide_text_boxes_verified'] = text_checks
         result['speaker_scripts_and_transitions'] = 'Match manifest, Markdown and native speaker notes'
