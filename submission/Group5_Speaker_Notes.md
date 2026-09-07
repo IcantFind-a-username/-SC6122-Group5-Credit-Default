@@ -61,9 +61,14 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1 
 
 **Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
-Target: 65 seconds
+Target: 50 seconds
 
-A decision tree can fit very detailed partitions, which makes overfitting easy. Our baseline achieves nearly perfect fitting-fold AP but only about zero point three in cross-validation. The declared grid searches seven depth limits and three minimum leaf sizes, giving twenty-one configurations. The selected model requires at least one hundred observations in each leaf, although it has no explicit depth cap. Test AP rises from 0.2843 to 0.5221. This is a substantial change for this model and split. It supports regularization as an explanation, rather than treating training performance as evidence of generalization. Next, we inspect what the tree actually uses.
+A decision tree can create very detailed splits, so it can easily overfit.
+In our baseline model, the tree fits the training folds almost perfectly, but its cross-validation performance is much lower.
+We therefore tested 21 combinations of maximum depth and minimum leaf size. The selected model requires at least 100 observations in each leaf, while keeping no explicit depth limit.
+On the test set, average precision improves from 0.284 to 0.522.
+So the key point is that controlling leaf size greatly improves the decision tree’s held-out performance on this split.
+Next, I’ll show one of the main rules learned by this model.
 
 **Transition:** Next, we inspect one rule to understand the tree's predictive pattern.
 
@@ -73,9 +78,14 @@ Source: results/final/model_comparison.csv | Historical test n=6,000; default=1
 
 **Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
-Target: 60 seconds
+Target: 55 seconds
 
-The selected tree begins with recent repayment status, PAY zero. Its root separates values at one point five. In the fitting sample, the default proportions are sixteen point five one percent on the left and seventy point one three percent on the right. This provides a concise description of an important predictive pattern. It does not mean repayment status causes the outcome, and node proportions are not a substitute for calibration analysis. The full selected tree still has depth eighteen and one hundred thirty-four leaves. We therefore use a representative rule rather than claiming the whole tree is a small explanation.
+The selected tree starts with recent repayment status, PAY zero.
+The root split is at 1.5. In the fitting sample, the default rate is about 16.5% on the left branch, compared with about 70.1% on the right branch.
+This shows that recent repayment status is one of the strongest predictive signals used by the tree.
+However, this is only an association in our fitted data. It does not mean repayment status directly causes default.
+The full tree is still quite large, with depth 18 and 134 leaves, so this rule is just one representative example rather than a complete explanation of the model.
+Next, we compare the tree with the other models using the same ranking metric.
 
 **Transition:** We can now place the tree beside the other models using a common ranking metric.
 
@@ -85,9 +95,14 @@ Source: saved decision-tree model; integration audit/report evidence.
 
 **Zhang Hanyu (G2509091L) | Part 2: Decision tree and overfitting | Contribution 25%**
 
-Target: 55 seconds
+Target: 75 seconds
 
-This comparison retains both the baseline and the cross-validation-selected model for each family. Average precision is a recall-increment weighted sum of precision, not the trapezoidal area sometimes also called PR-AUC. Our positive prevalence is approximately zero point two two, which gives useful context for these scores. The selected forest has AP 0.5508, and selected XGBoost has 0.5516. Those close point estimates do not establish superiority. The XGBoost baseline is numerically higher, but this retrospective observation does not authorize another selection round on test results. Zhou Xinzhe will now explain the forest, its feature importance, and examples of its errors.
+Finally, we compare the effect of tuning across all four model families using test average precision.
+The most noticeable result is the decision tree. Its AP increases substantially from 0.284 to 0.522 after tuning. In comparison, logistic regression stays around 0.497, and random forest improves only moderately. XGBoost changes very little.
+In this comparison, the decision tree benefits the most from hyperparameter tuning, which is consistent with what we saw earlier: controlling tree complexity is especially important for reducing overfitting.
+In terms of final ranking performance, the selected XGBoost and random forest models achieve AP values of 0.552 and 0.551 respectively. These values are extremely close, so we should not claim that one is clearly superior.
+Also, model selection was based on cross-validation before evaluating the test set, so we do not re-select a model simply because a baseline happens to perform slightly better on the test data.
+LR remains a separately labelled post-hoc supplement. Zhou Xinzhe will now explain random-forest tuning, feature importance and error cases.
 
 **Transition:** I will now hand over to Zhou Xinzhe for random forest, feature importance, and error cases.
 

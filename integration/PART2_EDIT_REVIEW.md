@@ -13,3 +13,7 @@ Comparison against the pre-redesign master at `e93211b` establishes that the mem
 - Keep the AP-definition explanation in report, Q&A Q8 and backup slide 13; it need not be repeated in the main comparison bullets.
 
 The current editable master is `submission/Group5_Presentation.pptx`; its PDF and Markdown notes are regenerated together. Other members' slide content and scripts are retained. No report metrics, model outputs or frozen experimental protocols are changed.
+
+## Acceptance
+
+The uploaded chart series match the pre-redesign base. After selective integration, only slides 4–6 differ in visible text or native notes from the latest master; every other slide and all chart series are unchanged. The new slide 6 was rendered and visually checked. The complete deck/PDF remains 16 pages, all 182 text boxes and native notes pass delivery validation, and the report remains unchanged at six pages. Repository gate: 70 pytest tests; Ruff passed; mypy passed for 29 source files.
