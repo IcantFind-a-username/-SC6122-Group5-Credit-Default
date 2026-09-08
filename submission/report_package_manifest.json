@@ -1,0 +1,13 @@
+{
+  "archive_SHA256": "13dffd474c8f8682949bac9368cd181bfb5d8cfc6d70f3ca830963b7127739e6",
+  "files": {
+    "Group5_Final_Report.pdf": "da6c9be013620ba98e7a6c3d2a016404b169d3c5330fb0910b0babb755d28d1b",
+    "Group5_Final_Report.tex": "85281cd1e2f97cdd3fa71d62814fc70765ad79e1d5e27b9d42f82612cf93e3fd",
+    "neurips_2021.sty": "d02d72219296bbd6202a95021971de29308851d144108702b7dc61622853fed8",
+    "report_validation.json": "29887e905ecfef6a0fec2ad9a689c5a99d7cfeec6d51246d3d3263160ff26e8d",
+    "figures/ranking.png": "7d2c7d6926b10ee6aecd678909ede802b54a198e305f2b905b904b82596708eb",
+    "figures/cost_tradeoff.png": "c1476a16f37c1a35557d9734e2485bbfc75c357432f32ec6999c121682eaa4af",
+    "figures/importance.png": "d7309f0ef615144adc47839f282971e5cfb0bf7ec6ae875eea8fc8479700fb9e",
+    "README.md": "64d52d73c80aaab82d1ba1109682a31a4f9eea621c92653a897039084df85d9b"
+  }
+}

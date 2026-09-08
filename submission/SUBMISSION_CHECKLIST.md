@@ -9,23 +9,23 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 | Real data and an applied ML problem | UCI credit-card default data; source, CC BY 4.0 attribution, raw/clean files and source audit included. |
 | Reasonable hyperparameters, comparisons and interpretation | Four reproducible model workflows; explicit baseline/selected settings and search budgets; AP, ROC-AUC and threshold metrics; association-only interpretations. |
 | Test excluded from training/tuning/threshold choice | Shared fit/validation/CV membership; pipeline fit boundaries and validation-only thresholds checked. Historical test exposure and the separately recorded LR integration run are explicitly disclosed. No new independent unseen-test claim. |
-| Entire English report, including references, ≤7 pages | **6 pages**, `Group5_Final_Report.pdf`; normal 11pt body; three figures, four numbered result tables and a plain partition table. Math subscripts are smaller glyphs, not reduced body type. |
+| Entire English report, including references, ≤7 pages | **6 pages**, `Group5_Final_Report.pdf`; teacher-template 10pt body (9pt references); abstract, three figures and six numbered tables, including partitions and contributions. Math subscripts are smaller glyphs, not reduced body type. |
 | Required report sections | Background/problem, data/target, objectives, methods, findings/comparison, conclusions/discussion and member contribution roles are included. All four names, student IDs and equal 25% shares are confirmed. |
-| Preferred teacher Word/LaTeX template | Repository and Documents/Downloads/NTU/Desktop filename search found no teacher template or named samples. Complete standard LaTeX fallback provided; swap to the actual template if supplied and recheck ≤7 pages. |
+| Preferred teacher Word/LaTeX template | **Received 9 September 2026 and applied.** Original `neurips_2021.sty` is unchanged; US Letter, native margins/fonts/title/abstract/headings; course metadata replaces the conference notice. See `REPORT_README.md`. |
 | Report + applicable dataset submitted day before presentation | Files ready locally; **group must confirm 7 September deadline time/portal and upload**. Data are in `data/`, also included in reproduction archive when packaged. |
 | 15 minutes including Q&A; all four speak | 12 main slides: 720 seconds speaking; four roles ×180 seconds; 180 seconds Q&A. Conclude on slide 12 (Thank you / Q&A). Slides 13–16 are question-triggered backups, not sequential speaking content. Rehearse actual speaking pace. |
 | 25% group / 75% individual assessment | Four substantive role assignments; per-slide English scripts and 22 bilingual Q&A items with role priorities. Named assignments and equal 25% contribution shares are recorded in `team.json`. |
 
 ## Actual deliverables
 
-- [Report PDF](Group5_Final_Report.pdf); [editable LaTeX](Group5_Final_Report.tex); [report prose template](report_template.tex).
+- [Report PDF](Group5_Final_Report.pdf); [complete editable source ZIP](Group5_Report_Source.zip); [editable LaTeX](Group5_Final_Report.tex); [build/template notes](REPORT_README.md).
 - [Editable PPTX](Group5_Presentation.pptx); [PDF backup](Group5_Presentation.pdf).
 - [English speaker notes](Group5_Speaker_Notes.md): each slide, named speaker, student ID, target time, script and transition; the same text is embedded in native PPTX notes for Presenter View.
 - [Bilingual Q&A](Group5_QA.md): 22 questions, role-priority map and evidence links. [Xu Yiqun’s Part 4 Q&A](Group5_Part4_QA.md) provides ten focused questions and a numeric crib sheet.
 - [Model comparison](model_comparison.csv), [cost comparison](cost_comparison.csv), [README](../README.md), [dataset provenance](../data/README.md).
 - [Experiment audit](../results/final/audit.json), [audit interpretation](../integration/AUDIT_FINDINGS.md), [source audit](../results/final/source_audit.json), [notebook execution status](../results/final/notebook_status.json).
 - `Group5_Dataset.zip` (data-only) and `Group5_Reproduction.zip` (code/data/results/materials), with `package_manifest.json`: suggested backup; packaged Git commit and archive SHA256 recorded after final build.
-- `delivery_validation.json`: PDF page counts, bounds/content checks and document hashes. Visual report inspection covers the full contact sheet and detailed table/reference pages. Final slide export/visual acceptance is recorded below.
+- `report_validation.json`: current teacher-template report page count, style hash, embedded-font check, text bounds and numerical checks. `delivery_validation.json` retains the earlier joint report/slide acceptance; its old report hash is superseded. The source ZIP has its own `report_package_manifest.json`.
 
 ## Reproducibility acceptance
 
@@ -58,7 +58,7 @@ Shared work: all four agree data splits, preprocessing and metrics; write indivi
 ## Human confirmation before upload
 
 1. Course announcement: final presentation date, report deadline **time/timezone**, submission portal/field, dataset packaging rules, and whether code/PPT must also be uploaded.
-2. Teacher `Word Template.docx` or `Latex Template.zip`; named sample report/slides if available. Samples never override the explicit seven-page cap.
+2. Review the current six-page teacher-template PDF. The actual template is now supplied and applied; its generic conference page exemptions do not override the course seven-page total.
 3. Team review of substantive contribution statements, source attribution, AI-assisted integration/supplement, and historical-exposure limitations; practice all four sections aloud.
 4. If any additional original LR training source exists outside the searched repository/workspace, supply it for provenance reconciliation; do not silently substitute it for the labelled supplement.
 
@@ -76,5 +76,9 @@ Integration branch only: `integration/final-submission-20260907`. No force-push,
 
 - Lei Peng is credited for preprocessing and the initial LR baseline. The report no longer describes an empty notebook or implies no LR work was done. Its comparison tables still use the explicitly identified integration run; original member metrics have not been silently substituted.
 - A dedicated AI disclosure includes language polishing and grammar guidance, alongside the code, verification, analysis and document assistance actually used.
-- Teacher template remains unavailable after a renewed local search; formatting compliance with that specific template is **pending**, not certified. The existing `report_template.tex` is a project-authored layout, not the teacher template.
+- Teacher template was subsequently supplied and applied on 9 September. `report_template.tex` now contains the course paper shell loading the byte-identical supplied `neurips_2021.sty`; the earlier fallback has been replaced.
 - Use `python -m integration.validate_delivery --report-only` for this report revision. The currently edited PPTX is preserved and has not been regenerated or certified against its older PDF in this revision.
+
+## Teacher-template acceptance — 9 September 2026
+
+The report is six pages including references and AI disclosure. All pages were rendered; the full comparison table, cost/importance figures, title, member table and references were inspected. The style bytes match the supplied archive; all fonts are embedded with no Type 3 fonts, all pages are US Letter, and there are no overfull TeX boxes. `Group5_Report_Source.zip` contains the current PDF and self-contained editable source. The older full `Group5_Reproduction.zip` retains its recorded packaged commit; use the new report source archive for this revision.

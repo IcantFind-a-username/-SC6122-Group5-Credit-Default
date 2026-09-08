@@ -71,3 +71,9 @@ Fetched and fast-forwarded the integration branch to preserve member commits caf
 ## Clear presentation ending (2026-09-07)
 
 Changed main slide 12 to “Conclusions & Q&A”, retaining its three conclusions and adding “Thank you / Questions & discussion” with all four member names. Notes instruct speakers to finish there and use slides 13–16 only for relevant questions. Main timing remains 720 seconds and each role 180 seconds. Added the previously delivered focused Part 4 Q&A to version control and the checklist. Regenerated the missing canonical PPTX from the saved current generator, exported the actual PPTX to PDF, checked the closing page visually and passed full document/notes validation. Report and experiment results remain unchanged.
+
+## 2026-09-09 — supplied teacher template
+
+Preserved the three supplied NeurIPS files in `course_materials/latex_template/`; loaded the unmodified style in named-author mode and replaced only conference metadata with the course notice. Migrated title, abstract, sections, table/figure captions and references to native template conventions. Kept the course seven-page total over the generic conference exemptions. Condensed repeated prose rather than reducing template type or margins. Replotted the same frozen numbers for the narrower text block; no model training or new threshold choice. Report validates at six pages with matching metrics, US Letter, embedded non-Type-3 fonts and no overfull boxes. Added a self-contained report-source packaging mode and preserved the user-modified PPTX.
+
+The final source ZIP was extracted into an independent temporary directory and compiled successfully with Tectonic. All six pages' extracted text matched the delivered PDF exactly. The final ranking legend is outside the plot; exact values remain in the adjacent performance table. Report-only validation and Ruff passed.
