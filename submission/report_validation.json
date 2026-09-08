@@ -3,19 +3,19 @@
   "report_page_details": [
     {
       "page": 1,
-      "words": 385,
+      "words": 390,
       "min_font_pt": 8.97,
       "rightmost_text_pt": 505.66
     },
     {
       "page": 2,
-      "words": 519,
+      "words": 532,
       "min_font_pt": 6.97,
-      "rightmost_text_pt": 505.65
+      "rightmost_text_pt": 505.74
     },
     {
       "page": 3,
-      "words": 334,
+      "words": 336,
       "min_font_pt": 9.96,
       "rightmost_text_pt": 505.66
     },
@@ -39,9 +39,9 @@
     },
     {
       "page": 7,
-      "words": 158,
-      "min_font_pt": 8.97,
-      "rightmost_text_pt": 503.79
+      "words": 171,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 503.69
     }
   ],
   "teacher_template": "Supplied neurips_2021.sty is byte-identical; US Letter; native 10pt typography; named-author mode; course-only notice",
@@ -49,7 +49,7 @@
   "fonts_embedded_no_type3": true,
   "overfull_tex_boxes": 0,
   "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
-  "report_pdf_SHA256": "104321b07bdba3475d8548d1ab7c7bc20e2a045f18ac81ddff2a72709d7c2398",
-  "report_latex_SHA256": "917e4765c68b26612e0979d81c7ee4aa07917339b945ee456900343a04a6d550",
+  "report_pdf_SHA256": "9c932fa4b04619810eb9e400a96b24f70798626a966e412058c427f0bef7046d",
+  "report_latex_SHA256": "3f82afd86320cf7d0e900734348810b14860cfa37811ae80090bf1135a30cdca",
   "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality."
 }

@@ -1,6 +1,6 @@
 # Sources checked on 2026-09-07 (Singapore)
 
-The September 7 entries below document the earlier four-reference version. The current seven-reference bibliography is recorded in the September 9 update at the end of this file.
+The September 7 entries below document the earlier four-reference version. The September 9 source-verification table documents the expanded seven-source version. The final APA 7 conversion is recorded at the end of this file; earlier numeric labels are historical verification identifiers, not current report citations.
 
 - UCI primary dataset page: https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients ; DOI https://doi.org/10.24432/C55S3H. Verified 30,000 observations, 23 features, positive default label, no missing values, Taiwan sample, April–September 2005 predictors, NT-dollar units and CC BY 4.0 license.
 - scikit-learn official `average_precision_score`: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html . AP is recall-increment weighted precision, without trapezoidal interpolation. The production environment remains pinned to 1.8.0; the live stable documentation currently displays 1.9.0.
@@ -49,3 +49,15 @@ The supplied teacher LaTeX template has now been received and applied. The revis
 | [7] scikit-learn developers, *average_precision_score* | [Version-pinned 1.8 API documentation](https://scikit-learn.org/1.8/modules/generated/sklearn.metrics.average_precision_score.html), accessed September 9, defines non-interpolated average precision. The experiment environment is pinned to 1.8.0. |
 
 Crossref records for [2], [5] and [6] were retrieved successfully during this revision. Consensus was also searched for the dataset paper, but this search returned related papers rather than the target; none of those results was used. The earlier successful Consensus record checks remain documented above. Bibliographic checking does not imply a full-text review of every source or independent validation of this project's experiments.
+
+## APA 7 conversion — 2026-09-09
+
+Corrected the missed user requirement: both in-text citations and references now use APA 7 conventions. The teacher's original style still governs the overall course-paper layout.
+
+- Author–date parenthetical citations replace numeric citations. Three or more authors use “et al.” in text; two-author parenthetical citations use an ampersand.
+- The unnumbered reference list is sorted Breiman, Chen, Hastie, Pedregosa, scikit-learn developers, Yeh alone, Yeh and Lien. It starts on page 7 with a centered bold heading, 0.5-inch hanging indents, double spacing and the same 10pt text as the body.
+- Journal titles and volume numbers are italicized; article/book titles use sentence case. DOI links use the `https://doi.org/` form, without a concluding period. The data reference uses `[Data set]`; its license remains in the source records rather than as a nonstandard citation suffix.
+- All 16 authors of the scikit-learn paper are listed, in the order confirmed by the [official JMLR record](https://jmlr.org/papers/v12/pedregosa11a.html). “Et al.” is limited to its in-text citation. The version-pinned API document has no reliable publication date, so it uses “n.d.”; an access date is unnecessary for this version-specific reference.
+- Formatting was checked against the APA-authored [student-paper formatting guidance](https://www.apa.org/ed/precollege/psn/2020/09/apa-style-student-papers) and the University of Canterbury's [APA reference-list guide](https://www.canterbury.ac.nz/study/study-support-info/citations-and-referencing/apa-style/creating-a-reference-list). APA's detailed reference-example pages returned an iframe in the text reader; no claim is made that inaccessible content was reviewed.
+
+The original seven sources and experimental values are unchanged. The final PDF and self-contained source ZIP supersede the numeric-reference revision.

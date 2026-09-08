@@ -3,7 +3,12 @@
 \usepackage[preprint,nonatbib]{neurips_2021}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[authoryear,round]{natbib}
 \usepackage{hyperref,url,booktabs,amsfonts,microtype,xcolor,graphicx,tabularx,array,capt-of}
+\urlstyle{same}
+\setlength{\bibhang}{0.5in}
+\setlength{\bibsep}{0pt}
+\renewcommand{\bibsection}{\begin{center}\normalsize\bfseries References\end{center}}
 \hypersetup{hidelinks,pdftitle={Credit Card Default Prediction},pdfauthor={SC6122 Group 5}}
 % Course metadata only: do not imply submission to or acceptance by NeurIPS.
 \makeatletter
@@ -20,7 +25,7 @@ We compare logistic regression, a decision tree, random forest and XGBoost on 30
 \section{Problem, objectives and data}
 Credit default prediction can prioritize account reviews, but missed defaults and unnecessary reviews have different consequences. We ask: \textbf{how well can models identify default risk, and how should ranking ability, interpretability and decision cost be balanced?} We compare logistic regression (LR), a decision tree (DT), random forest (RF) and XGBoost using average precision (AP), ROC-AUC, predictive explanations and hypothetical error costs.
 
-We use UCI's Default of Credit Card Clients dataset \cite{uci}: 30,000 Taiwan clients, 23 predictors and a binary outcome (1 = default). Predictors cover credit limit, demographics, repayment status, bills and payments during April--September 2005; amounts are in NT dollars. There are 6,636 defaults (22.12\%). An always-negative classifier therefore appears accurate while detecting no defaults. The dataset also underlies a published comparison of default-prediction methods \cite{yeh}.
+We use UCI's Default of Credit Card Clients dataset \citep{uci}: 30,000 Taiwan clients, 23 predictors and a binary outcome (1 = default). Predictors cover credit limit, demographics, repayment status, bills and payments during April--September 2005; amounts are in NT dollars. There are 6,636 defaults (22.12\%). An always-negative classifier therefore appears accurate while detecting no defaults. The dataset also underlies a published comparison of default-prediction methods \citep{yeh}.
 
 \textbf{Cleaning and identity.} No entries are missing. EDUCATION 0/5/6 are mapped to 4 (345 rows), and MARRIAGE 0 to 3 (54 rows). Other values are retained, including negative repayment codes and amounts. No rows are removed: 35 identical feature--label repetitions remain, and 15 test feature vectors also occur in development. This potential dependence is acknowledged without altering the established split after evaluation.
 
@@ -41,7 +46,7 @@ Test & 6,000 & Evaluation of frozen models and decisions\\\bottomrule
 \end{center}
 The 24,000 development rows are stratified into 18,000 fitting and 6,000 validation rows; 6,000 test rows remain separate (seed 42). Positive counts are 3982, 1,327 and 1,327. All four reported runs use identical development memberships and five CV folds. Final models fit only the 18,000 fitting rows, with no later validation refit.
 
-Preprocessing uses scikit-learn pipelines \cite{sklearn}, fitted within each CV training fold. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
+Preprocessing uses scikit-learn pipelines \citep{sklearn}, fitted within each CV training fold. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
 
 \textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. LR evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
 \begin{center}
@@ -58,7 +63,7 @@ XGB & 24 & 120 & 150 trees; depth=4; rate=.03; weight=3 & 0.5620\\
 \end{minipage}
 \end{center}
 
-LR uses L2 logistic regression \cite{esl} (\texttt{lbfgs}, maximum 3,000 iterations); its grid crosses $C$ values .001, .01, .1, 1, 10 and 100 with no class weighting or balanced weighting. DT searches maximum depth 2, 3, 4, 5, 6, 8 or unlimited, and minimum leaf size 1, 20 or 100. RF averages randomized trees \cite{rf}; its search varies tree count, depth, split/leaf size, feature subsampling and class weighting. XGBoost varies tree count, learning rate, depth, child weight, row/column sampling, L1/L2 penalties and positive-class weighting \cite{xgboost}. Baseline tree/ensemble configurations are retained alongside selected configurations.
+LR uses L2 logistic regression \citep{esl}, solved with \texttt{lbfgs} (maximum 3,000 iterations); its grid crosses $C$ values .001, .01, .1, 1, 10 and 100 with no class weighting or balanced weighting. DT searches maximum depth 2, 3, 4, 5, 6, 8 or unlimited, and minimum leaf size 1, 20 or 100. RF averages randomized trees \citep{rf}; its search varies tree count, depth, split/leaf size, feature subsampling and class weighting. XGBoost varies tree count, learning rate, depth, child weight, row/column sampling, L1/L2 penalties and positive-class weighting \citep{xgboost}. Baseline tree/ensemble configurations are retained alongside selected configurations.
 
 \textbf{Decision selection.} We use $\hat y=1[s\geq t]$ throughout, where $s$ is the positive-class score. The fixed reference is $t=0.5$. For LR, RF and XGBoost, all distinct validation score cutoffs are considered for $C_r=FP+r\,FN$, with $r\in\{1,3,5,10\}$. Equal costs prefer the largest threshold (fewer alerts); tied scores move together. DT has only its historical fixed 0.5 policy. Each cost threshold is chosen on validation, then applied unchanged to test predictions. No test threshold sweep is used to select a policy.
 
@@ -97,7 +102,7 @@ XGB & 4426 & 247 & 855 & 472 & 3983 & 690 & 599 & 728\\
 \end{minipage}
 \end{center}
 
-AP is computed by \texttt{average\_precision\_score}, a recall-increment weighted sum of precision, not trapezoidal PR-AUC \cite{ap}. ROC-AUC summarizes positive--negative score ordering. Both use continuous scores and are independent of the chosen operating threshold; precision, recall, F1 and accuracy describe a particular decision rule.
+AP is computed by \texttt{average\_precision\_score}, a recall-increment weighted sum of precision, not trapezoidal PR-AUC \citep{ap}. ROC-AUC summarizes positive--negative score ordering. Both use continuous scores and are independent of the chosen operating threshold; precision, recall, F1 and accuracy describe a particular decision rule.
 \begin{center}
 \begin{minipage}{\linewidth}
 \centering\includegraphics[width=\linewidth]{figures/ranking.png}
@@ -185,14 +190,16 @@ Shared responsibilities cover the data split, preprocessing and metrics, integra
 Generative AI supported language polishing and grammar guidance, together with selected technical tasks. The group retains responsibility for the methods, results, interpretation and acknowledgement of sources.
 
 \newpage
-{\small\raggedright
+% APA 7 references: alphabetical order, author-date citations, 0.5-inch
+% hanging indent, double-spaced entries, sentence-case titles and DOI URLs.
+{\normalsize\raggedright\setlength{\baselineskip}{20pt}
 \begin{thebibliography}{9}
-\bibitem{uci} Yeh, I.-C. (2009). \emph{Default of Credit Card Clients} [Dataset]. UCI Machine Learning Repository. \href{https://doi.org/10.24432/C55S3H}{doi:10.24432/C55S3H}. License: CC BY 4.0.
-\bibitem{yeh} Yeh, I.-C., and Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. \emph{Expert Systems with Applications}, 36(2), 2473--2480. \href{https://doi.org/10.1016/j.eswa.2007.12.020}{doi:10.1016/j.eswa.2007.12.020}.
-\bibitem{sklearn} Pedregosa, F., Varoquaux, G., Gramfort, A., et al. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research}, 12(85), 2825--2830. \href{https://jmlr.org/papers/v12/pedregosa11a.html}{Publisher's article page}.
-\bibitem{esl} Hastie, T., Tibshirani, R., and Friedman, J. (2009). \emph{The Elements of Statistical Learning: Data Mining, Inference, and Prediction} (2nd ed.). Springer. \href{https://doi.org/10.1007/978-0-387-84858-7}{doi:10.1007/978-0-387-84858-7}.
-\bibitem{rf} Breiman, L. (2001). Random forests. \emph{Machine Learning}, 45, 5--32. \href{https://doi.org/10.1023/A:1010933404324}{doi:10.1023/A:1010933404324}.
-\bibitem{xgboost} Chen, T., and Guestrin, C. (2016). XGBoost: A scalable tree boosting system. In \emph{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 785--794. ACM. \href{https://doi.org/10.1145/2939672.2939785}{doi:10.1145/2939672.2939785}.
-\bibitem{ap} scikit-learn developers. \emph{average\_precision\_score} [API documentation, version 1.8.0]. \href{https://scikit-learn.org/1.8/modules/generated/sklearn.metrics.average_precision_score.html}{scikit-learn 1.8 documentation}. Accessed 9 September 2026.
+\bibitem[Breiman(2001)]{rf} Breiman, L. (2001). Random forests. \emph{Machine Learning, 45}(1), 5--32. \url{https://doi.org/10.1023/A:1010933404324}
+\bibitem[Chen \& Guestrin(2016)]{xgboost} Chen, T., \& Guestrin, C. (2016). XGBoost: A scalable tree boosting system. In \emph{Proceedings of the 22nd ACM SIGKDD international conference on knowledge discovery and data mining} (pp.\ 785--794). Association for Computing Machinery. \url{https://doi.org/10.1145/2939672.2939785}
+\bibitem[Hastie et~al.(2009)]{esl} Hastie, T., Tibshirani, R., \& Friedman, J. (2009). \emph{The elements of statistical learning: Data mining, inference, and prediction} (2nd ed.). Springer. \url{https://doi.org/10.1007/978-0-387-84858-7}
+\bibitem[Pedregosa et~al.(2011)]{sklearn} Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., \& Duchesnay, \mbox{\'E.} (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research, 12}(85), 2825--2830. \url{https://jmlr.org/papers/v12/pedregosa11a.html}
+\bibitem[scikit-learn developers(n.d.)]{ap} scikit-learn developers. (n.d.). \emph{average\_precision\_score} [API documentation, version 1.8]. \url{https://scikit-learn.org/1.8/modules/generated/sklearn.metrics.average_precision_score.html}
+\bibitem[Yeh(2009)]{uci} Yeh, I.-C. (2009). \emph{Default of credit card clients} [Data set]. UCI Machine Learning Repository. \url{https://doi.org/10.24432/C55S3H}
+\bibitem[Yeh \& Lien(2009)]{yeh} Yeh, I.-C., \& Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. \emph{Expert Systems with Applications, 36}(2), 2473--2480. \url{https://doi.org/10.1016/j.eswa.2007.12.020}
 \end{thebibliography}}
 \end{document}
