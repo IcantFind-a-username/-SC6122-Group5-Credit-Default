@@ -19,3 +19,9 @@ Outputs include pipelines, exact-score validation/test predictions, CV scores an
 ## Clarification on 2026-09-09
 
 The group confirms that Lei Peng has the original LR work. The earlier search only described the repository snapshot and must not be interpreted as saying he did not perform LR. A fresh fetch of all remote refs on 9 September found no additional original fitting implementation. Its local path or branch has been requested. The report now credits his preprocessing and initial LR work explicitly, while identifying the integration run used for its numerical comparisons in one concise methods paragraph. Historical results, the supplement protocol and all model metrics remain unchanged.
+
+## Recheck of original member results — 2026-09-09
+
+A repeated fetch and `ls-remote --heads --tags` found the same five remote branches. Commit `959a2b2`, authored by `Leis101` on 5 September, supplies the original LR summary tables. Original baseline accuracy is 0.8088333333333333, ROC-AUC 0.7100908859130948 and recall 0.24415975885455915. These values are now explicitly attributed in the report, separately from the LR* comparison run. The report does not say the member did no LR work.
+
+The original `03_logistic_regression.ipynb` remains a zero-byte blob on the member/main history. The current populated notebook and `part1/experiment.py` on the integration branch are the later supplement. Four unreachable tree objects found by the repeat fsck were inspected; their LR entries point to the same known supplement/legacy blobs and expose no additional original fitting implementation. Thus original results exist, while their training implementation has not been recovered in the searched repository. No new experiment was run and no supplement result was relabelled as an original member result.

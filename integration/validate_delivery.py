@@ -42,6 +42,12 @@ def run(report_only=False):
         assert member['name'] in qa and member['student_id'] in qa
         assert member['share_percent'] == 25
     assert not re.search(r'TO CONFIRM|\bTBD\b|NAME /', report_text)
+    original_lr = read_csv(ROOT/'results/logistic_regression_final_comparison.csv')
+    original_lr = original_lr[original_lr.Model == 'Baseline LR'].iloc[0]
+    assert math.isclose(original_lr.Accuracy, (original_lr.TN+original_lr.TP)/6000)
+    assert math.isclose(original_lr.Recall, original_lr.TP/(original_lr.TP+original_lr.FN))
+    for key in ['Accuracy', 'ROC-AUC', 'Recall']:
+        assert f'{original_lr[key]:.4f}' in report_text
     rf_importance, rf_examples = rf_interpretation()
     assert f'{rf_importance.iloc[0].Mean_AP_decrease:.4f}' in report_text
     for _, example in rf_examples.iterrows():

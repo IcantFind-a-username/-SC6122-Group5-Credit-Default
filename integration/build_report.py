@@ -40,6 +40,8 @@ def run():
     FIG.mkdir(parents=True, exist_ok=True)
     comparison = read_csv(ROOT / 'results/final/model_comparison.csv')
     test = comparison[comparison.Partition == 'test']
+    original_lr = read_csv(ROOT/'results/logistic_regression_final_comparison.csv')
+    original_lr = original_lr[original_lr.Model == 'Baseline LR'].iloc[0]
     audit = json.loads((ROOT / 'results/final/audit.json').read_text())
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10, 'text.color': NAVY,
                          'axes.spines.top': False, 'axes.spines.right': False})
@@ -100,6 +102,9 @@ def run():
               'DUP_TEST':str(audit['details']['source']['test_rows_features_seen_in_development']),
               'FIT_POS':str(audit['details']['source']['fit_defaults']),
               'LR_BASE_AP':f"{selected_rows['LR*_B'].AP:.4f}", 'LR_TUNE_AP':f"{selected_rows['LR*_T'].AP:.4f}",
+              'LR_ORIG_ACC':f'{original_lr.Accuracy:.4f}',
+              'LR_ORIG_AUC':f"{original_lr['ROC-AUC']:.4f}",
+              'LR_ORIG_REC':f'{original_lr.Recall:.4f}',
               'XGB_THR':f'{selected.Threshold:.5f}',
               'XGB_REDUCTION':f'{100*(base.Cost_5-selected.Cost_5)/base.Cost_5:.2f}'}
     team = json.loads((OUT/'team.json').read_text())
@@ -135,6 +140,7 @@ def run():
     comparison.to_csv(OUT/'model_comparison.csv',index=False)
     read_csv(ROOT/'results/final/cost_comparison.csv').to_csv(OUT/'cost_comparison.csv',index=False)
     write_json(OUT/'report_build_provenance.json', {'comparison_SHA256':file_hash(ROOT/'results/final/model_comparison.csv'),
+               'original_member_lr_SHA256':file_hash(ROOT/'results/logistic_regression_final_comparison.csv'),
                'generator_SHA256':file_hash(Path(__file__)), 'template_SHA256':file_hash(OUT/'report_template.tex'),
                'teacher_style_SHA256':file_hash(OUT/'neurips_2021.sty'),
                'teacher_style_unchanged':file_hash(OUT/'neurips_2021.sty') == file_hash(ROOT/'course_materials/latex_template/neurips_2021.sty')})
