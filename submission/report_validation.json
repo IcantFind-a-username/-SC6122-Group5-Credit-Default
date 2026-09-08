@@ -1,17 +1,17 @@
 {
-  "report_pages": 6,
+  "report_pages": 7,
   "report_page_details": [
     {
       "page": 1,
-      "words": 374,
+      "words": 385,
       "min_font_pt": 8.97,
       "rightmost_text_pt": 505.66
     },
     {
       "page": 2,
-      "words": 507,
+      "words": 519,
       "min_font_pt": 6.97,
-      "rightmost_text_pt": 505.75
+      "rightmost_text_pt": 505.65
     },
     {
       "page": 3,
@@ -27,15 +27,21 @@
     },
     {
       "page": 5,
-      "words": 408,
+      "words": 411,
       "min_font_pt": 6.97,
       "rightmost_text_pt": 505.75
     },
     {
       "page": 6,
-      "words": 360,
+      "words": 281,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 505.74
+    },
+    {
+      "page": 7,
+      "words": 158,
       "min_font_pt": 8.97,
-      "rightmost_text_pt": 506.35
+      "rightmost_text_pt": 503.79
     }
   ],
   "teacher_template": "Supplied neurips_2021.sty is byte-identical; US Letter; native 10pt typography; named-author mode; course-only notice",
@@ -43,7 +49,7 @@
   "fonts_embedded_no_type3": true,
   "overfull_tex_boxes": 0,
   "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
-  "report_pdf_SHA256": "79b1b2a01ad7a29e3e4bc6e8810fa6ee2725f3c9978f141f807cff02f63d7b80",
-  "report_latex_SHA256": "d8566d354deae518073e07b0d542a4afdae3ce97acf434ae79170b522ab59e74",
+  "report_pdf_SHA256": "104321b07bdba3475d8548d1ab7c7bc20e2a045f18ac81ddff2a72709d7c2398",
+  "report_latex_SHA256": "917e4765c68b26612e0979d81c7ee4aa07917339b945ee456900343a04a6d550",
   "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality."
 }

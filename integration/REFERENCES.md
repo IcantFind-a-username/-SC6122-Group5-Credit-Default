@@ -1,5 +1,7 @@
 # Sources checked on 2026-09-07 (Singapore)
 
+The September 7 entries below document the earlier four-reference version. The current seven-reference bibliography is recorded in the September 9 update at the end of this file.
+
 - UCI primary dataset page: https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients ; DOI https://doi.org/10.24432/C55S3H. Verified 30,000 observations, 23 features, positive default label, no missing values, Taiwan sample, April–September 2005 predictors, NT-dollar units and CC BY 4.0 license.
 - scikit-learn official `average_precision_score`: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html . AP is recall-increment weighted precision, without trapezoidal interpolation. The production environment remains pinned to 1.8.0; the live stable documentation currently displays 1.9.0.
 - Chen and Guestrin (2016), XGBoost: A Scalable Tree Boosting System, https://arxiv.org/abs/1603.02754 ; published DOI https://doi.org/10.1145/2939672.2939785. Verified authors/title and boosted-tree system scope.
@@ -31,3 +33,19 @@ I-Cheng Yeh and Che-hui Lien (2009). “The comparisons of data mining technique
 - [Crossref publisher-deposited metadata](https://api.crossref.org/works/10.1016/j.eswa.2007.12.020) independently confirms the exact title, full author names, March 2009 publication, volume 36, issue 2 and pages 2473–2480. The `2007` embedded in the DOI is not the journal publication year.
 
 No fabricated or mismatched citation was found among the four current report references. This check establishes bibliographic identity and appropriate source type, not validation of every claim in the cited papers. External benchmark results are not substituted for this group's audited predictions. No report, slide or experimental value needed correction from this check.
+
+## Current bibliography — checked on 2026-09-09 (Singapore)
+
+The supplied teacher LaTeX template has now been received and applied. The revised report has seven pages including references, using the original template typography. Descriptive links and DOI strings replace long raw URLs. The project repository is linked in the result-reconciliation paragraph rather than listed as external literature. All seven numbered entries have corresponding in-text citations.
+
+| Current reference | Verification and supported use |
+| --- | --- |
+| [1] Yeh (2009), *Default of Credit Card Clients* | [Official UCI record](https://archive.ics.uci.edu/dataset/350/default+of+credit+card+clients) supplies the citation year, author, DOI `10.24432/C55S3H` and CC BY 4.0 license. Dataset provenance, not a journal article. |
+| [2] Yeh and Lien (2009), *The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients* | UCI identifies the associated paper; [Crossref metadata](https://api.crossref.org/works/10.1016/j.eswa.2007.12.020) confirms both authors, title, *Expert Systems with Applications* 36(2), 2473–2480 and 2009 publication. Supports the dataset's research context, not our model scores. |
+| [3] Pedregosa et al. (2011), *Scikit-learn: Machine Learning in Python* | [Official JMLR article](https://jmlr.org/papers/v12/pedregosa11a.html) confirms title, authors, 12(85), 2825–2830 and 2011. Software citation; current API behavior is documented separately in [7]. |
+| [4] Hastie, Tibshirani and Friedman (2009), *The Elements of Statistical Learning: Data Mining, Inference, and Prediction*, second edition | [Springer book record](https://link.springer.com/book/10.1007/978-0-387-84858-7) confirms three authors, edition, year and DOI. Its linear classification and tree chapters support method background. |
+| [5] Breiman (2001), *Random Forests* | [Crossref metadata](https://api.crossref.org/works/10.1023/A:1010933404324) confirms Leo Breiman, *Machine Learning* 45, 5–32, 2001. The [author-hosted paper](https://www.stat.berkeley.edu/users/breiman/randomforest2001.pdf) supports randomized tree ensembles. |
+| [6] Chen and Guestrin (2016), *XGBoost: A Scalable Tree Boosting System* | [Author preprint](https://arxiv.org/abs/1603.02754) confirms full title, authors and published DOI. [Crossref metadata](https://api.crossref.org/works/10.1145/2939672.2939785) confirms the KDD proceedings and pages 785–794; its shorter title field is “XGBoost.” |
+| [7] scikit-learn developers, *average_precision_score* | [Version-pinned 1.8 API documentation](https://scikit-learn.org/1.8/modules/generated/sklearn.metrics.average_precision_score.html), accessed September 9, defines non-interpolated average precision. The experiment environment is pinned to 1.8.0. |
+
+Crossref records for [2], [5] and [6] were retrieved successfully during this revision. Consensus was also searched for the dataset paper, but this search returned related papers rather than the target; none of those results was used. The earlier successful Consensus record checks remain documented above. Bibliographic checking does not imply a full-text review of every source or independent validation of this project's experiments.

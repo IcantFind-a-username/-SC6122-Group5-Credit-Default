@@ -4,7 +4,7 @@ Final integration branch: `integration/final-submission-20260907`. Main and memb
 
 ## Deliverables
 
-- [Final report PDF](submission/Group5_Final_Report.pdf), now using the supplied teacher NeurIPS template, with a [self-contained source ZIP](submission/Group5_Report_Source.zip), editable [LaTeX](submission/Group5_Final_Report.tex) and [build notes](submission/REPORT_README.md); six pages including references, no separate cover.
+- [Final report PDF](submission/Group5_Final_Report.pdf), now using the supplied teacher NeurIPS template, with a [self-contained source ZIP](submission/Group5_Report_Source.zip), editable [LaTeX](submission/Group5_Final_Report.tex) and [build notes](submission/REPORT_README.md); seven pages including references, no separate cover.
 - [Editable presentation](submission/Group5_Presentation.pptx), [PDF backup](submission/Group5_Presentation.pdf), [speaker notes](submission/Group5_Speaker_Notes.md), [bilingual Q&A](submission/Group5_QA.md).
 - [Submission checklist](submission/SUBMISSION_CHECKLIST.md).
 - [Final comparison](results/final/model_comparison.csv) and [cost scenarios](results/final/cost_comparison.csv). Corresponding submission copies are generated from these files.
