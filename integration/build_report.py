@@ -41,7 +41,7 @@ def run():
     comparison = read_csv(ROOT / 'results/final/model_comparison.csv')
     test = comparison[comparison.Partition == 'test']
     audit = json.loads((ROOT / 'results/final/audit.json').read_text())
-    plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 12, 'text.color': NAVY,
+    plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 10, 'text.color': NAVY,
                          'axes.spines.top': False, 'axes.spines.right': False})
     performance, counts, configs, costs, ranking = [], [], [], [], []
     selected_rows = {}
@@ -65,28 +65,30 @@ def run():
                 row = test[(test.Family == family) & (test.Model == model)].iloc[0]
                 costs.append([label, policy, f'{row.Threshold:.5f}', f'{row.Recall*100:.2f}',
                               f'{row.Alert_rate*100:.2f}', str(int(row.FP)), str(int(row.FN)), str(int(row.Cost_5))])
-    fig, ax = plt.subplots(figsize=(9, 2.8))
+    fig, ax = plt.subplots(figsize=(5.5, 2.05), layout='constrained')
     positions = np.arange(4)
     for offset,index,label,color in [(-.18,1,'Baseline',GREY),(.18,2,'CV-selected',TEAL)]:
         bars=ax.bar(positions+offset,[r[index] for r in ranking],.34,label=label,color=color)
-        ax.bar_label(bars,fmt='%.4f',fontsize=10,padding=3)
+        ax.bar_label(bars,fmt='%.4f',fontsize=8.5,padding=3)
     ax.axhline(1327/6000,ls='--',color=ORANGE,lw=1,label='Test prevalence')
     ax.set(xticks=positions,xticklabels=[r[0] for r in ranking],ylim=(0,.68),ylabel='Average precision (AP)')
-    ax.legend(ncol=3,fontsize=9,loc='upper left')
+    ax.legend(ncol=3,fontsize=8,loc='upper left')
     ax.grid(axis='y',alpha=.15)
     save_figure(fig,'ranking')
     base=selected_rows['XGB_T']
     selected=test[(test.Family=='XGBoost') & (test.Model=='Tuned XGBoost / cost ratio 5')].iloc[0]
-    fig, axes=plt.subplots(1,3,figsize=(10,2.8))
+    fig, axes=plt.subplots(1,3,figsize=(5.5,2.0), layout='constrained')
     for ax,key,title in zip(axes,['FP','FN','Cost_5'],['False positives','Missed defaults','Cost: FP + 5 FN']):
         bars=ax.bar(['0.5','Validation t'],[base[key],selected[key]],color=[GREY,ORANGE],width=.6)
-        ax.bar_label(bars,fmt='%.0f',padding=4,fontsize=12)
+        ax.bar_label(bars,fmt='%.0f',padding=4,fontsize=9)
         ax.set(title=title,ylim=(0,max(base[key],selected[key])*1.25))
+        ax.title.set_fontsize(9)
+        ax.tick_params(labelsize=8.5)
         ax.grid(axis='y',alpha=.12)
     save_figure(fig,'cost_tradeoff')
     rf_importance, rf_examples = rf_interpretation()
     imp=rf_importance.head(6).iloc[::-1]
-    fig,ax=plt.subplots(figsize=(9,2.8))
+    fig,ax=plt.subplots(figsize=(5.5,2.05), layout='constrained')
     ax.barh(imp.Feature,imp.Mean_AP_decrease,xerr=imp.SD_AP_decrease,color=TEAL,capsize=3)
     ax.set(xlabel='Decrease in validation AP after permutation')
     ax.grid(axis='x',alpha=.12)
