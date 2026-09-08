@@ -20,7 +20,7 @@ We compare logistic regression, a decision tree, random forest and XGBoost on 30
 \section{Problem, objectives and data}
 Credit default prediction can prioritize account reviews, but missed defaults and unnecessary reviews have different consequences. We ask: \textbf{how well can models identify default risk, and how should ranking ability, interpretability and decision cost be balanced?} We compare logistic regression (LR), a decision tree (DT), random forest (RF) and XGBoost using average precision (AP), ROC-AUC, predictive explanations and hypothetical error costs.
 
-We use UCI's Default of Credit Card Clients dataset \cite{uci}: 30,000 Taiwan clients, 23 predictors and a binary outcome (1 = default). Predictors cover credit limit, demographics, repayment status, bills and payments during April--September 2005; amounts are in NT dollars. There are 6,636 defaults (22.12\%). An always-negative classifier therefore appears accurate while detecting no defaults.
+We use UCI's Default of Credit Card Clients dataset \cite{uci}: 30,000 Taiwan clients, 23 predictors and a binary outcome (1 = default). Predictors cover credit limit, demographics, repayment status, bills and payments during April--September 2005; amounts are in NT dollars. There are 6,636 defaults (22.12\%). An always-negative classifier therefore appears accurate while detecting no defaults. The dataset also underlies a published comparison of default-prediction methods \cite{yeh}.
 
 \textbf{Cleaning and identity.} No entries are missing. EDUCATION 0/5/6 are mapped to 4 (345 rows), and MARRIAGE 0 to 3 (54 rows). Other values are retained, including negative repayment codes and amounts. No rows are removed: 35 identical feature--label repetitions remain, and {{DUP_TEST}} test feature vectors also occur in development. This potential dependence is acknowledged without altering the established split after evaluation.
 
@@ -41,7 +41,7 @@ Test & 6,000 & Evaluation of frozen models and decisions\\\bottomrule
 \end{center}
 The 24,000 development rows are stratified into 18,000 fitting and 6,000 validation rows; 6,000 test rows remain separate (seed 42). Positive counts are {{FIT_POS}}, 1,327 and 1,327. All four reported runs use identical development memberships and five CV folds. Final models fit only the 18,000 fitting rows, with no later validation refit.
 
-Each CV training fold fits its own preprocessing. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
+Preprocessing uses scikit-learn pipelines \cite{sklearn}, fitted within each CV training fold. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
 
 \textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. LR evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
 \begin{center}
@@ -52,7 +52,7 @@ Each CV training fold fits its own preprocessing. SEX, EDUCATION and MARRIAGE ar
 \end{minipage}
 \end{center}
 
-LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its grid crosses $C$ values .001, .01, .1, 1, 10 and 100 with no class weighting or balanced weighting. DT searches maximum depth 2, 3, 4, 5, 6, 8 or unlimited, and minimum leaf size 1, 20 or 100. RF varies tree count, depth, split/leaf size, feature subsampling and class weighting. XGBoost varies tree count, learning rate, depth, child weight, row/column sampling, L1/L2 penalties and positive-class weighting \cite{xgboost}. Baseline tree/ensemble configurations are retained alongside selected configurations.
+LR uses L2 logistic regression \cite{esl} (\texttt{lbfgs}, maximum 3,000 iterations); its grid crosses $C$ values .001, .01, .1, 1, 10 and 100 with no class weighting or balanced weighting. DT searches maximum depth 2, 3, 4, 5, 6, 8 or unlimited, and minimum leaf size 1, 20 or 100. RF averages randomized trees \cite{rf}; its search varies tree count, depth, split/leaf size, feature subsampling and class weighting. XGBoost varies tree count, learning rate, depth, child weight, row/column sampling, L1/L2 penalties and positive-class weighting \cite{xgboost}. Baseline tree/ensemble configurations are retained alongside selected configurations.
 
 \textbf{Decision selection.} We use $\hat y=1[s\geq t]$ throughout, where $s$ is the positive-class score. The fixed reference is $t=0.5$. For LR, RF and XGBoost, all distinct validation score cutoffs are considered for $C_r=FP+r\,FN$, with $r\in\{1,3,5,10\}$. Equal costs prefer the largest threshold (fewer alerts); tied scores move together. DT has only its historical fixed 0.5 policy. Each cost threshold is chosen on validation, then applied unchanged to test predictions. No test threshold sweep is used to select a policy.
 
@@ -122,7 +122,7 @@ RF averages many trees, making full decision paths less concise. Its saved valid
 
 \textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
 
-Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts \cite{repo}. The archived scripts, models and prediction files support result tracing and verification.
+Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts in the \href{https://github.com/IcantFind-a-username/-SC6122-Group5-Credit-Default}{project repository}. The archived scripts, models and prediction files support result tracing and verification.
 \newpage
 \section{Conclusions, limitations and contributions}
 The models reveal a trade-off: a regularized tree provides inspectable rules, while RF and XGBoost have similar selected-model AP; LR supplies a linear reference. \textbf{Ranking and action policy answer different questions.} XGBoost tuning does not improve test ranking, but its validation-selected threshold reduces hypothetical cost by accepting more false positives. Operational policy must account for costs and review capacity.
@@ -142,13 +142,17 @@ Future work should freeze a new protocol on temporal/external data, assess calib
 Shared responsibilities cover the data split, preprocessing and metrics, integration of the four sections, result checking and presentation preparation.
 
 \section*{AI disclosure}
-Generative AI was used for language polishing and grammar guidance, as well as assistance with code, analysis and document preparation. The group is responsible for the submitted work, its interpretation and the acknowledgement of sources.
+Generative AI supported language polishing and grammar guidance, together with selected technical tasks. The group retains responsibility for the methods, results, interpretation and acknowledgement of sources.
 
-{\small
+\newpage
+{\small\raggedright
 \begin{thebibliography}{9}
-\bibitem{uci} I.-C. Yeh. \emph{Default of Credit Card Clients}. UCI Machine Learning Repository, 2009. \url{https://doi.org/10.24432/C55S3H}. CC BY 4.0.
-\bibitem{ap} scikit-learn developers. \emph{average\_precision\_score} documentation. \url{https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html}. Accessed 7 September 2026; experiments use scikit-learn 1.8.0.
-\bibitem{xgboost} T. Chen and C. Guestrin. ``XGBoost: A Scalable Tree Boosting System.'' KDD, 2016, pp. 785--794. \url{https://doi.org/10.1145/2939672.2939785}.
-\bibitem{repo} Group 5. \emph{SC6122 Credit Default repository}, experiment protocols and integration evidence, 2026. \href{https://github.com/IcantFind-a-username/-SC6122-Group5-Credit-Default}{Repository and audit artifacts}.
+\bibitem{uci} Yeh, I.-C. (2009). \emph{Default of Credit Card Clients} [Dataset]. UCI Machine Learning Repository. \href{https://doi.org/10.24432/C55S3H}{doi:10.24432/C55S3H}. License: CC BY 4.0.
+\bibitem{yeh} Yeh, I.-C., and Lien, C.-H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. \emph{Expert Systems with Applications}, 36(2), 2473--2480. \href{https://doi.org/10.1016/j.eswa.2007.12.020}{doi:10.1016/j.eswa.2007.12.020}.
+\bibitem{sklearn} Pedregosa, F., Varoquaux, G., Gramfort, A., et al. (2011). Scikit-learn: Machine learning in Python. \emph{Journal of Machine Learning Research}, 12(85), 2825--2830. \href{https://jmlr.org/papers/v12/pedregosa11a.html}{Publisher's article page}.
+\bibitem{esl} Hastie, T., Tibshirani, R., and Friedman, J. (2009). \emph{The Elements of Statistical Learning: Data Mining, Inference, and Prediction} (2nd ed.). Springer. \href{https://doi.org/10.1007/978-0-387-84858-7}{doi:10.1007/978-0-387-84858-7}.
+\bibitem{rf} Breiman, L. (2001). Random forests. \emph{Machine Learning}, 45, 5--32. \href{https://doi.org/10.1023/A:1010933404324}{doi:10.1023/A:1010933404324}.
+\bibitem{xgboost} Chen, T., and Guestrin, C. (2016). XGBoost: A scalable tree boosting system. In \emph{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}, 785--794. ACM. \href{https://doi.org/10.1145/2939672.2939785}{doi:10.1145/2939672.2939785}.
+\bibitem{ap} scikit-learn developers. \emph{average\_precision\_score} [API documentation, version 1.8.0]. \href{https://scikit-learn.org/1.8/modules/generated/sklearn.metrics.average_precision_score.html}{scikit-learn 1.8 documentation}. Accessed 9 September 2026.
 \end{thebibliography}}
 \end{document}

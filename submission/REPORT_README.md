@@ -30,6 +30,6 @@ Edit the repository's `submission/report_template.tex` for prose changes. Its ta
 
 ## Evidence and disclosure
 
-The report presents the four model sections and their named responsibilities under a common evaluation framework. Numerical tables are generated from `results/final/model_comparison.csv`; models, predictions, thresholds and experimental values are unchanged. The repository retains the underlying member and integration artifacts for traceability. Historical test exposure is explained at the study level. AI disclosure covers language polishing and grammar guidance as well as assistance with code, analysis and document preparation.
+The report presents the four model sections and their named responsibilities under a common evaluation framework. Numerical tables are generated from `results/final/model_comparison.csv`; models, predictions, thresholds and experimental values are unchanged. The repository retains the underlying member and integration artifacts for traceability. Historical test exposure is explained at the study level. AI disclosure covers language polishing and grammar guidance together with selected technical tasks; it does not describe the document or the entire codebase as AI-produced.
 
 The group is responsible for final course-platform submission. This archive contains no virtual environment, Git internals, cache, presentation edits or teacher submission-example PDF.
