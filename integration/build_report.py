@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'submission'
 FIG = OUT / 'figures'
 NAVY, TEAL, ORANGE, GREY = '#142C43', '#127D88', '#D76B38', '#65788A'
-FAMILIES = [('logistic_supplement', 'Logistic Regression', 'LR*'),
+FAMILIES = [('logistic_supplement', 'Logistic Regression', 'LR'),
             ('decision_tree', 'Decision Tree', 'DT'), ('rf', 'RF', 'RF'), ('xgboost', 'XGBoost', 'XGB')]
 
 
@@ -47,7 +47,7 @@ def run():
                          'axes.spines.top': False, 'axes.spines.right': False})
     performance, counts, configs, costs, ranking = [], [], [], [], []
     selected_rows = {}
-    config_text = {'LR*': 'C=0.1; unweighted', 'DT': 'Unlimited depth; leaf=100',
+    config_text = {'LR': 'C=0.1; unweighted', 'DT': 'Unlimited depth; leaf=100',
                    'RF': '500 trees; depth=8; leaf=2; class 1:3',
                    'XGB': '150 trees; depth=4; rate=.03; weight=3'}
     for folder, family, label in FAMILIES:
@@ -101,7 +101,7 @@ def run():
               'COST_TABLE':table(['Model','Policy','Threshold','Recall \\%','Alert \\%','FP','FN','Cost'],costs),
               'DUP_TEST':str(audit['details']['source']['test_rows_features_seen_in_development']),
               'FIT_POS':str(audit['details']['source']['fit_defaults']),
-              'LR_BASE_AP':f"{selected_rows['LR*_B'].AP:.4f}", 'LR_TUNE_AP':f"{selected_rows['LR*_T'].AP:.4f}",
+              'LR_BASE_AP':f"{selected_rows['LR_B'].AP:.4f}", 'LR_TUNE_AP':f"{selected_rows['LR_T'].AP:.4f}",
               'LR_ORIG_ACC':f'{original_lr.Accuracy:.4f}',
               'LR_ORIG_AUC':f"{original_lr['ROC-AUC']:.4f}",
               'LR_ORIG_REC':f'{original_lr.Recall:.4f}',
