@@ -1,6 +1,6 @@
 # Group 5 submission checklist
 
-Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: report **7 September 2026**, presentation **Tuesday 8 September 2026**. No exact submission time or platform upload field has been verified. The group makes the final course-platform submission; no upload or email has been performed.
+Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: report **7 September 2026**, presentation **Tuesday 8 September 2026**. No exact submission time or platform upload field has been verified. The group makes the final course-platform submission; no course-platform upload or teacher email has been performed.
 
 ## Teacher requirements supplied by the group
 
@@ -8,7 +8,7 @@ Prepared for **NTU SC6122 Emerging Topics in FinTech**. Dates are provisional: r
 |---|---|
 | Real data and an applied ML problem | UCI credit-card default data; source, CC BY 4.0 attribution, raw/clean files and source audit included. |
 | Reasonable hyperparameters, comparisons and interpretation | Four reproducible model workflows; explicit baseline/selected settings and search budgets; AP, ROC-AUC and threshold metrics; association-only interpretations. |
-| Test excluded from training/tuning/threshold choice | Shared fit/validation/CV membership; pipeline fit boundaries and validation-only thresholds checked. Historical test exposure, original LR gap and RF regeneration are explicitly disclosed. No new independent unseen-test claim. |
+| Test excluded from training/tuning/threshold choice | Shared fit/validation/CV membership; pipeline fit boundaries and validation-only thresholds checked. Historical test exposure and the separately recorded LR integration run are explicitly disclosed. No new independent unseen-test claim. |
 | Entire English report, including references, ≤7 pages | **6 pages**, `Group5_Final_Report.pdf`; normal 11pt body; three figures, four numbered result tables and a plain partition table. Math subscripts are smaller glyphs, not reduced body type. |
 | Required report sections | Background/problem, data/target, objectives, methods, findings/comparison, conclusions/discussion and member contribution roles are included. All four names, student IDs and equal 25% shares are confirmed. |
 | Preferred teacher Word/LaTeX template | Repository and Documents/Downloads/NTU/Desktop filename search found no teacher template or named samples. Complete standard LaTeX fallback provided; swap to the actual template if supplied and recheck ≤7 pages. |
@@ -71,3 +71,10 @@ Use `submission/Group5_Presentation.pptx` and its matching PDF. The uploaded `Gr
 Actual PPTX exported by official LibreOffice 26.8.0.3 to a 16-page PDF. All nonempty slide text boxes are checked against the rendered PDF; scripts and explicit transitions match Markdown, native speaker notes and the manifest. The revised cover, open chart layouts, partition table and backup pages are rendered for visual inspection. Main talk: 720 seconds; Q&A: 180 seconds. Report is complete and visually inspected at 6 pages. `slide_manifest.json` and `delivery_validation.json` record hashes and counts.
 
 Integration branch only: `integration/final-submission-20260907`. No force-push, main merge, course upload or teacher email.
+
+## Report revision — 9 September 2026
+
+- Lei Peng is credited for preprocessing and the initial LR baseline. The report no longer describes an empty notebook or implies no LR work was done. Its comparison tables still use the explicitly identified integration run; original member metrics have not been silently substituted.
+- A dedicated AI disclosure includes language polishing and grammar guidance, alongside the code, verification, analysis and document assistance actually used.
+- Teacher template remains unavailable after a renewed local search; formatting compliance with that specific template is **pending**, not certified. The existing `report_template.tex` is a project-authored layout, not the teacher template.
+- Use `python -m integration.validate_delivery --report-only` for this report revision. The currently edited PPTX is preserved and has not been regenerated or certified against its older PDF in this revision.

@@ -1,4 +1,5 @@
 """Render and mechanically check delivered documents against accepted metrics."""
+import argparse
 import json
 import math
 from pathlib import Path
@@ -17,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'submission'
 
 
-def run():
+def run(report_only=False):
     rendered = OUT/'rendered'
     rendered.mkdir(exist_ok=True)
     pdf = fitz.open(OUT/'Group5_Final_Report.pdf')
@@ -61,7 +62,7 @@ def run():
             'report_comparison_numbers':'All baseline/tuned 0.5 numeric metrics found in PDF',
             'report_pdf_SHA256':file_hash(OUT/'Group5_Final_Report.pdf'), 'report_latex_SHA256':file_hash(OUT/'Group5_Final_Report.tex'),
             'visual_inspection':'Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality.'}
-    if (OUT/'Group5_Presentation.pdf').exists():
+    if not report_only and (OUT/'Group5_Presentation.pdf').exists():
         deck=Presentation(str(OUT/'Group5_Presentation.pptx'))
         slides_pdf=fitz.open(OUT/'Group5_Presentation.pdf')
         assert len(deck.slides)==len(slides_pdf)==16
@@ -109,9 +110,11 @@ def run():
                        'presentation_pptx_SHA256':file_hash(OUT/'Group5_Presentation.pptx'),
                        'presentation_pdf_SHA256':file_hash(OUT/'Group5_Presentation.pdf')})
     assert len(pdf) <= 7, f'Report has {len(pdf)} pages'
-    write_json(OUT/'delivery_validation.json',result)
+    write_json(OUT/('report_validation.json' if report_only else 'delivery_validation.json'),result)
     print(json.dumps(result,indent=2))
 
 
 if __name__=='__main__':
-    run()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--report-only', action='store_true', help='Validate the report without touching a separately edited presentation.')
+    run(report_only=parser.parse_args().report_only)
