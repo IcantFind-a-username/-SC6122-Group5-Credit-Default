@@ -1,8 +1,8 @@
 {
   "comparison_SHA256": "90ec1df8bb42f20604ceea5f208ca031f042d48932cd850f7007a7df8a8b4acb",
   "original_member_lr_SHA256": "a5641df75fd53eb4db2a9ae24385f6a2f284e2b624eff3e9e3bfac5071a051ac",
-  "generator_SHA256": "df8d5d8f9ec50ab3788bd0fc03c0a7b6617b1ae2c83c827cc3be1c7eab1bd257",
-  "template_SHA256": "97451a0820cdb9d5660f20bce67bb3510e7440e83352c73d9d77a402fa6eabf9",
+  "generator_SHA256": "fd78f75f29319ffc7dababfcd27bc7abff92576cbd6cc9373c91f34ea34d4e96",
+  "template_SHA256": "cab6096da227d5b5d91a03fd373ce6c7e0c9ab9f62128860332b2793e92d2dd0",
   "teacher_style_SHA256": "d02d72219296bbd6202a95021971de29308851d144108702b7dc61622853fed8",
   "teacher_style_unchanged": true
 }
