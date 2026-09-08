@@ -107,11 +107,17 @@ def run():
         r' \quad '.join(r'\textbf{' + member['name'] + '} (' + member['student_id'] + ')'
                       for member in team[start:start+2]) for start in (0, 2)) +
         r' \\ Nanyang Technological University \\ SC6122 Emerging Topics in FinTech --- Group 5')
+    report_roles = {
+        'Part 1': 'Data inspection/preprocessing; LR baseline and data characteristics',
+        'Part 2': 'Decision-tree tuning, learned rules and overfitting control',
+        'Part 3': 'Random-forest tuning, feature importance and error cases',
+        'Part 4': 'XGBoost tuning and threshold trade-offs between missed defaults and false alarms',
+    }
     values['MEMBER_CONTRIBUTIONS'] = (
         '\\begin{tabularx}{\\linewidth}{@{}p{30mm}Xr@{}}\\toprule\n'
         'Member / student ID & Responsibility and presentation & Share\\\\\\midrule\n' +
         '\n'.join('\\shortstack[l]{' + member['name'] + r'\\' + '\n' + member['student_id'] + '} & ' +
-                  member['role'] + ': ' + member['contribution_scope'] + '; slides ' +
+                  member['role'] + ': ' + report_roles[member['role']] + '; slides ' +
                   member['slides'].replace('–', '--') + ' & ' + str(member['share_percent']) + '\\%\\\\'
                   for member in team) + '\n\\bottomrule\\end{tabularx}')
     values['RF_TOP_IMPORTANCE'] = f'{rf_importance.iloc[0].Mean_AP_decrease:.4f}'
