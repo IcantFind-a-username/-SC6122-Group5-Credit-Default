@@ -24,6 +24,16 @@ def run(report_only=False):
     pdf = fitz.open(OUT/'Group5_Final_Report.pdf')
     print('Report page openings:', [(i+1, p.get_text()[:100]) for i,p in enumerate(pdf)])
     report_text = '\n'.join(p.get_text() for p in pdf)
+    supplied_style = ROOT/'course_materials/latex_template/neurips_2021.sty'
+    assert file_hash(OUT/'neurips_2021.sty') == file_hash(supplied_style)
+    assert all(abs(page.rect.width-612) < .1 and abs(page.rect.height-792) < .1 for page in pdf)
+    assert 'Abstract' in report_text and 'AI disclosure' in report_text
+    assert 'language polishing and grammar guidance' in report_text
+    assert 'Anonymous Author' not in report_text and 'Under review' not in report_text
+    assert 'Conference on Neural Information Processing Systems' not in report_text
+    fonts = {font[0]: font for page in pdf for font in page.get_fonts(full=True)}
+    assert all(font[2] != 'Type3' and pdf.extract_font(xref)[3] for xref,font in fonts.items())
+    assert 'Overfull' not in (OUT/'Group5_Final_Report.log').read_text()
     team = json.loads((OUT/'team.json').read_text())
     qa = (OUT/'Group5_QA.md').read_text()
     assert sum(member['share_percent'] for member in team) == 100
@@ -47,7 +57,8 @@ def run(report_only=False):
     pages = []
     for i,page in enumerate(pdf):
         spans=[s for block in page.get_text('dict')['blocks'] if 'lines' in block for line in block['lines'] for s in line['spans']]
-        outside=[s['text'] for s in spans if s['bbox'][0]<20 or s['bbox'][2]>page.rect.width-20 or s['bbox'][3]>page.rect.height-20]
+        # Three-point tolerance permits normal glyph protrusion in the 5.5-inch text block.
+        outside=[s['text'] for s in spans if s['bbox'][0]<105 or s['bbox'][2]>507 or s['bbox'][3]>page.rect.height-20]
         assert not outside, (i+1,outside)
         page.get_pixmap(matrix=fitz.Matrix(1,1)).save(rendered/f'report_page_{i+1}.png')
         pages.append({'page':i+1,'words':len(page.get_text().split()),'min_font_pt':round(min(s['size'] for s in spans),2),
@@ -59,6 +70,9 @@ def run(report_only=False):
         sheet.paste(im,((i%3)*430,(i//3)*610))
     sheet.save(rendered/'report_contact.png')
     result={'report_pages':len(pdf),'report_page_details':pages,
+            'teacher_template': 'Supplied neurips_2021.sty is byte-identical; US Letter; native 10pt typography; named-author mode; course-only notice',
+            'teacher_style_SHA256':file_hash(supplied_style),
+            'fonts_embedded_no_type3':True, 'overfull_tex_boxes':0,
             'report_comparison_numbers':'All baseline/tuned 0.5 numeric metrics found in PDF',
             'report_pdf_SHA256':file_hash(OUT/'Group5_Final_Report.pdf'), 'report_latex_SHA256':file_hash(OUT/'Group5_Final_Report.tex'),
             'visual_inspection':'Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality.'}
