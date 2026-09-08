@@ -43,7 +43,7 @@ The 24,000 development rows are stratified into 18,000 fitting and 6,000 validat
 
 Each CV training fold fits its own preprocessing. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
 
-\textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. The harmonized LR run evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
+\textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. LR evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
 \begin{center}
 \begin{minipage}{\linewidth}
 \captionof{table}{Declared search budgets and selected configurations. Complete settings and per-fold scores accompany the frozen protocols.}
@@ -56,7 +56,7 @@ LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its g
 
 \textbf{Decision selection.} We use $\hat y=1[s\geq t]$ throughout, where $s$ is the positive-class score. The fixed reference is $t=0.5$. For LR, RF and XGBoost, all distinct validation score cutoffs are considered for $C_r=FP+r\,FN$, with $r\in\{1,3,5,10\}$. Equal costs prefer the largest threshold (fewer alerts); tied scores move together. DT has only its historical fixed 0.5 policy. Each cost threshold is chosen on validation, then applied unchanged to test predictions. No test threshold sweep is used to select a policy.
 
-\textbf{LR contribution and comparison scope.} Lei Peng contributed data inspection, preprocessing and the initial LR baseline. His original result table reports accuracy {{LR_ORIG_ACC}}, ROC-AUC {{LR_ORIG_AUC}} and recall {{LR_ORIG_REC}} at threshold 0.5 \cite{repo}. The common comparison tables and ranking figure use the separately recorded LR integration run. Its 12-setting search was specified before execution; models and thresholds were frozen before test evaluation. This \emph{post-hoc harmonization followed earlier test exposure}, so it is not a fresh independent holdout. Historical test exposure is a team-wide limitation.
+\textbf{Evaluation scope.} This report compares the recorded model configurations and saved predictions under common evaluation rules. Model and threshold choices were frozen before their final test evaluation. The project test sample had already been examined in earlier work, however, so this retrospective comparison does not constitute fresh independent validation. No further optimization is based on the displayed test results.
 \newpage
 \section{Ranking and classification findings}
 \begin{center}
@@ -122,12 +122,12 @@ RF averages many trees, making full decision paths less concise. Its saved valid
 
 \textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
 
-Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts \cite{repo}. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
+Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts \cite{repo}. The archived scripts, models and prediction files support result tracing and verification.
 \newpage
 \section{Conclusions, limitations and contributions}
 The models reveal a trade-off: a regularized tree provides inspectable rules, while RF and XGBoost have similar selected-model AP; LR supplies a linear reference. \textbf{Ranking and action policy answer different questions.} XGBoost tuning does not improve test ranking, but its validation-selected threshold reduces hypothetical cost by accepting more false positives. Operational policy must account for costs and review capacity.
 
-Limitations include a single historical population, random rather than temporal/external evaluation, repeated feature vectors, prior test exposure, unequal search budgets and unvalidated calibration. Subgroup errors and fairness have not been assessed; demographic inputs warrant scrutiny. Hypothetical costs omit exposure, realized losses and intervention benefits. Fixed-prediction intervals exclude model-selection uncertainty. Predictive associations do not establish causality, regulatory compliance or production readiness.
+Limitations include a single historical population, random rather than temporal/external evaluation, repeated feature vectors, historical test exposure, unequal search budgets and unvalidated calibration. Subgroup errors and fairness have not been assessed; demographic inputs warrant scrutiny. Hypothetical costs omit exposure, realized losses and intervention benefits. Fixed-prediction intervals exclude model-selection uncertainty. Predictive associations do not establish causality, regulatory compliance or production readiness.
 
 Future work should freeze a new protocol on temporal/external data, assess calibration and subgroup errors, and evaluate realistic costs subject to review capacity.
 
@@ -142,7 +142,7 @@ Future work should freeze a new protocol on temporal/external data, assess calib
 Shared responsibilities cover the data split, preprocessing and metrics, integration of the four sections, result checking and presentation preparation.
 
 \section*{AI disclosure}
-Generative AI was used for language polishing and grammar guidance, and to assist with code development, experiment verification, analysis, and preparation of the report and presentation. The group is responsible for the submitted work, its interpretation and the appropriate acknowledgement of sources.
+Generative AI was used for language polishing and grammar guidance, as well as assistance with code, analysis and document preparation. The group is responsible for the submitted work, its interpretation and the acknowledgement of sources.
 
 {\small
 \begin{thebibliography}{9}

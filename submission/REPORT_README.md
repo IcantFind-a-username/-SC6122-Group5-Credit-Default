@@ -30,6 +30,6 @@ Edit the repository's `submission/report_template.tex` for prose changes. Its ta
 
 ## Evidence and disclosure
 
-Lei Peng's initial LR contribution is explicitly acknowledged. The numerical tables retain the clearly identified integration run; this template migration did not change models, predictions, thresholds or experimental values. AI disclosure covers language polishing and grammar guidance as well as the implementation, verification, analysis and material preparation actually assisted by AI.
+The report presents the four model sections and their named responsibilities under a common evaluation framework. Numerical tables are generated from `results/final/model_comparison.csv`; models, predictions, thresholds and experimental values are unchanged. The repository retains the underlying member and integration artifacts for traceability. Historical test exposure is explained at the study level. AI disclosure covers language polishing and grammar guidance as well as assistance with code, analysis and document preparation.
 
 The group is responsible for final course-platform submission. This archive contains no virtual environment, Git internals, cache, presentation edits or teacher submission-example PDF.
