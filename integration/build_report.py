@@ -68,11 +68,11 @@ def run():
     fig, ax = plt.subplots(figsize=(5.5, 2.05), layout='constrained')
     positions = np.arange(4)
     for offset,index,label,color in [(-.18,1,'Baseline',GREY),(.18,2,'CV-selected',TEAL)]:
-        bars=ax.bar(positions+offset,[r[index] for r in ranking],.34,label=label,color=color)
-        ax.bar_label(bars,fmt='%.4f',fontsize=8.5,padding=3)
+        ax.bar(positions+offset,[r[index] for r in ranking],.34,label=label,color=color)
     ax.axhline(1327/6000,ls='--',color=ORANGE,lw=1,label='Test prevalence')
     ax.set(xticks=positions,xticklabels=[r[0] for r in ranking],ylim=(0,.68),ylabel='Average precision (AP)')
-    ax.legend(ncol=3,fontsize=8,loc='upper left')
+    ax.legend(ncol=3,fontsize=8,loc='lower left',bbox_to_anchor=(0,1.02),
+              borderaxespad=0,frameon=False)
     ax.grid(axis='y',alpha=.15)
     save_figure(fig,'ranking')
     base=selected_rows['XGB_T']
