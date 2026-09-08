@@ -25,14 +25,14 @@ FAMILIES = [('logistic_supplement', 'Logistic Regression', 'LR*'),
 
 def table(headers, rows, spec=None):
     spec = spec or ('l' + 'r' * (len(headers) - 1))
-    return ('\\begin{center}\\small\n\\begin{tabular}{@{}' + spec + '@{}}\\toprule\n' +
+    return ('\\begin{tabular}{@{}' + spec + '@{}}\\toprule\n' +
             ' & '.join(headers) + '\\\\\\midrule\n' +
             '\n'.join(' & '.join(map(str, row)) + '\\\\' for row in rows) +
-            '\n\\bottomrule\\end{tabular}\\end{center}')
+            '\n\\bottomrule\\end{tabular}')
 
 
 def save_figure(fig, name):
-    fig.savefig(FIG / f'{name}.png', dpi=160, bbox_inches='tight', facecolor='white')
+    fig.savefig(FIG / f'{name}.png', dpi=300, bbox_inches='tight', facecolor='white')
     plt.close(fig)
 
 
@@ -91,7 +91,7 @@ def run():
     ax.set(xlabel='Decrease in validation AP after permutation')
     ax.grid(axis='x',alpha=.12)
     save_figure(fig,'importance')
-    values = {'CONFIG_TABLE':table(['Model','Configs','CV fits','Selected (summary)','CV AP'], configs, 'lrrp{70mm}r'),
+    values = {'CONFIG_TABLE':table(['Model','Configs','CV fits','Selected (summary)','CV AP'], configs, 'lrrp{47mm}r'),
               'PERFORMANCE_TABLE':table(['Model','AP','ROC-AUC','P','R','F1','Acc'],performance),
               'CONFUSION_TABLE':table(['Model','B: TN','FP','FN','TP','T: TN','FP','FN','TP'], [[counts[i][0].split()[0]] + counts[i][1:] + counts[i+1][1:] for i in range(0,len(counts),2)]),
               'COST_TABLE':table(['Model','Policy','Threshold','Recall \\%','Alert \\%','FP','FN','Cost'],costs),
@@ -101,18 +101,17 @@ def run():
               'XGB_THR':f'{selected.Threshold:.5f}',
               'XGB_REDUCTION':f'{100*(base.Cost_5-selected.Cost_5)/base.Cost_5:.2f}'}
     team = json.loads((OUT/'team.json').read_text())
-    values['MEMBER_HEADER'] = '{\\small ' + ' \\quad '.join(
-        member['name'] + ' (' + member['student_id'] + ')' for member in team[:2]
-    ) + r'\\' + '\n' + ' \\quad '.join(
-        member['name'] + ' (' + member['student_id'] + ')' for member in team[2:]
-    ) + '}\\par'
+    values['MEMBER_AUTHORS'] = (r' \\ '.join(
+        r' \quad '.join(r'\textbf{' + member['name'] + '} (' + member['student_id'] + ')'
+                      for member in team[start:start+2]) for start in (0, 2)) +
+        r' \\ Nanyang Technological University \\ SC6122 Emerging Topics in FinTech --- Group 5')
     values['MEMBER_CONTRIBUTIONS'] = (
-        '\\begin{center}\\small\\begin{tabularx}{\\linewidth}{@{}p{34mm}Xr@{}}\\toprule\n'
+        '\\begin{tabularx}{\\linewidth}{@{}p{30mm}Xr@{}}\\toprule\n'
         'Member / student ID & Responsibility and presentation & Share\\\\\\midrule\n' +
         '\n'.join('\\shortstack[l]{' + member['name'] + r'\\' + '\n' + member['student_id'] + '} & ' +
                   member['role'] + ': ' + member['contribution_scope'] + '; slides ' +
                   member['slides'].replace('–', '--') + ' & ' + str(member['share_percent']) + '\\%\\\\'
-                  for member in team) + '\n\\bottomrule\\end{tabularx}\\end{center}')
+                  for member in team) + '\n\\bottomrule\\end{tabularx}')
     values['RF_TOP_IMPORTANCE'] = f'{rf_importance.iloc[0].Mean_AP_decrease:.4f}'
     values['RF_SECOND_IMPORTANCE'] = f'{rf_importance.iloc[1].Mean_AP_decrease:.4f}'
     for group, example in rf_examples.iterrows():
@@ -128,7 +127,9 @@ def run():
     comparison.to_csv(OUT/'model_comparison.csv',index=False)
     read_csv(ROOT/'results/final/cost_comparison.csv').to_csv(OUT/'cost_comparison.csv',index=False)
     write_json(OUT/'report_build_provenance.json', {'comparison_SHA256':file_hash(ROOT/'results/final/model_comparison.csv'),
-               'generator_SHA256':file_hash(Path(__file__)), 'template_SHA256':file_hash(OUT/'report_template.tex')})
+               'generator_SHA256':file_hash(Path(__file__)), 'template_SHA256':file_hash(OUT/'report_template.tex'),
+               'teacher_style_SHA256':file_hash(OUT/'neurips_2021.sty'),
+               'teacher_style_unchanged':file_hash(OUT/'neurips_2021.sty') == file_hash(ROOT/'course_materials/latex_template/neurips_2021.sty')})
     print('Built report source and figures from audited comparison.')
 
 
