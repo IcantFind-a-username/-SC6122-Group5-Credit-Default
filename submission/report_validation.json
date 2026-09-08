@@ -1,0 +1,45 @@
+{
+  "report_pages": 6,
+  "report_page_details": [
+    {
+      "page": 1,
+      "words": 431,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 2,
+      "words": 539,
+      "min_font_pt": 7.97,
+      "rightmost_text_pt": 541.42
+    },
+    {
+      "page": 3,
+      "words": 346,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.42
+    },
+    {
+      "page": 4,
+      "words": 404,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 5,
+      "words": 412,
+      "min_font_pt": 7.97,
+      "rightmost_text_pt": 541.43
+    },
+    {
+      "page": 6,
+      "words": 434,
+      "min_font_pt": 9.96,
+      "rightmost_text_pt": 541.43
+    }
+  ],
+  "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
+  "report_pdf_SHA256": "b04809bf499a5b29e090fc6fb0c2eef53b3897f0f6fdb6dd5ac6691ac6e7ccdf",
+  "report_latex_SHA256": "df4b0c241fb7995ef90e1f103972842883adfc440cdffa198b77019e2ee2c23b",
+  "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality."
+}

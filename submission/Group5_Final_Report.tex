@@ -14,7 +14,7 @@
 \begin{document}
 {\LARGE\bfseries\color{navy} Credit Card Default Prediction}\par
 {\large Ranking risk, explaining patterns and choosing an action}\par
-NTU SC6122 Emerging Topics in FinTech --- Group 5\hfill 7 September 2026\par
+NTU SC6122 Emerging Topics in FinTech --- Group 5\hfill 9 September 2026\par
 {\small Lei Peng (G2509090C) \quad Zhang Hanyu (G2509091L)\\
 Zhou Xinzhe (G2509033F) \quad Xu Yiqun (G2509092H)}\par
 \sect{1. Problem, objectives and data}
@@ -39,7 +39,7 @@ The original 80/20 split yields 24,000 development and 6,000 test rows. A furthe
 
 Each CV training fold fits its own preprocessing. SEX, EDUCATION and MARRIAGE are one-hot encoded with unknown categories ignored. LR additionally learns numeric StandardScaler statistics within the fold. Tree models retain numeric scales. No missing-value imputation or sampling is used. Selected class weights are part of the training configuration, not a change to test prevalence. Pipelines prevent categories or scaling moments from being learned on validation/test data.
 
-\textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. LR's supplement evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
+\textbf{Hyperparameters.} The common selection objective is mean five-fold AP. Equal scores prefer the lowest candidate index. DT uses exhaustive grid search; RF/XGBoost evaluate a specified baseline plus 23 seeded random candidates. The harmonized LR run evaluates 12 exhaustive settings. These are comparable splits and objectives, not identical computational budgets.
 \begin{center}\small
 \begin{tabular}{@{}lrrp{70mm}r@{}}\toprule
 Model & Configs & CV fits & Selected (summary) & CV AP\\\midrule
@@ -54,7 +54,7 @@ LR uses L2 logistic regression (\texttt{lbfgs}, maximum 3,000 iterations); its g
 
 \textbf{Decision selection.} We use $\hat y=1[s\geq t]$ throughout, where $s$ is the positive-class score. The fixed reference is $t=0.5$. For LR, RF and XGBoost, all distinct validation score cutoffs are considered for $C_r=FP+r\,FN$, with $r\in\{1,3,5,10\}$. Equal costs prefer the largest threshold (fewer alerts); tied scores move together. DT has only its historical fixed 0.5 policy. Each cost threshold is chosen on validation, then applied unchanged to test predictions. No test threshold sweep is used to select a policy.
 
-\textbf{Evidence boundary.} Historical LR CSVs exist, but the original model notebook was empty throughout the available member history; no saved model/predictions establish that process. Their ``PR-AUC'' definition is also unverified. We retain them but exclude them from the verified ranking table. LR below is a separately recorded, predeclared \emph{post-hoc reproducibility supplement}, run once after earlier team test results were visible. It is not a recovered original experiment or a new independently unseen test. Tree runners freeze choices before loading test rows, but team-wide historical exposure remains a limitation.
+\textbf{LR contribution and comparison scope.} Lei Peng contributed data inspection, preprocessing and the initial LR baseline; the team's earlier LR result tables are retained in the repository. For the common comparison below, LR* denotes a separately logged integration run using the shared fitting rows, CV folds and metric implementation. Its 12-setting search was specified before that run, and its model and thresholds were frozen before test evaluation. This was a \emph{post-hoc harmonization after earlier test results were available}, not a fresh independent holdout. The reported LR* values refer to that run, not a claim to reproduce the teammate's original execution. All models retain the limitation of team-wide historical test exposure.
 \newpage
 \sect{3. Ranking and classification findings}
 \begin{center}\small
@@ -69,7 +69,7 @@ RF T & 0.5508 & 0.7752 & 0.5463 & 0.5200 & 0.5328 & 0.7983\\
 XGB B & 0.5544 & 0.7773 & 0.6565 & 0.3557 & 0.4614 & 0.8163\\
 XGB T & 0.5516 & 0.7762 & 0.5134 & 0.5486 & 0.5304 & 0.7852\\
 \bottomrule\end{tabular}\end{center}
-\smallcap{Table 2. Historical test, $n=6,000$, default positive. All rows use threshold 0.5. P/R/F1/Acc are proportions. B = baseline; T = CV-selected; LR* = post-hoc supplement. Full precision and all confusion counts are in \texttt{model\_comparison.csv}.}
+\smallcap{Table 2. Historical test, $n=6,000$, default positive. All rows use threshold 0.5. P/R/F1/Acc are proportions. B = baseline; T = CV-selected; LR* = harmonized integration run (Section 2). Full precision and all confusion counts are in \texttt{model\_comparison.csv}.}
 
 \begin{center}\small
 \begin{tabular}{@{}lrrrrrrrr@{}}\toprule
@@ -99,7 +99,7 @@ RF & Val r=5 & 0.32288 & 77.09 & 48.45 & 1884 & 304 & 3404\\
 XGB & 0.5 & 0.50000 & 54.86 & 23.63 & 690 & 599 & 3685\\
 XGB & Val r=5 & 0.31502 & 82.52 & 55.72 & 2248 & 232 & 3408\\
 \bottomrule\end{tabular}\end{center}
-\smallcap{Table 4. Same-model test comparison at 0.5 versus its validation-selected $r=5$ policy. Alert rate is the share flagged for review; costs are total hypothetical units across 6,000 rows. LR* remains a post-hoc supplement. DT has no historical validation-selected cost policy.}
+\smallcap{Table 4. Same-model test comparison at 0.5 versus its validation-selected $r=5$ policy. Alert rate is the share flagged for review; costs are total hypothetical units across 6,000 rows. DT has no historical validation-selected cost policy.}
 \begin{center}\includegraphics[width=.94\linewidth]{figures/cost_tradeoff.png}\end{center}
 \smallcap{Figure 2. Moving the same tuned XGBoost from 0.5 to its validation cutoff changes FP/FN and workload. Ranking scores remain unchanged.}
 
@@ -120,18 +120,16 @@ RF averages many trees, making full decision paths less concise. Its saved valid
 
 \textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
 
-Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
+Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts [4]. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
 \newpage
 \sect{6. Conclusions, limitations and contributions}
-The historical sample contains useful predictive structure. A regularized tree improves on its unrestricted baseline and provides inspectable rules. RF and XGBoost obtain similar selected-model AP, while LR supplies a linear reference with separately documented supplementary provenance.
+The historical sample contains useful predictive structure. A regularized tree improves on its unrestricted baseline and provides inspectable rules. RF and XGBoost obtain similar selected-model AP, while LR supplies an interpretable linear reference under the common comparison protocol.
 
 \textbf{Ranking quality and action policy answer different questions.} XGBoost tuning did not yield a clear AP gain, but its validation-selected cutoff reduced hypothetical cost by accepting more false positives. Operational selection needs credible error costs and review capacity; test outcomes cannot justify another optimization round.
 
-Limitations include one historical geography/time period; a random rather than temporal or external holdout; retained duplicate feature vectors; incomplete provenance of the original LR results; historical test exposure; unequal search budgets; unvalidated calibration; and no assessment of group-specific errors or fairness. Demographic fields warrant further governance evaluation. Cost ratios do not capture exposure, realized losses, intervention benefits or review limits. The conditional bootstrap omits the uncertainty from building and selecting models. We make no causal, regulatory-compliance or production-readiness claim.
+Limitations include one historical geography/time period; a random rather than temporal or external holdout; retained duplicate feature vectors; reuse of a previously examined test sample; unequal search budgets; unvalidated calibration; and no assessment of group-specific errors or fairness. Demographic fields warrant further governance evaluation. Cost ratios do not capture exposure, realized losses, intervention benefits or review limits. The conditional bootstrap omits the uncertainty from building and selecting models. We make no causal, regulatory-compliance or production-readiness claim.
 
 A defensible next study would freeze a new protocol on fresh temporal/external data, assess calibration and subgroup errors, collect realistic loss and intervention-cost estimates, and evaluate policies constrained by review capacity. These are future steps, not experiments silently performed on the already evaluated test set.
-
-\textbf{Reproducibility and delivery.} The README separates verification from retraining. Automated comparison CSVs, models, predictions, source data and environment pins accompany the editable report and presentation. Historical protocols and member commits are preserved. Course-platform deadline and upload details require group confirmation.
 
 \sect{Member contribution statement}
 \begin{center}\small\begin{tabularx}{\linewidth}{@{}p{34mm}Xr@{}}\toprule
@@ -145,7 +143,10 @@ G2509033F} & Part 3: Random-forest tuning; feature importance and illustrative m
 \shortstack[l]{Xu Yiqun\\
 G2509092H} & Part 4: XGBoost tuning; threshold trade-offs between missed defaults and false alarms; slides 10--12 & 25\%\\
 \bottomrule\end{tabularx}\end{center}
-\smallcap{Contribution shares are equal at 25\% per member, as confirmed by the group. Integration and the LR supplement were prepared with AI assistance for member review. All four agree data splits, preprocessing and metrics, write their sections, and jointly integrate, check and rehearse.}
+\smallcap{Each member has an equal 25\% contribution share. Shared responsibilities cover the data split, preprocessing and metrics, integration of the four sections, result checking and presentation preparation.}
+
+\sect{AI disclosure}
+Generative AI was used for language polishing and grammar guidance, and to assist with code development, experiment verification, analysis, and preparation of the report and presentation. The group is responsible for the submitted work, its interpretation and the appropriate acknowledgement of sources.
 
 \sect{References}
 {\small

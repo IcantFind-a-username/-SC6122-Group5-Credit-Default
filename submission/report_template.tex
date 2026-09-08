@@ -85,7 +85,7 @@ RF averages many trees, making full decision paths less concise. Its saved valid
 
 \textbf{Reconciliation.} All metrics in the final comparison are recalculated after one-to-one \texttt{row\_id} alignment with actual labels. CSV scores and thresholds use round-trip float parsing. Threshold-equality cases are explicitly tested with $\geq$; no rounding is performed before decisions. Source-train/test hash differences in historical protocols are explained by LF/CRLF serialization, while parsed content, types and order agree. Development and CV membership files are identical across the reproducible models.
 
-Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
+Saved models reproduce stored decisions. XGBoost probability replay on this platform differs by at most $5.96\times10^{-8}$ (float32-scale drift) while frozen policy decisions agree; original probabilities remain the reporting source. Model hashes and run metadata are checked, with newline-aware evidence for textual artifacts [4]. Audit checks establish reproducible evidence consistent with the code and artifacts; they cannot prove everything a teammate did outside the repository.
 \newpage
 \sect{6. Conclusions, limitations and contributions}
 The historical sample contains useful predictive structure. A regularized tree improves on its unrestricted baseline and provides inspectable rules. RF and XGBoost obtain similar selected-model AP, while LR supplies an interpretable linear reference under the common comparison protocol.
@@ -95,8 +95,6 @@ The historical sample contains useful predictive structure. A regularized tree i
 Limitations include one historical geography/time period; a random rather than temporal or external holdout; retained duplicate feature vectors; reuse of a previously examined test sample; unequal search budgets; unvalidated calibration; and no assessment of group-specific errors or fairness. Demographic fields warrant further governance evaluation. Cost ratios do not capture exposure, realized losses, intervention benefits or review limits. The conditional bootstrap omits the uncertainty from building and selecting models. We make no causal, regulatory-compliance or production-readiness claim.
 
 A defensible next study would freeze a new protocol on fresh temporal/external data, assess calibration and subgroup errors, collect realistic loss and intervention-cost estimates, and evaluate policies constrained by review capacity. These are future steps, not experiments silently performed on the already evaluated test set.
-
-\textbf{Reproducibility.} The accompanying repository provides source data, fitted pipelines, row-aligned predictions, CV records and environment pins. Its README distinguishes verification from retraining; historical results and member contributions are preserved [4].
 
 \sect{Member contribution statement}
 {{MEMBER_CONTRIBUTIONS}}
