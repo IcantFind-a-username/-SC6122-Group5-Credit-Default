@@ -4,7 +4,7 @@ Open `Group5_Final_Report.pdf` for the rendered report. The self-contained sourc
 
 ## Template and course adaptation
 
-The supplied `Latex Template.zip` contains `neurips_2021.tex`, `neurips_2021.sty` and `neurips_2021.pdf`. The originals are preserved in the repository under `course_materials/latex_template/`. The report uses the supplied style **without changing its bytes**, US Letter paper, its 5.5-inch text width and 9-inch text height, native 10pt Times-family body text, native title/abstract/headings, and numbered tables with captions above and figures with captions below. References use the template-permitted 9pt size.
+The supplied `Latex Template.zip` contains `neurips_2021.tex`, `neurips_2021.sty` and `neurips_2021.pdf`. The originals are preserved in the repository under `course_materials/latex_template/`. The report uses the supplied style **without changing its bytes**, US Letter paper, its 5.5-inch text width and 9-inch text height, native 10pt Times-family body text, native title/abstract/headings, and numbered tables with captions above and figures with captions below. References use the same 10pt type as the body, with double spacing and a 0.5-inch hanging indent.
 
 The supported `preprint` option displays the four named authors. Only the conference notice is replaced by the SC6122 course-project notice; the report does not claim NeurIPS submission or acceptance. Page numbers are shown, including on the first page. Conference submission instructions, sample prose, sample references, the conference review checklist and optional appendix are not course-report content. The course's **seven-page maximum including references** takes precedence over the generic conference example's nine-page/exempt-reference language.
 
