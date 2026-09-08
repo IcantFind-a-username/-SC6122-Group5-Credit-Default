@@ -9,7 +9,7 @@
     },
     {
       "page": 2,
-      "words": 527,
+      "words": 535,
       "min_font_pt": 6.97,
       "rightmost_text_pt": 505.75
     },
@@ -43,7 +43,7 @@
   "fonts_embedded_no_type3": true,
   "overfull_tex_boxes": 0,
   "report_comparison_numbers": "All baseline/tuned 0.5 numeric metrics found in PDF",
-  "report_pdf_SHA256": "da6c9be013620ba98e7a6c3d2a016404b169d3c5330fb0910b0babb755d28d1b",
-  "report_latex_SHA256": "85281cd1e2f97cdd3fa71d62814fc70765ad79e1d5e27b9d42f82612cf93e3fd",
+  "report_pdf_SHA256": "31f0f1340ca4116584aafddf08a712d541d8e696c15bc532c1348abb368178ee",
+  "report_latex_SHA256": "9a6b08db42a4a23caed33e01c1628885a616d943c82f9e338cfc84b673128572",
   "visual_inspection": "Rendered contact sheet and full pages are separately inspected; automated bounds do not alone establish visual quality."
 }
